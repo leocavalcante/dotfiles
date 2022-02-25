@@ -114,4 +114,4 @@ alias gs="git status"
 alias ga="git add --all"
 alias gm="git commit -m"
 alias gp="git push"
-
+alias gu="git pull"
