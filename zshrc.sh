@@ -3,7 +3,6 @@
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
-
 export LANG=en_US.UTF-8
 export LC_CTYPE=en_US.UTF-8
 
@@ -110,4 +109,10 @@ alias t="tmux"
 alias ts="tmux new -s"
 alias ta="tmux attach -t"
 alias tk="tmux kill-session -t"
+alias nproc="sysctl -n hw.logicalcpu"
+alias ls="exa -l"
+alias gs="git status"
+alias ga="git add --all"
+alias gm="git commit -m"
+alias gp="git push"
 
