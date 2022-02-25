@@ -104,11 +104,10 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-alias hf="php bin/hyperf.php"
 alias d="docker"
 alias dc="docker-compose"
-alias c="composer"
 alias t="tmux"
 alias ts="tmux new -s"
 alias ta="tmux attach -t"
 alias tk="tmux kill-session -t"
+
