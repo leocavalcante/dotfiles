@@ -1,5 +1,4 @@
 syntax on
-colorscheme dracula
 
 set formatoptions-=cro
 set splitbelow splitright
