@@ -12,3 +12,6 @@ ln -s $(pwd)/tmux.conf ~/.tmux.conf
 rm ~/.config/nvim/init.vim
 ln -s $(pwd)/neovim.vim ~/.config/nvim/init.vim
 
+# gitconfig
+rm ~/.gitconfig
+ln -s $(pwd)/gitconfig ~/.gitconfig

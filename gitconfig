@@ -1,0 +1,19 @@
+[user]
+	email = lc@leocavalcante.com
+    name = leocavalcante
+
+[core]
+    pager = delta
+	autocrlf = true
+
+[interactive]
+    diffFilter = delta --color-only
+
+[delta]
+    navigate = true  # use n and N to move between diff sections
+
+[merge]
+    conflictstyle = diff3
+
+[diff]
+    colorMoved = default
