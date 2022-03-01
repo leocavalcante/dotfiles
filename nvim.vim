@@ -1,12 +1,20 @@
+syntax on
 colorscheme dracula
 
+set formatoptions-=cro
+set splitbelow splitright
+set undofile
+set ignorecase
+set smartcase
+set wrap
+set textwidth=79
+set formatoptions=qrn1
+set incsearch
+set relativenumber
 set tabstop=4
 set softtabstop=4
 set shiftwidth=4
 set expandtab
-set number
-
-syntax on
 
 nnoremap <leader>n :NERDTreeFocus<CR>
 nnoremap <C-n> :NERDTree<CR>
