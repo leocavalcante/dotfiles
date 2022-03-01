@@ -1,10 +1,10 @@
 [user]
-	email = lc@leocavalcante.com
+    email = lc@leocavalcante.com
     name = leocavalcante
 
 [core]
     pager = delta
-	autocrlf = true
+    autocrlf = true
 
 [interactive]
     diffFilter = delta --color-only
@@ -17,3 +17,4 @@
 
 [diff]
     colorMoved = default
+
