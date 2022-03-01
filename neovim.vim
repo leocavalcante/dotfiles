@@ -10,6 +10,7 @@ set wrap
 set textwidth=79
 set formatoptions=qrn1
 set incsearch
+set number
 set relativenumber
 set tabstop=4
 set softtabstop=4
