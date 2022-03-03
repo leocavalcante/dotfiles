@@ -4,8 +4,9 @@
 
 [core]
     pager = delta
-    autocrlf = true
+	autocrlf = false
 	editor = nvim
+	eol = lf
 
 [interactive]
     diffFilter = delta --color-only
