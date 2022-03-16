@@ -121,4 +121,6 @@ alias gd="git diff"
 alias apu="sudo apt-get update"
 alias apg="sudo apt-get upgrade -y"
 alias pini="nvim $(asdf where php)/conf.d/php.ini"
-
+alias k="kubectl"
+alias kns="kubens"
+alias ktx="kubectx"
