@@ -15,3 +15,8 @@ ln -s $(pwd)/neovim.vim ~/.config/nvim/init.vim
 # gitconfig
 rm ~/.gitconfig
 ln -s $(pwd)/gitconfig ~/.gitconfig
+
+# php
+rm $(asdf where php)/conf.d/php.ini
+ln -s $(pwd)/php.ini $(asdf where php)/conf.d/php.ini
+
