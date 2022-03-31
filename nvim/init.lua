@@ -53,17 +53,21 @@ local on_attach = function(client, bufnr)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
 end
 
-local lsp = require 'lspconfig'.phpactor
+local phpactor = require 'lspconfig'.phpactor
+local intelephense = require 'lspconfig'.intelephense
 local coq = require 'coq'
 
-lsp.setup{
+phpactor.setup(coq.lsp_ensure_capabilities {  
   on_attach = on_attach,
   init_options = {
     ['language_server_phpstan.enabled'] = true,
   }
-}
+})
 
-lsp.setup(coq.lsp_ensure_capabilities{})
+
+intelephense.setup(coq.lsp_ensure_capabilities {
+  on_attach = on_attach
+})
 
 vim.cmd('COQnow -s')
 
