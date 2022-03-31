@@ -1,5 +1,10 @@
 require('plugins')
 
+vim.g.material_style = 'deep ocean'
+vim.g.gitblame_enabled = true
+
+vim.cmd 'colorscheme material'
+
 require'nvim-tree'.setup {}
 vim.api.nvim_set_keymap('n', '<leader>t', '<cmd>:NvimTreeToggle<CR>', { noremap=true, silent=true })
 
@@ -9,18 +14,20 @@ vim.api.nvim_set_keymap('n', '<leader>fg', '<cmd>Telescope live_grep<cr>', { nor
 vim.api.nvim_set_keymap('n', '<leader>fb', '<cmd>Telescope buffers<cr>', { noremap=true, silent=true })
 vim.api.nvim_set_keymap('n', '<leader>fh', '<cmd>Telescope help_tags<cr>', { noremap=true, silent=true })
 
-vim.opt.undofile = true
-vim.opt.ignorecase = true
-vim.opt.smartcase = true
-vim.opt.textwidth = 79
-vim.opt.formatoptions = 'qrn1'
-vim.opt.incsearch = true
-vim.opt.number = true
-vim.opt.relativenumber = true
-vim.opt.tabstop = 4
-vim.opt.softtabstop = 4
-vim.opt.shiftwidth = 4
-vim.opt.expandtab = true
+require('tmux').setup {}
+
+vim.o.undofile = true
+vim.o.ignorecase = true
+vim.o.smartcase = true
+vim.o.textwidth = 79
+vim.o.formatoptions = 'qrn1'
+vim.o.incsearch = true
+vim.o.number = true
+vim.o.relativenumber = true
+vim.o.tabstop = 4
+vim.o.softtabstop = 4
+vim.o.shiftwidth = 4
+vim.o.expandtab = true
 
 -- Mappings.
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions

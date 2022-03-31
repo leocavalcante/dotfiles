@@ -12,4 +12,9 @@ return require('packer').startup(function()
     'nvim-telescope/telescope.nvim',
     requires = { 'nvim-lua/plenary.nvim' }
   }
+  use 'marko-cerovac/material.nvim'
+  use 'jghauser/mkdir.nvim'
+  use 'f-person/git-blame.nvim'
+  use 'gpanders/editorconfig.nvim'
+  use 'aserowy/tmux.nvim'
 end)
