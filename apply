@@ -8,13 +8,11 @@ ln -s $(pwd)/zshrc.sh ~/.zshrc
 rm ~/.tmux.conf
 ln -s $(pwd)/tmux.conf ~/.tmux.conf
 
-# neovim (vim)
-rm ~/.config/nvim/init.vim
-ln -s $(pwd)/neovim.vim ~/.config/nvim/init.vim
-
-# neovim (lua)
+# neovim
+rm -rf ~/.config/nvim/lua
 rm ~/.config/nvim/init.lua
-ln -s $(pwd)/neovim.lua ~/.config/nvim/init.lua
+ln -s $(pwd)/nvim/lua ~/.config/nvim/lua
+ln -s $(pwd)/nvim/init.lua ~/.config/nvim/init.lua
 
 # gitconfig
 rm ~/.gitconfig
