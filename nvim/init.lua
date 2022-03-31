@@ -1,7 +1,13 @@
 require('plugins')
-require'nvim-tree'.setup {}
 
+require'nvim-tree'.setup {}
 vim.api.nvim_set_keymap('n', '<leader>t', '<cmd>:NvimTreeToggle<CR>', { noremap=true, silent=true })
+
+require('telescope').setup {}
+vim.api.nvim_set_keymap('n', '<leader>ff', '<cmd>Telescope find_files<cr>', { noremap=true, silent=true })
+vim.api.nvim_set_keymap('n', '<leader>fg', '<cmd>Telescope live_grep<cr>', { noremap=true, silent=true })
+vim.api.nvim_set_keymap('n', '<leader>fb', '<cmd>Telescope buffers<cr>', { noremap=true, silent=true })
+vim.api.nvim_set_keymap('n', '<leader>fh', '<cmd>Telescope help_tags<cr>', { noremap=true, silent=true })
 
 vim.opt.undofile = true
 vim.opt.ignorecase = true
@@ -47,15 +53,17 @@ local on_attach = function(client, bufnr)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
 end
 
--- Use a loop to conveniently call 'setup' on multiple servers and
--- map buffer local keybindings when the language server attaches
-local servers = { 'phpactor' }
-for _, lsp in pairs(servers) do
-  require('lspconfig')[lsp].setup {
-    on_attach = on_attach,
-    flags = {
-      -- This will be the default in neovim 0.7+
-      debounce_text_changes = 150,
-    }
+local lsp = require 'lspconfig'.phpactor
+local coq = require 'coq'
+
+lsp.setup{
+  on_attach = on_attach,
+  init_options = {
+    ['language_server_phpstan.enabled'] = true,
   }
-end
+}
+
+lsp.setup(coq.lsp_ensure_capabilities{})
+
+vim.cmd('COQnow -s')
+
