@@ -17,4 +17,5 @@ return require('packer').startup(function()
   use 'f-person/git-blame.nvim'
   use 'gpanders/editorconfig.nvim'
   use 'aserowy/tmux.nvim'
+  use 'wakatime/vim-wakatime'
 end)
