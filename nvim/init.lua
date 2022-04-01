@@ -1,6 +1,6 @@
 require('plugins')
 
-vim.g.material_style = 'deep ocean'
+-- vim.g.material_style = 'ocean'
 vim.g.gitblame_enabled = true
 
 vim.cmd 'colorscheme material'
