@@ -63,12 +63,12 @@ end
 local lsp = require 'lspconfig'
 local coq = require 'coq'
 
-lsp.phpactor.setup(coq.lsp_ensure_capabilities {  
+--[[ lsp.phpactor.setup {  
   on_attach = on_attach,
   init_options = {
     ['language_server_phpstan.enabled'] = true,
   }
-})
+} ]]--
 
 lsp.intelephense.setup(coq.lsp_ensure_capabilities {
   on_attach = on_attach
