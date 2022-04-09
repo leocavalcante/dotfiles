@@ -77,7 +77,7 @@ ZSH_DISABLE_COMPFIX=true
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(git composer tmux zsh-syntax-highlighting zsh-autosuggestions asdf)
 
-export PATH=$(asdf where php)/.composer/vendor/bin:$PATH
+export PATH=$(asdf where python)/bin:$(asdf where php)/.composer/vendor/bin:$PATH
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
