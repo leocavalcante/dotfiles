@@ -5,16 +5,6 @@
 export ZSH="$HOME/.oh-my-zsh"
 export LANG=en_US.UTF-8
 export LC_CTYPE=en_US.UTF-8
-export PHP_CONFIGURE_OPTIONS="--with-openssl --with-curl --with-zlib --with-readline --with-iconv --with-gettext --with-sodium --with-ffi --enable-zts"
-
-# macOS :rolleyes:
-if [[ $(uname -a) =~ "Darwin" ]]; then
-    alias nproc="sysctl -n hw.ncpu"
-
-    export PHP_CONFIGURE_OPTIONS="$PHP_CONFIGURE_OPTIONS --with-iconv=$(brew --prefix libiconv)"
-    export PHP_CONFIGURE_OPTIONS="$PHP_CONFIGURE_OPTIONS --with-readline=$(brew --prefix readline)"
-    export PHP_CONFIGURE_OPTIONS="$PHP_CONFIGURE_OPTIONS --with-openssl=$(brew --prefix openssl)"
-fi
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -84,9 +74,7 @@ ZSH_DISABLE_COMPFIX=true
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git composer tmux zsh-syntax-highlighting zsh-autosuggestions asdf)
-
-export PATH=$(asdf where python)/bin:$(asdf where php)/.composer/vendor/bin:$PATH
+plugins=(git composer tmux zsh-syntax-highlighting zsh-autosuggestions)
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
@@ -132,7 +120,8 @@ alias gd="git diff"
 alias gc="git checkout"
 alias apu="sudo apt-get update"
 alias apg="sudo apt-get upgrade -y"
-alias pini="nvim $(asdf where php)/conf.d/php.ini"
 alias k="kubectl"
 alias kns="kubens"
 alias ktx="kubectx"
+alias tf="terraform"
+
