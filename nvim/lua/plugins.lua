@@ -17,4 +17,5 @@ return require('packer').startup(function()
   use 'gpanders/editorconfig.nvim'
   use 'aserowy/tmux.nvim'
   use 'wakatime/vim-wakatime'
+  use 'projekt0n/github-nvim-theme'
 end)

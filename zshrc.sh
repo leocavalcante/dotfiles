@@ -10,8 +10,8 @@ export LC_CTYPE=en_US.UTF-8
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="agnoster"
-ZSH_TMUX_AUTOSTART=false
+ZSH_THEME="fishy"
+ZSH_TMUX_AUTOSTART=true
 ZSH_DISABLE_COMPFIX=true
 
 # Set list of themes to pick from when loading at random
@@ -124,4 +124,5 @@ alias k="kubectl"
 alias kns="kubens"
 alias ktx="kubectx"
 alias tf="terraform"
-
+alias gempty="git commit --allow-empty -m 'chore(ci): trigger'; git push"
+alias gg="git merge"

@@ -11,6 +11,7 @@ vim.api.nvim_set_keymap('n', '<leader>fh', '<cmd>Telescope help_tags<cr>', { nor
 
 require('tmux').setup {}
 
+vim.o.mouse = 'a'
 vim.g.gitblame_enabled = true
 vim.o.undofile = true
 vim.o.ignorecase = true
@@ -25,3 +26,6 @@ vim.o.softtabstop = 4
 vim.o.shiftwidth = 4
 vim.o.expandtab = true
 
+require('github-theme').setup({
+    theme_style = 'light'
+})
