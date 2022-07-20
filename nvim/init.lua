@@ -26,6 +26,3 @@ vim.o.softtabstop = 4
 vim.o.shiftwidth = 4
 vim.o.expandtab = true
 
-require('github-theme').setup({
-    theme_style = 'light'
-})

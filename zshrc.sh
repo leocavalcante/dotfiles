@@ -10,7 +10,7 @@ export LC_CTYPE=en_US.UTF-8
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="fishy"
+ZSH_THEME="agnoster"
 ZSH_TMUX_AUTOSTART=true
 ZSH_DISABLE_COMPFIX=true
 

@@ -18,7 +18,3 @@ ln -s $(pwd)/nvim/init.lua ~/.config/nvim/init.lua
 rm ~/.gitconfig
 ln -s $(pwd)/gitconfig ~/.gitconfig
 
-# php
-rm $(asdf where php)/conf.d/php.ini
-ln -s $(pwd)/php.ini $(asdf where php)/conf.d/php.ini
-
