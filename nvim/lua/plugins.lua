@@ -17,4 +17,5 @@ return require('packer').startup(function()
   use 'gpanders/editorconfig.nvim'
   use 'aserowy/tmux.nvim'
   use 'wakatime/vim-wakatime'
+  use 'ziglang/zig.vim'
 end)
