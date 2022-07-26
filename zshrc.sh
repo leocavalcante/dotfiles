@@ -126,3 +126,4 @@ alias ktx="kubectx"
 alias tf="terraform"
 alias gempty="git commit --allow-empty -m 'chore(ci): trigger'; git push"
 alias gg="git merge"
+
