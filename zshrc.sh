@@ -11,7 +11,7 @@ export LC_CTYPE=en_US.UTF-8
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
 ZSH_THEME="agnoster"
-ZSH_TMUX_AUTOSTART=true
+ZSH_TMUX_AUTOSTART=false
 ZSH_DISABLE_COMPFIX=true
 
 # Set list of themes to pick from when loading at random
