@@ -1,6 +1,8 @@
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/bin:/usr/local/bin:$PATH
-
+export EDITOR=emacs
+export GIT_EDITOR=$EDITOR
+export KUBE_EDITOR=$EDITOR
 export ZSH_TMUX_AUTOSTART=true
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
@@ -102,6 +104,8 @@ source $HOME/antigen.zsh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+antigen init $HOME/.antigenrc
+
 alias c="composer"
 alias ci="composer install"
 alias cr="composer require"
@@ -116,5 +120,3 @@ alias gp="git push -u"
 alias gs="git status"
 alias gu="git pull"
 alias gub="git pull --rebase"
-
-antigen init $HOME/.antigenrc
