@@ -1,0 +1,5 @@
+#+title: .dotfiles
+
+#+begin_src sh
+  stow .
+#+end_src
