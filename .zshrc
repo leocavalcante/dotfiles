@@ -1,18 +1,15 @@
 # If you come from bash you might have to change your $PATH.
-# export PATH=$(asdf where php)/.composer/vendor/bin:$PATH
+export PATH=$HOME/bin:/usr/local/bin:$PATH
 
+export ZSH_TMUX_AUTOSTART=true
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
-export LANG=en_US.UTF-8
-export LC_CTYPE=en_US.UTF-8
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="agnoster"
-ZSH_TMUX_AUTOSTART=false
-ZSH_DISABLE_COMPFIX=true
+ZSH_THEME="robbyrussell"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -74,8 +71,10 @@ ZSH_DISABLE_COMPFIX=true
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git composer tmux zsh-syntax-highlighting zsh-autosuggestions)
+plugins=(git tmux)
+
 source $ZSH/oh-my-zsh.sh
+source $HOME/antigen.zsh
 
 # User configuration
 
@@ -102,30 +101,20 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-alias d="docker"
-alias dc="docker-compose"
-alias t="tmux"
-alias ts="tmux new -s"
-alias ta="tmux attach -t"
-alias tk="tmux kill-session -t"
-alias ls="exa -l"
-alias gs="git status"
-alias ga="git add"
-alias gall="git add --all"
+
+alias c="composer"
+alias ci="composer install"
+alias cr="composer require"
+alias ct="composer test"
+alias cu="composer update"
+alias e="emacs"
+alias g="git"
+alias ga="git add --all"
+alias gd="git diff"
 alias gm="git commit"
-alias gmm="git commit -m"
-alias gp="git push"
-alias gpo="git push origin"
+alias gp="git push -u"
+alias gs="git status"
 alias gu="git pull"
 alias gub="git pull --rebase"
-alias gd="git diff"
-alias gc="git checkout"
-alias apu="sudo apt-get update"
-alias apg="sudo apt-get upgrade -y"
-alias k="kubectl"
-alias kns="kubens"
-alias ktx="kubectx"
-alias tf="terraform"
-alias gempty="git commit --allow-empty -m 'chore(ci): trigger'; git push"
-alias gg="git merge"
-alias gbclean="git branch | grep -v "main" | xargs git branch -D"
+
+antigen init $HOME/.antigenrc
