@@ -1,17 +1,20 @@
 (setq x-select-enable-clipboard t)
 (setq ido-enable-flex-matching t)
 (setq ido-everywhere t)
-(ido-mode 1)
 
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
 (package-initialize)
 
-(setq package-selected-packages '(lsp-mode yasnippet lsp-treemacs flycheck company which-key dap-mode php-mode magit projectile multiple-cursors phpactor company-phpactor))
+(setq package-selected-packages '(lsp-mode yasnippet lsp-treemacs flycheck company which-key dap-mode php-mode magit projectile multiple-cursors material-theme phpactor company-phpactor))
 (when (cl-find-if-not #'package-installed-p package-selected-packages)
   (package-refresh-contents)
   (mapc #'package-install package-selected-packages))
 
+(ido-mode 1)
+(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+(menu-bar-mode -1)
+(load-theme 'material t)
 (which-key-mode)
 (add-hook 'php-mode-hook 'lsp)
 
