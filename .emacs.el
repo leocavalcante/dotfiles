@@ -1,22 +1,22 @@
-(setq x-select-enable-clipboard t)
 (setq ido-enable-flex-matching t)
 (setq ido-everywhere t)
+(setq x-select-enable-clipboard t)
 
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
 (package-initialize)
-
 (setq package-selected-packages '(lsp-mode yasnippet lsp-treemacs flycheck company which-key dap-mode php-mode magit projectile multiple-cursors material-theme phpactor company-phpactor))
 (when (cl-find-if-not #'package-installed-p package-selected-packages)
   (package-refresh-contents)
   (mapc #'package-install package-selected-packages))
 
-(ido-mode 1)
-(add-hook 'prog-mode-hook 'display-line-numbers-mode)
-(menu-bar-mode -1)
-(load-theme 'material t)
-(which-key-mode)
 (add-hook 'php-mode-hook 'lsp)
+(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+(delete-selection-mode 1)
+(ido-mode 1)
+(load-theme 'material t)
+(menu-bar-mode -1)
+(which-key-mode)
 
 (setq gc-cons-threshold (* 100 1024 1024)
       read-process-output-max (* 1024 1024)
@@ -30,8 +30,3 @@
   (require 'dap-php)
   (yas-global-mode))
 
-(global-set-key (kbd "C-c p") #'projectile-find-file)
-(global-set-key (kbd "C-c l") #'org-store-link)
-(global-set-key (kbd "C-c a") #'org-agenda)
-(global-set-key (kbd "C-c c") #'org-capture)
-(global-set-key (kbd "C-c C-t") #'org-todo)
