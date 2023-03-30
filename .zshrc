@@ -8,7 +8,7 @@ export ZSH_TMUX_AUTOSTART=true
 
 ZSH_THEME="robbyrussell"
 
-plugins=()
+plugins=(tmux)
 
 source $ZSH/oh-my-zsh.sh
 source $HOME/antigen.zsh
