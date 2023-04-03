@@ -14,7 +14,7 @@ plugins=(tmux)
 
 source $ZSH/oh-my-zsh.sh
 source $HOME/antigen.zsh
-[[ -e ~/.phpbrew/bashrc ]] && source ~/.phpbrew/bashrc
+source $HOME/.phpbrew/bashrc
 
 antigen init $HOME/.antigenrc
 
@@ -36,3 +36,4 @@ alias gp="git push -u"
 alias gs="git status"
 alias gu="git pull"
 alias gub="git pull --rebase"
+alias phw="phpbrew"
