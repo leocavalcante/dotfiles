@@ -1,10 +1,9 @@
 export GOPATH=~/go
-export COMPOSER_PATH=~/.composer
 export EDITOR=emacs
 export GIT_EDITOR=$EDITOR
 export KUBE_EDITOR=$EDITOR
 export LANG=en_US.UTF-8
-export PATH=$HOME/bin:/usr/local/bin:$COMPOSER_PATH/vendor/bin:$GOPATH/bin:$PATH
+export PATH=$HOME/bin:/usr/local/bin:$HOME/.composer/vendor/bin:$HOME/.config/composer/vendor/bin:$GOPATH/bin:$PATH
 export ZSH="$HOME/.oh-my-zsh"
 export ZSH_TMUX_AUTOSTART=true
 
