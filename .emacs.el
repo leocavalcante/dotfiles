@@ -1,3 +1,4 @@
+;; package management
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
 (package-initialize)
@@ -6,10 +7,18 @@
   (package-refresh-contents)
   (mapc #'package-install package-selected-packages))
 
+;; mode hooks
 (add-hook 'go-mode-hook 'lsp)
 (add-hook 'php-mode-hook 'lsp)
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
+
+;; ide
 (delete-selection-mode 1)
 (load-theme 'material t)
 (menu-bar-mode 0)
 (yas-global-mode 1)
+
+;; ido
+(setq ido-enable-flex-matching t)
+(setq ido-everywhere t)
+(ido-mode 1)
