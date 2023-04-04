@@ -2,7 +2,7 @@
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
 (package-initialize)
-(setq package-selected-packages '(lsp-mode yasnippet lsp-treemacs flycheck company php-mode magit projectile multiple-cursors material-theme phpactor company-phpactor go-mode))
+(setq package-selected-packages '(lsp-mode yasnippet treemacs lsp-treemacs flycheck company php-mode magit projectile treemacs-projectile multiple-cursors material-theme phpactor company-phpactor go-mode))
 (when (cl-find-if-not #'package-installed-p package-selected-packages)
   (package-refresh-contents)
   (mapc #'package-install package-selected-packages))
