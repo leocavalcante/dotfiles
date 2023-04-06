@@ -14,8 +14,9 @@
 
 ;; ide
 (delete-selection-mode 1)
+(global-hl-line-mode t)
 (load-theme 'material t)
-(menu-bar-mode 0)
+(menu-bar-mode -1)
 (yas-global-mode 1)
 
 ;; ido
