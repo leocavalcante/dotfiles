@@ -25,46 +25,51 @@
 
 (use-package multiple-cursors
   :ensure t
-  :bind (("C-c d" . mc/mark-next-like-this)
- 	 ("C-c C-d" . mc/mark-all-like-this)))
+    :bind (("C-c d" . mc/mark-next-like-this)
+          ("C-c C-d" . mc/mark-all-like-this)))
  
 (use-package phpactor :ensure t)
 (use-package company-phpactor :ensure t)
 (use-package php-mode
-  :after (phpactor company-phpactor)
+   :after (phpactor company-phpactor)
   :ensure t
-  :hook ((php-mode . (lambda () (set (make-local-variable 'company-backends)
-       '(company-phpactor company-files))))))
+    :hook ((php-mode . (lambda () (set (make-local-variable 'company-backends)
+           '(company-phpactor company-files))))))
 
 (use-package lsp-mode
-  :after (php-mode)
+   :after (php-mode)
   :ensure t
-  :hook (php-mode . lsp))
+    :hook (php-mode . lsp))
 (use-package lsp-ui
-  :after (lsp-mode)
+   :after (lsp-mode)
   :ensure t)
 
 (use-package flycheck
   :ensure t
-  :init (global-flycheck-mode)
-  :hook (flycheck-mode-hook . flycheck-highlighting-mode)
-        (flycheck-mode-hook . flycheck-indication-mode))
+    :init (global-flycheck-mode)
+    :hook (flycheck-mode-hook . flycheck-highlighting-mode)
+          (flycheck-mode-hook . flycheck-indication-mode))
 
 (use-package magit :ensure t)
 
 (use-package projectile
   :ensure t
-  :init (projectile-mode +1)
-  :bind (:map projectile-mode-map ("C-c p" . projectile-command-map))
-        (:map projectile-mode-map ("C-c f" . projectile-find-file)))
+    :init (projectile-mode +1)
+    :bind (:map projectile-mode-map ("C-c p" . projectile-command-map))
+          (:map projectile-mode-map ("C-c f" . projectile-find-file)))
 
 (use-package treemacs
   :ensure t
   :config (treemacs-follow-mode t)
           (treemacs-filewatch-mode t)
-  :bind (:map global-map ("C-c t" . treemacs)))
-(use-package treemacs-projectile :after (treemacs projectile) :ensure t)
-(use-package treemacs-magit :after (treemac magit) :ensure t)
+    :bind (:map global-map ("C-c t" . treemacs))
+	  (:map global-map ("C-c C-t" . treemacs-add-and-display-current-project-exclusively)))
+(use-package treemacs-projectile
+   :after (treemacs projectile)
+  :ensure t)
+(use-package treemacs-magit
+   :after (treemac magit)
+  :ensure t)
 
 
 ;; customize (do not edit)
