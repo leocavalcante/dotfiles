@@ -13,6 +13,7 @@
 (global-hl-line-mode t)
 (load-theme 'material t)
 (menu-bar-mode -1)
+(tool-bar-mode -1)
 (show-paren-mode t)
 (yas-global-mode t)
 
