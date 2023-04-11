@@ -1,5 +1,5 @@
 export GOPATH=~/go
-export EDITOR=emacs
+export EDITOR="emacs -nw"
 export GIT_EDITOR=$EDITOR
 export KUBE_EDITOR=$EDITOR
 export LANG=en_US.UTF-8
@@ -22,7 +22,8 @@ alias ci="composer install"
 alias cr="composer require"
 alias ct="composer test"
 alias cu="composer update"
-alias e="emacs -nw"
+alias emacs="emacs -nw"
+alias e="emacs"
 alias ee="e ~/.emacs.d/init.el"
 alias en="e ~/notes.org"
 alias ez="e ~/.zshrc"
