@@ -10,12 +10,12 @@
 
 (delete-selection-mode t)
 (global-display-line-numbers-mode t)
-(global-hl-line-mode t)
 (load-theme 'wombat t)
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (show-paren-mode t)
 (yas-global-mode t)
+(scroll-bar-mode -1)
 
 (setq ido-enable-flex-matching t)
 (setq ido-everywhere t)
@@ -63,13 +63,13 @@
   :ensure t
   :config (treemacs-follow-mode t)
           (treemacs-filewatch-mode t)
-    :bind (:map global-map ("C-c t" . treemacs))
-	  (:map global-map ("C-c C-t" . treemacs-add-and-display-current-project-exclusively)))
+    :bind (:map global-map ("C-\\" . treemacs))
+	  (:map global-map ("C-c \\" . treemacs-add-and-display-current-project-exclusively)))
 (use-package treemacs-projectile
    :after (treemacs projectile)
   :ensure t)
 (use-package treemacs-magit
-   :after (treemac magit)
+   :after (treemacs magit)
   :ensure t)
 
 
@@ -80,7 +80,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(yasnippet treemacs-projectile treemacs-magit php-mode multiple-cursors material-theme lsp-ui lsp-treemacs flycheck company-phpactor)))
+   '(yasnippet treemacs-projectile treemacs-magit php-mode multiple-cursors lsp-ui lsp-treemacs flycheck company-phpactor)))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
