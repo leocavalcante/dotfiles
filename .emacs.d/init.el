@@ -12,10 +12,10 @@
 (global-display-line-numbers-mode t)
 (load-theme 'wombat t)
 (menu-bar-mode -1)
-(tool-bar-mode -1)
-(show-paren-mode t)
-(yas-global-mode t)
 (scroll-bar-mode -1)
+(show-paren-mode t)
+(tool-bar-mode -1)
+(yas-global-mode t)
 
 (setq ido-enable-flex-matching t)
 (setq ido-everywhere t)
@@ -23,6 +23,9 @@
 
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+
+(use-package dockerfile-mode
+  :ensure t)
 
 (use-package multiple-cursors
   :ensure t
