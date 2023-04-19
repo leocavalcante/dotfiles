@@ -2,7 +2,6 @@
 
 ;;; Commentary:
 ;; 
-
 ;;; Code:
 (setq make-backup-files nil
       auto-save-default t)
@@ -20,6 +19,15 @@
 (setq ido-enable-flex-matching t)
 (setq ido-everywhere t)
 (ido-mode 1)
+
+(setq vc-follow-symlinks t)
+
+(global-set-key (kbd "C-o") 'other-window)
+(global-set-key (kbd "C-c t") 'ansi-term)
+(global-set-key (kbd "S-C-<left>") 'shrink-window-horizontally)
+(global-set-key (kbd "S-C-<right>") 'enlarge-window-horizontally)
+(global-set-key (kbd "S-C-<down>") 'shrink-window)
+(global-set-key (kbd "S-C-<up>") 'enlarge-window)
 
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
@@ -46,7 +54,7 @@
     :hook (php-mode . lsp))
 (use-package lsp-ui
    :after (lsp-mode)
-  :ensure t)
+   :ensure t)
 
 (use-package flycheck
   :ensure t
