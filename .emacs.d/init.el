@@ -1,6 +1,7 @@
 (setq auto-save-default t
-      ido-everywhere t
       make-backup-files nil
+      package-enable-at-startup nil
+      ido-everywhere t
       vc-follow-symlinks t)
 
 (delete-selection-mode t)
@@ -15,6 +16,20 @@
 (global-set-key (kbd "S-C-<right>") 'enlarge-window-horizontally)
 (global-set-key (kbd "S-C-<down>") 'shrink-window)
 (global-set-key (kbd "S-C-<up>") 'enlarge-window)
+
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 6))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+(straight-use-package 'use-package)
 
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
@@ -90,6 +105,12 @@
 
 (use-package dockerfile-mode
   :ensure t)
+
+(use-package copilot
+  :straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
+  :ensure t
+  :hook (prog-mode . copilot-mode)
+  :bind (:map global-map ("C-q" . copilot-accept-completion)))
 
 
 (custom-set-variables
