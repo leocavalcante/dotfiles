@@ -85,5 +85,23 @@
   :bind (("C-c d" . mc/mark-next-like-this)
 	 ("C-c C-d" . mc/mark-all-like-this)))
 
+(use-package psysh
+  :ensure t)
+
 (use-package dockerfile-mode
   :ensure t)
+
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(psysh yasnippet yaml use-package treemacs-projectile treemacs-magit multiple-cursors material-theme lsp-ui lsp-treemacs github-theme github-dark-vscode-theme flycheck-phpstan dockerfile-mode company-phpactor company-go auto-complete all-the-icons)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
