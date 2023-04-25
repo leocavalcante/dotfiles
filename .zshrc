@@ -45,5 +45,3 @@ alias kns="kubens"
 alias ktx="kubectx"
 alias ns="nix-shell"
 alias nsp="ns -p"
-alias phw="phpbrew"
-
