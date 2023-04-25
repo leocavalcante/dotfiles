@@ -1,4 +1,5 @@
 (setq auto-save-default t
+      custom-file "~/.emacs.d/custom.el"
       make-backup-files nil
       package-enable-at-startup nil
       ido-everywhere t
@@ -7,6 +8,7 @@
 (delete-selection-mode t)
 (global-display-line-numbers-mode t)
 (ido-mode t)
+(load custom-file)
 (menu-bar-mode -1)
 (scroll-bar-mode -1)
 (show-paren-mode t)
@@ -40,41 +42,34 @@
 
 (use-package company
   :ensure t
-  :init
-  (setq company-minimum-prefix-length 0)
-  :config
-  (global-company-mode t))
+  :init (setq company-minimum-prefix-length 0)
+  :config (global-company-mode t))
 
 (use-package flycheck
   :ensure t
-  :config
-  (global-flycheck-mode)
+  :config (global-flycheck-mode)
   :hook
   (flycheck-mode-hook . flycheck-highlighting-mode)
   (flycheck-mode-hook . flycheck-indication-mode))
 
 (use-package projectile
   :ensure t
-  :init
-  (projectile-mode +1)
+  :init (projectile-mode +1)
   :bind
   (:map projectile-mode-map ("C-c p" . projectile-command-map))
   (:map projectile-mode-map ("C-c f" . projectile-find-file)))
 
 (use-package yasnippet
   :ensure t
-  :config
-  (yas-global-mode t))
+  :config (yas-global-mode t))
 
 (use-package lsp-mode
   :ensure t
-  :hook
-  (php-mode . lsp))
+  :hook (php-mode . lsp))
 
 (use-package github-dark-vscode-theme
   :ensure t
-  :config
-  (load-theme 'github-dark-vscode t))
+  :config (load-theme 'github-dark-vscode t))
 
 (use-package auto-complete
   :ensure t)
@@ -104,6 +99,10 @@
 (use-package psysh
   :ensure t)
 
+(use-package wakatime-mode
+  :ensure t
+  :config (global-wakatime-mode t))
+
 (use-package dockerfile-mode
   :ensure t)
 
@@ -112,18 +111,3 @@
   :ensure t
   :hook (prog-mode . copilot-mode)
   :bind ("C-q" . copilot-accept-completion))
-
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(psysh yasnippet yaml use-package treemacs-projectile treemacs-magit multiple-cursors github-dark-vscode-theme flycheck-phpstan dockerfile-mode company-phpactor company-go auto-complete)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
