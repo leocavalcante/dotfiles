@@ -1,6 +1,7 @@
-export GOPATH=~/go
+export COMPOSER_AUTH=$(cat ~/.composer/auth.json)
 export EDITOR="emacs -nw"
 export GIT_EDITOR=$EDITOR
+export GOPATH=~/go
 export KUBE_EDITOR=$EDITOR
 export LANG=en_US.UTF-8
 export PATH=$HOME/bin:/usr/local/bin:$HOME/.composer/vendor/bin:$HOME/.config/composer/vendor/bin:$GOPATH/bin:$PATH
