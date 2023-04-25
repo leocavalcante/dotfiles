@@ -35,7 +35,8 @@
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
 
 (use-package magit
-  :ensure t)
+  :ensure t
+  :bind ("M-g" . magit))
 
 (use-package company
   :ensure t
@@ -110,7 +111,7 @@
   :straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
   :ensure t
   :hook (prog-mode . copilot-mode)
-  :bind (:map global-map ("C-q" . copilot-accept-completion)))
+  :bind ("C-q" . copilot-accept-completion))
 
 
 (custom-set-variables
