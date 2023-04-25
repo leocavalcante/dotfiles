@@ -23,10 +23,12 @@
 (global-set-key (kbd "S-C-<down>") 'shrink-window)
 (global-set-key (kbd "S-C-<up>") 'enlarge-window)
 
-(load-theme 'wombat t)
-
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+
+(use-package github-dark-vscode-theme
+  :ensure t
+  :config (load-theme 'github-dark-vscode t))
 
 (use-package company
   :ensure t
@@ -90,7 +92,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(yasnipet ido company-mode yasnippet treemacs-projectile treemacs-magit php-mode multiple-cursors lsp-ui lsp-treemacs flycheck company-phpactor)))
+   '(github-dark-vscode-theme company-mode yasnippet treemacs-projectile treemacs-magit php-mode multiple-cursors lsp-ui lsp-treemacs flycheck company-phpactor)))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
