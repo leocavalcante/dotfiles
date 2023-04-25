@@ -1,0 +1,3 @@
+.PHONY: default
+default:
+	stow .
