@@ -14,6 +14,7 @@
 (scroll-bar-mode -1)
 (show-paren-mode t)
 (tool-bar-mode -1)
+(load-theme 'misterioso t)
 
 (global-set-key (kbd "S-C-<left>") 'shrink-window-horizontally)
 (global-set-key (kbd "S-C-<right>") 'enlarge-window-horizontally)

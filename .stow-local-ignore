@@ -1,0 +1,5 @@
+\.git
+\.stow-local-ignore
+LICENSE
+Makefile
+README.*
