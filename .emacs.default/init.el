@@ -1,8 +1,9 @@
 (setq auto-save-default t
-      custom-file "~/.emacs.d/custom.el"
+      custom-file "~/.emacs.default/custom.el"
       make-backup-files nil
       package-enable-at-startup nil
       ido-everywhere t
+      inhibit-startup-message t
       vc-follow-symlinks t)
 
 (delete-selection-mode t)
@@ -36,6 +37,9 @@
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
 
+(use-package yaml-mode
+  :ensure t)
+
 (use-package magit
   :ensure t
   :bind ("M-g" . magit))
@@ -63,13 +67,13 @@
   :ensure t
   :config (yas-global-mode t))
 
+(use-package php-mode
+  :ensure t)
+
 (use-package lsp-mode
   :ensure t
+  :init (setq lsp-file-watch-threshold 5000)
   :hook (php-mode . lsp))
-
-(use-package github-dark-vscode-theme
-  :ensure t
-  :config (load-theme 'github-dark-vscode t))
 
 (use-package auto-complete
   :ensure t)
@@ -111,3 +115,6 @@
   :ensure t
   :hook (prog-mode . copilot-mode)
   :bind ("C-q" . copilot-accept-completion))
+
+(use-package gptel
+  :ensure t)
