@@ -14,7 +14,6 @@
 (scroll-bar-mode -1)
 (show-paren-mode t)
 (tool-bar-mode -1)
-(load-theme 'misterioso t)
 
 (global-set-key (kbd "S-C-<left>") 'shrink-window-horizontally)
 (global-set-key (kbd "S-C-<right>") 'enlarge-window-horizontally)
@@ -37,6 +36,15 @@
 
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+
+(use-package autothemer :ensure t)
+
+(straight-use-package
+ '(rose-pine-emacs
+   :host github
+   :repo "thongpv87/rose-pine-emacs"
+   :branch "master"))
+(load-theme 'rose-pine-color t)
 
 (use-package yaml-mode
   :ensure t)
