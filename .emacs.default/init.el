@@ -7,13 +7,14 @@
       vc-follow-symlinks t)
 
 (delete-selection-mode t)
-(global-display-line-numbers-mode t)
 (ido-mode t)
 (load custom-file)
 (menu-bar-mode -1)
 (scroll-bar-mode -1)
 (show-paren-mode t)
 (tool-bar-mode -1)
+
+(add-hook 'prog-mode-hook 'display-line-numbers-mode)
 
 (global-set-key (kbd "S-C-<left>") 'shrink-window-horizontally)
 (global-set-key (kbd "S-C-<right>") 'enlarge-window-horizontally)
