@@ -1,9 +1,13 @@
+(set-face-attribute 'default nil :family "Andale Mono" :height 120 :weight 'normal)
+
 (setq auto-save-default t
       custom-file "~/.emacs.default/custom.el"
-      make-backup-files nil
-      package-enable-at-startup nil
+      frame-title-format nil
       ido-everywhere t
       inhibit-startup-message t
+      make-backup-files nil
+      ns-use-proxy-icon nil
+      package-enable-at-startup nil
       vc-follow-symlinks t)
 
 (delete-selection-mode t)
@@ -37,15 +41,12 @@
 
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+(package-initialize)
 
-(use-package autothemer :ensure t)
-
-(straight-use-package
- '(rose-pine-emacs
-   :host github
-   :repo "thongpv87/rose-pine-emacs"
-   :branch "master"))
-(load-theme 'rose-pine-color t)
+(use-package zenburn-theme
+  :ensure t
+  :config
+  (load-theme 'zenburn t))
 
 (use-package yaml-mode
   :ensure t)
@@ -97,6 +98,10 @@
   (:map global-map ("C-\\" . treemacs))
   (:map global-map ("C-c \\" . treemacs-add-and-display-current-project-exclusively)))
 
+(use-package lsp-treemacs
+  :after (treemacs lsp-mode)
+  :ensure t)
+
 (use-package treemacs-projectile
   :after (treemacs projectile)
   :ensure t)
@@ -128,3 +133,17 @@
 
 (use-package gptel
   :ensure t)
+
+(use-package org
+  :ensure t
+  :init (setq org-ellipsis " ⇂"
+	      org-hide-emphasis-markers t))
+
+(use-package org-modern
+  :ensure t
+  :hook (org-mode . org-modern-mode))
+
+(use-package visual-fill-column
+  :ensure t
+  :init (setq visual-fill-column-center-text t)
+  :hook (org-mode . visual-fill-column-mode))
