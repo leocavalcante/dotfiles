@@ -43,10 +43,16 @@
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
 (package-initialize)
 
-(use-package zenburn-theme
+(use-package doom-themes
   :ensure t
   :config
-  (load-theme 'zenburn t))
+  (setq doom-themes-enable-bold t
+        doom-themes-enable-italic t)
+  (load-theme 'doom-city-lights t)
+  (doom-themes-visual-bell-config)
+  (setq doom-themes-treemacs-theme "doom-atom")
+  (doom-themes-treemacs-config)
+  (doom-themes-org-config))
 
 (use-package yaml-mode
   :ensure t)
@@ -108,6 +114,9 @@
 
 (use-package treemacs-magit
   :after (treemacs magit)
+  :ensure t)
+
+(use-package treemacs-all-the-icons
   :ensure t)
 
 (use-package multiple-cursors
