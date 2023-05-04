@@ -156,3 +156,9 @@
   :ensure t
   :init (setq visual-fill-column-center-text t)
   :hook (org-mode . visual-fill-column-mode))
+
+(use-package dashboard
+  :ensure t
+  :init (setq initial-buffer-choice (lambda () (switch-to-buffer "*dashboard*")))
+  :config
+  (dashboard-setup-startup-hook))
