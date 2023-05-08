@@ -162,3 +162,6 @@
   :init (setq initial-buffer-choice (lambda () (switch-to-buffer "*dashboard*")))
   :config
   (dashboard-setup-startup-hook))
+
+(use-package composer
+  :ensure t)
