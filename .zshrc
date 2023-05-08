@@ -1,5 +1,5 @@
 export COMPOSER_AUTH=$(cat ~/.composer/auth.json)
-export EDITOR="emacs -nw"
+export EDITOR="emacsclient -c"
 export GIT_EDITOR=$EDITOR
 export GOPATH=~/go
 export KUBE_EDITOR=$EDITOR
