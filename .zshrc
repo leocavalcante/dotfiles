@@ -46,3 +46,4 @@ alias k="kubectl"
 alias kns="kubens"
 alias ktx="kubectx"
 alias ls="exa -al"
+
