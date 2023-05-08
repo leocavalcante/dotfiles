@@ -8,7 +8,7 @@ export PATH=$HOME/bin:/usr/local/bin:$HOME/.composer/vendor/bin:$HOME/.config/co
 export ZSH="$HOME/.oh-my-zsh"
 export ZSH_TMUX_AUTOSTART=true
 
-ZSH_THEME="half-life"
+ZSH_THEME="agnoster"
 
 plugins=(tmux)
 
