@@ -1,4 +1,5 @@
 (set-face-attribute 'default nil :family "JetBrains Mono" :height 120 :weight 'light)
+(add-to-list 'default-frame-alist '(alpha 85 85))
 
 (setq auto-save-default t
       custom-file "~/.emacs.default/custom.el"
@@ -164,4 +165,7 @@
   (dashboard-setup-startup-hook))
 
 (use-package composer
+  :ensure t)
+
+(use-package org-present
   :ensure t)
