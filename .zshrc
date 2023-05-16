@@ -1,5 +1,5 @@
 export COMPOSER_AUTH=$(cat ~/.composer/auth.json)
-export EDITOR="emacs"
+export EDITOR="emacs -nw"
 export GIT_EDITOR=$EDITOR
 export GOPATH=~/go
 export KUBE_EDITOR=$EDITOR
@@ -8,7 +8,7 @@ export PATH=$HOME/bin:/usr/local/bin:$HOME/.composer/vendor/bin:$HOME/.config/co
 export ZSH="$HOME/.oh-my-zsh"
 export ZSH_TMUX_AUTOSTART=true
 
-ZSH_THEME="dstufft"
+ZSH_THEME="josh"
 
 plugins=(tmux)
 
@@ -25,12 +25,12 @@ alias ct="composer test"
 alias cu="composer update"
 alias d="docker"
 alias dc="docker-compose"
-alias e="emacs"
-alias ee="emacs ~/.emacs.default/init.el"
-alias ek="emacs ~/.config/kitty/kitty.conf"
-alias en="emacs ~/notes.org"
-alias et="emacs ~/.tmux.conf"
-alias ez="emacs ~/.zshrc"
+alias e="emacs -nw"
+alias ee="emacs -nw ~/.emacs.default/init.el"
+alias ek="emacs -nw ~/.config/kitty/kitty.conf"
+alias en="emacs -nw ~/notes.org"
+alias et="emacs -nw ~/.tmux.conf"
+alias ez="emacs -nw ~/.zshrc"
 alias g="git"
 alias ga="git add --all"
 alias gc="git checkout"
@@ -45,3 +45,4 @@ alias kns="kubens"
 alias ktx="kubectx"
 alias ls="exa -al"
 
+eval "$(starship init zsh)"
