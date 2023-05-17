@@ -1,5 +1,5 @@
 (set-face-attribute 'default nil :family "JetBrains Mono" :height 120 :weight 'light)
-(add-to-list 'default-frame-alist '(alpha 95 90))
+(add-to-list 'default-frame-alist '(alpha 90 85))
 
 (setq auto-save-default t
       custom-file "~/.emacs.default/custom.el"
@@ -11,6 +11,7 @@
       vc-follow-symlinks t)
 
 (delete-selection-mode t)
+(global-hl-line-mode t)
 (ido-mode t)
 (load custom-file)
 (menu-bar-mode -1)
@@ -43,16 +44,26 @@
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
 (package-initialize)
 
-(use-package doom-themes
+(use-package modus-themes
   :ensure t
-  :config
-  (setq doom-themes-enable-bold t
-        doom-themes-enable-italic t)
-  (load-theme 'doom-city-lights t)
-  (doom-themes-visual-bell-config)
-  (setq doom-themes-treemacs-theme "doom-atom")
-  (doom-themes-treemacs-config)
-  (doom-themes-org-config))
+  :init
+  (setq modus-themes-mode-line '(accented borderless)
+	modus-themes-bold-constructs t
+	modus-themes-italic-constructs t
+	modus-themes-fringes 'subtle
+	modus-themes-tabs-accented t
+	modus-themes-paren-match '(bold intense)
+	modus-themes-prompts '(bold intense)
+	modus-themes-org-blocks 'tinted-background
+	modus-themes-scale-headings t
+	modus-themes-region '(bg-only)
+	modus-themes-headings
+	'((1 . (rainbow overline background 1.4))
+	  (2 . (rainbow background 1.3))
+	  (3 . (rainbow bold 1.2))
+	  (t . (semilight 1.1))))
+  :config (load-theme 'modus-vivendi t))
+
 
 (use-package yaml-mode
   :ensure t)
