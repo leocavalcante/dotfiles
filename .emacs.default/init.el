@@ -64,7 +64,6 @@
 	  (t . (semilight 1.1))))
   :config (load-theme 'modus-vivendi t))
 
-
 (use-package yaml-mode
   :ensure t)
 
