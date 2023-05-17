@@ -177,3 +177,6 @@
 
 (use-package org-present
   :ensure t)
+
+(use-package kubernetes
+  :ensure t)
