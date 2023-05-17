@@ -1,9 +1,8 @@
 (set-face-attribute 'default nil :family "JetBrains Mono" :height 120 :weight 'light)
-(add-to-list 'default-frame-alist '(alpha 98 100))
+(add-to-list 'default-frame-alist '(alpha 95 90))
 
 (setq auto-save-default t
       custom-file "~/.emacs.default/custom.el"
-      frame-title-format nil
       ido-everywhere t
       inhibit-startup-message t
       make-backup-files nil
