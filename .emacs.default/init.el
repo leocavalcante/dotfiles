@@ -1,5 +1,5 @@
 (set-face-attribute 'default nil :family "JetBrains Mono" :height 120 :weight 'light)
-(add-to-list 'default-frame-alist '(alpha 90 85))
+(add-to-list 'default-frame-alist '(alpha 95 90))
 
 (setq auto-save-default t
       custom-file "~/.emacs.default/custom.el"
@@ -8,13 +8,17 @@
       make-backup-files nil
       ns-use-proxy-icon nil
       package-enable-at-startup nil
+      use-dialog-box nil
       vc-follow-symlinks t)
 
 (delete-selection-mode t)
+(global-auto-revert-mode t)
 (global-hl-line-mode t)
 (ido-mode t)
 (load custom-file)
 (menu-bar-mode -1)
+(recentf-mode t)
+(save-place-mode t)
 (scroll-bar-mode -1)
 (show-paren-mode t)
 (tool-bar-mode -1)
