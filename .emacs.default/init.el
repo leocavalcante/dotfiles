@@ -173,9 +173,13 @@
 (use-package ob-mermaid
   :ensure t)
 
+(use-package ob-php
+  :ensure t)
+
 (org-babel-do-load-languages
     'org-babel-load-languages
-    '((mermaid . t)))
+    '((mermaid . t)
+      (php . t)))
 
 (use-package org-modern
   :ensure t
