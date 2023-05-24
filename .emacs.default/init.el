@@ -101,10 +101,15 @@
 (use-package php-mode
   :ensure t)
 
+(use-package rust-mode
+  :ensure t)
+
 (use-package lsp-mode
   :ensure t
   :init (setq lsp-file-watch-threshold 5000)
-  :hook (php-mode . lsp))
+  :hook
+  (php-mode . lsp)
+  (rust-mode . lsp))
 
 (use-package auto-complete
   :ensure t)
@@ -112,7 +117,7 @@
 (use-package treemacs
   :ensure t
   :config
-  (treemacs-follow-mode t)
+  (treemacs-follow-mode t)
   (treemacs-filewatch-mode t)
   :bind
   (:map global-map ("C-\\" . treemacs))
@@ -131,7 +136,8 @@
   :ensure t)
 
 (use-package treemacs-all-the-icons
-  :ensure t)
+  :ensure t
+  :config (treemacs-load-theme "all-the-icons"))
 
 (use-package multiple-cursors
   :ensure t
@@ -162,6 +168,15 @@
   :init (setq org-ellipsis " ⇂"
 	      org-hide-emphasis-markers t))
 
+(setq org-startup-with-inline-images 'inlineimages)
+
+(use-package ob-mermaid
+  :ensure t)
+
+(org-babel-do-load-languages
+    'org-babel-load-languages
+    '((mermaid . t)))
+
 (use-package org-modern
   :ensure t
   :hook (org-mode . org-modern-mode))
@@ -181,6 +196,7 @@
 
 (use-package org-present
   :ensure t)
+
 
 (use-package kubernetes
   :ensure t)

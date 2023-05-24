@@ -13,6 +13,7 @@ plugins=(tmux)
 source $ZSH/oh-my-zsh.sh
 source $HOME/antigen.zsh
 source $HOME/.phpbrew/bashrc
+source $HOME/.cargo/env
 
 antigen init $HOME/.antigenrc
 
