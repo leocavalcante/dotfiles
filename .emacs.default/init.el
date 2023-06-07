@@ -1,5 +1,4 @@
-(set-face-attribute 'default nil :family "JetBrains Mono" :height 120 :weight 'light)
-(add-to-list 'default-frame-alist '(alpha 95 90))
+(set-face-attribute 'default nil :family "JetBrains Mono" :height 120 :weight 'normal)
 
 (setq auto-save-default t
       custom-file "~/.emacs.default/custom.el"
@@ -66,7 +65,12 @@
 	  (2 . (rainbow background 1.3))
 	  (3 . (rainbow bold 1.2))
 	  (t . (semilight 1.1))))
-  :config (load-theme 'modus-vivendi t))
+  :config (load-theme 'modus-operandi t))
+
+(use-package doom-themes
+  :ensure t
+  :init (setq doom-themes-treemacs-theme "doom-atom")
+  :config (doom-themes-treemacs-config))
 
 (use-package yaml-mode
   :ensure t)
@@ -80,12 +84,16 @@
   :init (setq company-minimum-prefix-length 0)
   :config (global-company-mode t))
 
+(use-package flycheck-inline
+  :ensure t)
+
 (use-package flycheck
   :ensure t
   :config (global-flycheck-mode)
   :hook
   (flycheck-mode-hook . flycheck-highlighting-mode)
-  (flycheck-mode-hook . flycheck-indication-mode))
+  (flycheck-mode-hook . flycheck-indication-mode)
+  (flycheck-mode-hook . flycheck-inline-mode))
 
 (use-package projectile
   :ensure t
@@ -114,10 +122,14 @@
 (use-package auto-complete
   :ensure t)
 
+(use-package flyspell
+  :ensure t
+  :config (flyspell-mode))
+
 (use-package treemacs
   :ensure t
   :config
-  (treemacs-follow-mode t)
+  (treemacs-follow-mode t)
   (treemacs-filewatch-mode t)
   :bind
   (:map global-map ("C-\\" . treemacs))
@@ -166,7 +178,8 @@
 (use-package org
   :ensure t
   :init (setq org-ellipsis " ⇂"
-	      org-hide-emphasis-markers t))
+	      org-hide-emphasis-markers t
+	      org-agenda-files '("~/Notes")))
 
 (setq org-startup-with-inline-images 'inlineimages)
 
