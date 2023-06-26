@@ -1,4 +1,4 @@
-(set-face-attribute 'default nil :family "JetBrains Mono" :height 120 :weight 'normal)
+(set-face-attribute 'default nil :family "JetBrains Mono" :height 120 :weight 'light)
 
 (setq auto-save-default t
       custom-file "~/.emacs.default/custom.el"
@@ -10,11 +10,12 @@
       use-dialog-box nil
       vc-follow-symlinks t)
 
+(load custom-file)
+
 (delete-selection-mode t)
 (global-auto-revert-mode t)
 (global-hl-line-mode t)
 (ido-mode t)
-(load custom-file)
 (menu-bar-mode -1)
 (recentf-mode t)
 (save-place-mode t)
@@ -28,6 +29,11 @@
 (global-set-key (kbd "S-C-<right>") 'enlarge-window-horizontally)
 (global-set-key (kbd "S-C-<down>") 'shrink-window)
 (global-set-key (kbd "S-C-<up>") 'enlarge-window)
+
+(defun kill-other-buffers ()
+  "Kill all other buffers."
+  (interactive)
+  (mapc 'kill-buffer (delq (current-buffer) (buffer-list))))
 
 (defvar bootstrap-version)
 (let ((bootstrap-file
@@ -47,30 +53,9 @@
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
 (package-initialize)
 
-(use-package modus-themes
+(use-package material-theme
   :ensure t
-  :init
-  (setq modus-themes-mode-line '(accented borderless)
-	modus-themes-bold-constructs t
-	modus-themes-italic-constructs t
-	modus-themes-fringes 'subtle
-	modus-themes-tabs-accented t
-	modus-themes-paren-match '(bold intense)
-	modus-themes-prompts '(bold intense)
-	modus-themes-org-blocks 'tinted-background
-	modus-themes-scale-headings t
-	modus-themes-region '(bg-only)
-	modus-themes-headings
-	'((1 . (rainbow overline background 1.4))
-	  (2 . (rainbow background 1.3))
-	  (3 . (rainbow bold 1.2))
-	  (t . (semilight 1.1))))
-  :config (load-theme 'modus-operandi t))
-
-(use-package doom-themes
-  :ensure t
-  :init (setq doom-themes-treemacs-theme "doom-atom")
-  :config (doom-themes-treemacs-config))
+  :config (load-theme 'material-light t))
 
 (use-package yaml-mode
   :ensure t)
@@ -129,6 +114,7 @@
 (use-package treemacs
   :ensure t
   :config
+  (treemacs-resize-icons 16)
   (treemacs-follow-mode t)
   (treemacs-filewatch-mode t)
   :bind
@@ -215,4 +201,7 @@
   :ensure t)
 
 (use-package kubernetes
+  :ensure t)
+
+(use-package ox-slack
   :ensure t)
