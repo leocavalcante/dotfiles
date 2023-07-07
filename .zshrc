@@ -43,5 +43,7 @@ alias k="kubectl"
 alias kns="kubens"
 alias ktx="kubectx"
 alias ls="exa -al"
+alias gh-pr"gh pr view --web"
+alias gh-cpr="gh pr create --web"
 
 eval "$(starship init zsh)"

@@ -8,7 +8,8 @@
       ns-use-proxy-icon nil
       package-enable-at-startup nil
       use-dialog-box nil
-      vc-follow-symlinks t)
+      vc-follow-symlinks t
+      org-mobile-directory "~/notes/")
 
 (load custom-file)
 
@@ -159,6 +160,12 @@
   :bind ("C-q" . copilot-accept-completion))
 
 (use-package gptel
+  :ensure t)
+
+(use-package vterm
+  :ensure t)
+
+(use-package multi-vterm
   :ensure t)
 
 (use-package org
