@@ -54,9 +54,17 @@
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
 (package-initialize)
 
-(use-package material-theme
+(use-package doom-themes
   :ensure t
-  :config (load-theme 'material-light t))
+  :config
+  (setq doom-themes-enable-bold t
+        doom-themes-enable-italic t)
+  (load-theme 'doom-plain t) ; another cool options: doom-ayu-light, doom-nord-light, doom-opera-light
+  (doom-themes-visual-bell-config)
+  (doom-themes-neotree-config)
+  (setq doom-themes-treemacs-theme "doom-atom")
+  (doom-themes-treemacs-config)
+  (doom-themes-org-config))
 
 (use-package yaml-mode
   :ensure t)
