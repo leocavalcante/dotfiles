@@ -1,4 +1,4 @@
-(set-face-attribute 'default nil :family "JetBrains Mono" :height 120 :weight 'light)
+(set-face-attribute 'default nil :famigly "JetBrains Mono" :height 100 :weight 'light)
 
 (setq auto-save-default t
       custom-file "~/.emacs.default/custom.el"
