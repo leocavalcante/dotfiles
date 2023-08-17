@@ -59,7 +59,7 @@
   :config
   (setq doom-themes-enable-bold t
         doom-themes-enable-italic t)
-  (load-theme 'doom-plain t) ; another cool options: doom-ayu-light, doom-nord-light, doom-opera-light
+  (load-theme 'doom-opera-light t) ; another cool options: doom-ayu-light, doom-nord-light, doom-opera-light
   (doom-themes-visual-bell-config)
   (doom-themes-neotree-config)
   (setq doom-themes-treemacs-theme "doom-atom")
