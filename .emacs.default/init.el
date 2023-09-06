@@ -1,5 +1,3 @@
-(set-face-attribute 'default nil :family "JetBrains Mono" :height 100 :weight 'light)
-
 (setq auto-save-default t
       custom-file "~/.emacs.default/custom.el"
       ido-everywhere t
