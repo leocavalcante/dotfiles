@@ -7,7 +7,7 @@
       package-enable-at-startup nil
       use-dialog-box nil
       vc-follow-symlinks t
-      org-mobile-directory "~/notes/")
+      vc-follow-symlinks t)
 
 (load custom-file)
 
