@@ -6,7 +6,6 @@
       ns-use-proxy-icon nil
       package-enable-at-startup nil
       use-dialog-box nil
-      vc-follow-symlinks t
       vc-follow-symlinks t)
 
 (load custom-file)
@@ -28,6 +27,7 @@
 (global-set-key (kbd "S-C-<right>") 'enlarge-window-horizontally)
 (global-set-key (kbd "S-C-<down>") 'shrink-window)
 (global-set-key (kbd "S-C-<up>") 'enlarge-window)
+(global-set-key (kbd "C-x p") 'previous-window-any-frame)
 
 (defun kill-other-buffers ()
   "Kill all other buffers."
