@@ -186,11 +186,6 @@
   :init (setq visual-fill-column-center-text t)
   :hook (org-mode . visual-fill-column-mode))
 
-(use-package dashboard
-  :ensure t
-  :config
-  (dashboard-setup-startup-hook))
-
 (use-package composer
   :ensure t)
 
