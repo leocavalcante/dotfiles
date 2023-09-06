@@ -128,10 +128,6 @@
   :after (treemacs magit)
   :ensure t)
 
-(use-package treemacs-all-the-icons
-  :ensure t
-  :config (treemacs-load-theme "all-the-icons"))
-
 (use-package multiple-cursors
   :ensure t
   :bind (("C-c d" . mc/mark-next-like-this)
