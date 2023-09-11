@@ -12,7 +12,7 @@
 
 (delete-selection-mode t)
 (global-auto-revert-mode t)
-(global-hl-line-mode t)
+(global-hl-line-mode -1)
 (ido-mode t)
 (menu-bar-mode -1)
 (recentf-mode t)
