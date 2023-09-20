@@ -1,5 +1,4 @@
-# https://youtrack.jetbrains.com/articles/IDEA-A-19/Shell-Environment-Loading
-[ -z "$INTELLIJ_ENVIRONMENT_READER" ] && plugins=(tmux)
+plugins=(tmux)
 
 export COMPOSER_AUTH=$(cat ~/.composer/auth.json)
 export EDITOR="emacs -nw"
@@ -8,7 +7,9 @@ export GOPATH=~/go
 export KUBE_EDITOR=$EDITOR
 export PATH=$HOME/bin:/usr/local/bin:$HOME/.composer/vendor/bin:$HOME/.config/composer/vendor/bin:$GOPATH/bin:$PATH
 export ZSH="$HOME/.oh-my-zsh"
-export ZSH_TMUX_AUTOSTART=true
+
+# https://youtrack.jetbrains.com/articles/IDEA-A-19/Shell-Environment-Loading
+[ -z "$INTELLIJ_ENVIRONMENT_READER" ] && ZSH_TMUX_AUTOSTART=true
 
 source $ZSH/oh-my-zsh.sh
 source $HOME/antigen.zsh
