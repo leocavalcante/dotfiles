@@ -1,3 +1,6 @@
+# https://youtrack.jetbrains.com/articles/IDEA-A-19/Shell-Environment-Loading
+[ -z "$INTELLIJ_ENVIRONMENT_READER" ] && plugins=(tmux)
+
 export COMPOSER_AUTH=$(cat ~/.composer/auth.json)
 export EDITOR="emacs -nw"
 export GIT_EDITOR=$EDITOR
@@ -7,14 +10,9 @@ export PATH=$HOME/bin:/usr/local/bin:$HOME/.composer/vendor/bin:$HOME/.config/co
 export ZSH="$HOME/.oh-my-zsh"
 export ZSH_TMUX_AUTOSTART=true
 
-plugins=(tmux)
-
 source $ZSH/oh-my-zsh.sh
 source $HOME/antigen.zsh
 source $HOME/.phpbrew/bashrc
-source $HOME/.cargo/env
-
-antigen init $HOME/.antigenrc
 
 alias c="composer"
 alias ci="composer install"
@@ -43,7 +41,6 @@ alias k="kubectl"
 alias kns="kubens"
 alias ktx="kubectx"
 alias ls="exa -al"
-alias gh-pr"gh pr view --web"
-alias gh-cpr="gh pr create --web"
 
+antigen init $HOME/.antigenrc
 eval "$(starship init zsh)"
