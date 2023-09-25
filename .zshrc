@@ -4,7 +4,7 @@ export GIT_EDITOR=$EDITOR
 export KUBE_EDITOR=$EDITOR
 export GOPATH=~/go
 export PATH=$HOME/bin:/usr/local/bin:$HOME/.composer/vendor/bin:$HOME/.config/composer/vendor/bin:$GOPATH/bin:$PATH
-export ZSH_THEME="agnoster"
+export ZSH_THEME="robbyrussell"
 export ZSH="$HOME/.oh-my-zsh"
 
 source $ZSH/oh-my-zsh.sh
