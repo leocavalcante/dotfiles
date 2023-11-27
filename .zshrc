@@ -11,4 +11,8 @@ source $ZSH/oh-my-zsh.sh
 source $HOME/antigen.zsh
 source $HOME/.phpbrew/bashrc
 
+git-branch-delete-all-except() {
+  git branch | grep -v $1 | xargs git branch -D
+}
+
 antigen init $HOME/.antigenrc
