@@ -1,0 +1,5 @@
+# .dotfiles
+
+```shell
+stow .
+```
