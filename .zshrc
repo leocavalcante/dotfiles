@@ -1,18 +1,22 @@
 export COMPOSER_AUTH=$(cat ~/.composer/auth.json)
-export EDITOR="vi"
+export EDITOR="emacs -nw"
 export GIT_EDITOR=$EDITOR
 export KUBE_EDITOR=$EDITOR
-export GOPATH=~/go
-export PATH=$HOME/bin:/usr/local/bin:$HOME/.composer/vendor/bin:$HOME/.config/composer/vendor/bin:$GOPATH/bin:$PATH
 export ZSH_THEME="robbyrussell"
 export ZSH="$HOME/.oh-my-zsh"
-
-source $ZSH/oh-my-zsh.sh
-source $HOME/antigen.zsh
-source $HOME/.phpbrew/bashrc
 
 git-branch-delete-all-except() {
   git branch | grep -v $1 | xargs git branch -D
 }
 
-antigen init $HOME/.antigenrc
+source $ZSH/oh-my-zsh.sh
+source $HOME/antigen.zsh
+
+antigen use oh-my-zsh
+antigen bundle git
+antigen bundle zsh-users/zsh-syntax-highlighting
+antigen bundle zsh-users/zsh-autosuggestions
+antigen bundle zsh-users/zsh-completions
+antigen bundle zsh-users/zsh-history-substring-search
+
+antigen apply
