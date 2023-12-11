@@ -1,6 +1,6 @@
 # Environment variables
 export COMPOSER_AUTH=$(cat ~/.composer/auth.json)
-export EDITOR="vi"
+export EDITOR="code"
 export GIT_EDITOR=$EDITOR
 export KUBE_EDITOR=$EDITOR
 
