@@ -22,7 +22,3 @@ antigen apply
 git-branch-delete-all-except() {
   git branch | grep -v $1 | xargs git branch -D
 }
-
-# Aliases
-alias php="phpctl php"
-alias composer="phpctl composer"
