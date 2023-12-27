@@ -1,6 +1,6 @@
 # Environment variables
 export COMPOSER_AUTH=$(cat ~/.composer/auth.json)
-export EDITOR="code"
+export EDITOR="emacs -nw"
 export GIT_EDITOR=$EDITOR
 export KUBE_EDITOR=$EDITOR
 
@@ -32,3 +32,7 @@ dock() {
         $(env | awk -F= '/^[[:alpha:]]/{print $1}' | sed 's/^/-e/') \
         --name "dock-$(openssl rand -hex 2)" $@
 }
+
+# Aliases
+alias e="emacs -nw"
+alias d="dock"
