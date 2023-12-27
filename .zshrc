@@ -22,3 +22,13 @@ antigen apply
 git-branch-delete-all-except() {
   git branch | grep -v $1 | xargs git branch -D
 }
+
+dock() {
+    docker run --rm -it \
+        -v /var/run/docker.sock:/var/run/docker.sock \
+        -v $PWD:/usr/local/src \
+        -w /usr/local/src \
+        --net host \
+        $(env | awk -F= '/^[[:alpha:]]/{print $1}' | sed 's/^/-e/') \
+        --name "dock-$(openssl rand -hex 2)" $@
+}
