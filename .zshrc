@@ -33,6 +33,19 @@ dock() {
         --name "dock-$(openssl rand -hex 2)" $@
 }
 
-# Aliases
-alias e="emacs -nw"
-alias d="dock"
+e() {
+    case "$1" in
+	"rc")
+	    file="~/.zshrc"
+	    ;;
+
+	"profile")
+	    file="~/.zprofile"
+	    ;;
+	*)
+	    file="$1"
+	    ;;
+    esac
+    
+    $(echo $EDITOR) $file
+}
