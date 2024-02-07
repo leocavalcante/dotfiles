@@ -42,6 +42,9 @@ e() {
 	"profile")
 	    file="~/.zprofile"
 	    ;;
+	"emacs")
+	    file="~/.emacs.d/init.el"
+	    ;;
 	*)
 	    file="$1"
 	    ;;
