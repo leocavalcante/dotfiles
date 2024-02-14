@@ -20,7 +20,7 @@ antigen apply
 
 # Functions
 git-branch-delete-all-except() {
-  git branch | grep -v $1 | xargs git branch -D
+    git branch | grep -v "${1:-$(git branch --show-current)}" | xargs git branch -D
 }
 
 dock() {
