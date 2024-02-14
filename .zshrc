@@ -58,3 +58,9 @@ e() {
     
     $(echo $EDITOR) $file
 }
+
+# Aliases
+alias dr="docker run --rm"
+alias dc="docker-compose"
+alias dcu="docker-compose up"
+alias dcd="docker-compose down --remove-orphans"
