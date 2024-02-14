@@ -69,9 +69,9 @@ alias dcu="docker-compose up"
 alias dcd="docker-compose down --remove-orphans"
 
 ## Git
-alias gub="git pull origin HEAD --rebase"
-alias gs="git status"
-alias gm="git commit"
 alias ga="git add"
-alias gs="git diff"
+alias gb="git pull origin HEAD --rebase"
+alias gm="git commit"
 alias gp="git push origin HEAD"
+alias gd="git diff"
+alias gs="git status"
