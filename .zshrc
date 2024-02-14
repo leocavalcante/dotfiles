@@ -61,7 +61,16 @@ e() {
 }
 
 # Aliases
+
+## Docker
 alias dr="docker run --rm"
 alias dc="docker-compose"
 alias dcu="docker-compose up"
 alias dcd="docker-compose down --remove-orphans"
+
+## Git
+alias gub="git pull origin HEAD --rebase"
+alias gs="git status"
+alias gm="git commit"
+alias ga="git add"
+alias gs="git diff"
