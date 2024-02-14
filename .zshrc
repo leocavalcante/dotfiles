@@ -45,6 +45,12 @@ e() {
 	"emacs")
 	    file="~/.emacs.d/init.el"
 	    ;;
+	"aws")
+	    file="~/.aws/config"
+	    ;;
+	"kube")
+	    file="~/.kube/config"
+	    ;;
 	*)
 	    file="$1"
 	    ;;
