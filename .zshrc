@@ -33,33 +33,16 @@ dock() {
         --name "dock-$(openssl rand -hex 2)" $@
 }
 
-e() {
-    case "$1" in
-	"rc")
-	    file="~/.zshrc"
-	    ;;
-
-	"profile")
-	    file="~/.zprofile"
-	    ;;
-	"emacs")
-	    file="~/.emacs.d/init.el"
-	    ;;
-	"aws")
-	    file="~/.aws/config"
-	    ;;
-	"kube")
-	    file="~/.kube/config"
-	    ;;
-	*)
-	    file="$1"
-	    ;;
-    esac
-    
-    $(echo $EDITOR) $file
-}
-
 # Aliases
+
+## Editor
+alias e="$EDITOR"
+alias eaws="$EDITOR ~/.aws/config"
+alias ehosts="sudo $EDITOR /etc/hosts"
+alias ekube="$EDITOR ~/.kube/config"
+alias emacs="$EDITOR ~/.emacs.d/init.el"
+alias eprofile="$EDITOR ~/.zprofile"
+alias erc="$EDITOR ~/.zshrc"
 
 ## Docker
 alias dr="docker run --rm"
