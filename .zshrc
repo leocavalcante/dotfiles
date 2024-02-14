@@ -29,7 +29,6 @@ dock() {
         -v $(pwd):/usr/local/src \
         -w /usr/local/src \
         --net host \
-	--user "$(id -u):$(id -g)" \
         $(env | awk -F= '/^[[:alpha:]]/{print $1}' | sed 's/^/-e/') \
         --name "dock-$(openssl rand -hex 2)" $@
 }
