@@ -26,7 +26,7 @@ git-branch-delete-all-except() {
 dock() {
     docker run --rm -it \
         -v /var/run/docker.sock:/var/run/docker.sock \
-        -v $PWD:/usr/local/src \
+        -v $(pwd):/usr/local/src \
         -w /usr/local/src \
         --net host \
 	--user "$(id -u):$(id -g)" \
