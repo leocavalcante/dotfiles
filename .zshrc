@@ -1,4 +1,5 @@
 # Environment variables
+export LANG=en_US.UTF-8
 export COMPOSER_AUTH=$(cat ~/.composer/auth.json)
 export EDITOR="emacs -nw"
 export GIT_EDITOR=$EDITOR
