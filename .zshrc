@@ -34,6 +34,11 @@ dock() {
         --name "dock-$(openssl rand -hex 2)" $@
 }
 
+reload() {
+    source ~/.zshrc
+    source ~/.zprofile
+}
+
 # Aliases
 
 ## Editor
