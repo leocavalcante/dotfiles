@@ -20,7 +20,7 @@ antigen theme robbyrussell
 antigen apply
 
 # Functions
-git-branch-delete-all-except() {
+gbd-all-except() {
     git branch | grep -v "${1:-$(git branch --show-current)}" | xargs git branch -D
 }
 
@@ -58,10 +58,11 @@ alias dcd="docker-compose down --remove-orphans"
 
 ## Git
 alias ga="git add"
-alias gb="git pull origin HEAD --rebase"
+alias gb="git branch"
 alias gc="git checkout"
 alias gd="git diff"
-alias gm="git commit"
-alias gp="git push origin HEAD"
+alias gm="git commit -m"
+alias gp="git push"
 alias gs="git status"
 alias gt="git stash"
+alias gu="git pull --rebase"
