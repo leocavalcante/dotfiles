@@ -51,10 +51,12 @@ alias eprofile="$EDITOR ~/.zprofile"
 alias erc="$EDITOR ~/.zshrc"
 
 ## Docker
-alias dr="docker run --rm"
 alias dc="docker-compose"
-alias dcu="docker-compose up"
 alias dcd="docker-compose down --remove-orphans"
+alias dcu="docker-compose up"
+alias dr="docker run --rm --init"
+alias dri="docker run --rm --init -it"
+alias dsh="docker run --rm -it --entrypoint sh"
 
 ## Git
 alias ga="git add"
