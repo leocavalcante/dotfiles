@@ -44,6 +44,7 @@ reload() {
 ## Editor
 alias e="$EDITOR"
 alias eaws="$EDITOR ~/.aws/config"
+alias egit="$EDITR ~/.gitconfig"
 alias ehosts="sudo $EDITOR /etc/hosts"
 alias einit="$EDITOR ~/.emacs.d/init.el"
 alias ekube="$EDITOR ~/.kube/config"
