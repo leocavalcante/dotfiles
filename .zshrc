@@ -31,7 +31,9 @@ dock() {
         -w /usr/local/src \
         --net host \
         $(env | awk -F= '/^[[:alpha:]]/{print $1}' | sed 's/^/-e/') \
-        --name "dock-$(openssl rand -hex 2)" $@
+        --name "dock-$(openssl rand -hex 2)" \
+	--entrypoint sh \
+        $@
 }
 
 reload() {
@@ -55,6 +57,7 @@ alias erc="$EDITOR ~/.zshrc"
 alias dc="docker-compose"
 alias dcd="docker-compose down --remove-orphans"
 alias dcu="docker-compose up"
+alias dcr="docker-compose run --rm"
 alias dr="docker run --rm --init"
 alias dri="docker run --rm --init -it"
 alias dsh="docker run --rm -it --entrypoint sh"
