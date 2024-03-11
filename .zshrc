@@ -36,11 +36,6 @@ dock() {
         $@
 }
 
-reload() {
-    source ~/.zshrc
-    source ~/.zprofile
-}
-
 # Aliases
 
 ## Editor
