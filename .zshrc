@@ -49,13 +49,18 @@ alias eprofile="$EDITOR ~/.zprofile"
 alias erc="$EDITOR ~/.zshrc"
 
 ## Docker
-alias dc="docker-compose"
-alias dcd="docker-compose down --remove-orphans"
-alias dcu="docker-compose up"
-alias dcr="docker-compose run --rm"
+alias d="docker"
 alias dr="docker run --rm --init"
 alias dri="docker run --rm --init -it"
+alias ds="docker stop"
 alias dsh="docker run --rm -it --entrypoint sh"
+
+## Docker Compose
+alias dc="docker-compose"
+alias dcd="docker-compose down --remove-orphans"
+alias dce="docker-compose exec"
+alias dcr="docker-compose run --rm"
+alias dcu="docker-compose up"
 
 ## Git
 alias ga="git add"
@@ -64,6 +69,7 @@ alias gc="git checkout"
 alias gd="git diff"
 alias gm="git commit -m"
 alias gp="git push"
+alias gpp="git push --set-upstream origin HEAD"
 alias gs="git status"
 alias gt="git stash"
 alias gu="git pull --rebase"
