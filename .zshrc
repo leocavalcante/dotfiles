@@ -11,7 +11,7 @@ fi
 # Sources
 source $HOME/.oh-my-zsh/oh-my-zsh.sh
 
-if [ -s "$HOME/antigen.zsh" ]; then
+if [ ! -f "$HOME/antigen.zsh" ]; then
     curl -sL git.io/antigen > "$HOME/antigen.zsh"
 fi
 source "$HOME/antigen.zsh"
