@@ -1,13 +1,20 @@
 # Environment variables
 export LANG=en_US.UTF-8
-export COMPOSER_AUTH=$(cat ~/.composer/auth.json)
 export EDITOR="emacs -nw"
 export GIT_EDITOR=$EDITOR
 export KUBE_EDITOR=$EDITOR
 
+if [ -s "$HOME/.composer/auth.json" ]; then
+    export COMPOSER_AUTH="$(cat "$HOME/.composer/auth.json")"
+fi
+
 # Sources
 source $HOME/.oh-my-zsh/oh-my-zsh.sh
-source $HOME/antigen.zsh
+
+if [ -s "$HOME/antigen.zsh" ]; then
+    curl -sL git.io/antigen > "$HOME/antigen.zsh"
+fi
+source "$HOME/antigen.zsh"
 
 # Antigen (https://antigen.sharats.me/)
 antigen use oh-my-zsh
