@@ -45,6 +45,14 @@ dock() {
 
 # Aliases
 
+## Composer
+alias c="composer"
+alias ci="composer install"
+alias cr="composer require"
+alias crd="composer require --dev"
+alias ct="composer test"
+alias cu="composer update"
+
 ## Editor
 alias e="$EDITOR"
 alias eaws="$EDITOR ~/.aws/config"
