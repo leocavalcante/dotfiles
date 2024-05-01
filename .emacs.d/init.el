@@ -1,18 +1,24 @@
-(setq make-backup-files nil)
-(setq tab-width 4)
-(setq vc-follow-symlinks t)
-(setq visible-bell t)
+(require 'package)
+(add-to-list 'package-archives
+             '("melpa" . "https://melpa.org/packages/") t)
 
-(menu-bar-mode -1)
-(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+(use-package emacs
+  :init
+  (setq make-backup-files nil)
+  (setq tab-width 4)
+  (setq vc-follow-symlinks t)
+  (setq visible-bell t)
+  :config
+  (menu-bar-mode -1)
+  (add-hook 'prog-mode-hook 'display-line-numbers-mode))
+
+(use-package lsp-mode
+  :ensure t)
 
 (use-package go-mode
   :ensure t
   :config
-  (add-hook 'go-mode-hook 'eglot-ensure))
-
-(use-package eglot
-  :ensure t)
+  (add-hook 'go-mode-hook 'lsp-mode))
 
 (use-package yasnippet
   :ensure t
