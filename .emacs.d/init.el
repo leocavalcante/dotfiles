@@ -15,6 +15,11 @@
 (use-package lsp-mode
   :ensure t)
 
+(use-package php-mode
+  :ensure t
+  :config
+  (add-hook 'php-mode-hook 'lsp-mode))
+
 (use-package go-mode
   :ensure t
   :config
