@@ -1,4 +1,5 @@
 (setq make-backup-files nil)
+(setq tab-width 4)
 (setq vc-follow-symlinks t)
 (setq visible-bell t)
 
@@ -38,3 +39,4 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+(put 'upcase-region 'disabled nil)
