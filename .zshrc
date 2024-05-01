@@ -28,3 +28,6 @@ antigen bundle zsh-users/zsh-completions
 antigen bundle zsh-users/zsh-history-substring-search
 antigen theme robbyrussell
 antigen apply
+
+# Aliases
+alias code="$EDITOR"
