@@ -3,6 +3,9 @@ export LANG=en_US.UTF-8
 export EDITOR="emacs -nw"
 export GIT_EDITOR=$EDITOR
 export KUBE_EDITOR=$EDITOR
+export GOPATH="$(go env GOPATH)"
+export GOBIN="$GOPATH/bin"
+export PATH="$PATH:$GOBIN"
 
 if [ -s "$HOME/.composer/auth.json" ]; then
     export COMPOSER_AUTH="$(cat "$HOME/.composer/auth.json")"
@@ -25,3 +28,6 @@ antigen bundle zsh-users/zsh-completions
 antigen bundle zsh-users/zsh-history-substring-search
 antigen theme robbyrussell
 antigen apply
+
+# Aliases
+alias e="$EDITOR"
