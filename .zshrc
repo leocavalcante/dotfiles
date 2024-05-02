@@ -31,3 +31,4 @@ antigen apply
 
 # Aliases
 alias code="$EDITOR"
+alias byebye="Rundll32.exe powrprof.dll,SetSuspendState Sleep"
