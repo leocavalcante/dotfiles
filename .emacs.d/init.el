@@ -1,7 +1,3 @@
-(require 'package)
-(add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/") t)
-
 (defvar bootstrap-version)
 (let ((bootstrap-file
        (expand-file-name
@@ -16,62 +12,32 @@
          'silent 'inhibit-cookies)
       (goto-char (point-max))
       (eval-print-last-sexp)))
+  (setq straight-check-for-modifications '(watch-files))
   (load bootstrap-file nil 'nomessage))
 
 (use-package emacs
-  :init
-  (setq-default make-backup-files nil)
-  (setq-default tab-width 4)
+  :init  
+  (setq make-backup-files nil)
+  (setq read-file-name-completion-ignore-case t)
   (setq vc-follow-symlinks t)
   (setq visible-bell t)
-  (setq read-file-name-completion-ignore-case t)
+  (setq-default tab-width 4)
   (setq make-backup-files nil)
   :config
   (menu-bar-mode -1)
   (tool-bar-mode -1)
-  (add-hook 'prog-mode-hook 'display-line-numbers-mode))
+  :hook
+  (prog-mode . display-line-numbers-mode))
 
-(use-package magit
-  :ensure t)
-
-(use-package vertico
-  :ensure t
-  :config
-  (vertico-mode))
-
-(use-package copilot
-  :straight (:host github :repo "copilot-emacs/copilot.el" :files ("*.el"))
-  :ensure t)
-
-(use-package gptel
-  :straight t
-  :ensure t)
-
-(use-package lsp-mode
-  :ensure t)
-
-(use-package php-mode
-  :ensure t
-  :config
-  (add-hook 'php-mode-hook 'lsp-mode))
-
-(use-package go-mode
-  :ensure t
-  :config
-  (add-hook 'go-mode-hook 'lsp-mode))
-
-(use-package yasnippet
-  :ensure t
-  :config
-  (yas-global-mode))
-
-(use-package yasnippet-snippets
-  :ensure t)
-
-(use-package company
-  :ensure t
-  :config
-  (global-company-mode))
+(use-package company :config (global-company-mode))
+(use-package copilot :straight t :defer t)
+(use-package go-mode :hook (go-mode . lsp-mode))
+(use-package lsp-mode)
+(use-package magit :defer t)
+(use-package php-mode :hook (php-mode . lsp-mode))
+(use-package vertico :config (vertico-mode))
+(use-package yasnippet :config (yas-global-mode))
+(use-package yasnippet-snippets :defer t)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
