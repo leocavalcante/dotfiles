@@ -28,6 +28,14 @@
   (menu-bar-mode -1)
   (add-hook 'prog-mode-hook 'display-line-numbers-mode))
 
+(use-package magit
+  :ensure t)
+
+(use-package vertico
+  :ensure t
+  :config
+  (vertico-mode))
+
 (use-package copilot
   :straight (:host github :repo "copilot-emacs/copilot.el" :files ("*.el"))
   :ensure t)
