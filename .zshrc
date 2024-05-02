@@ -3,6 +3,7 @@ export LANG=en_US.UTF-8
 export EDITOR="emacsclient -nw -c"
 export GIT_EDITOR=$EDITOR
 export KUBE_EDITOR=$EDITOR
+export SUDO_EDITOR=$EDITOR
 export GOPATH="$(go env GOPATH)"
 export GOBIN="$GOPATH/bin"
 export PATH="$PATH:$GOBIN"
