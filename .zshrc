@@ -1,6 +1,6 @@
 # Environment variables
 export LANG=en_US.UTF-8
-export EDITOR="emacs -nw"
+export EDITOR="emacsclient -nw -c"
 export GIT_EDITOR=$EDITOR
 export KUBE_EDITOR=$EDITOR
 export GOPATH="$(go env GOPATH)"
@@ -32,3 +32,6 @@ antigen apply
 # Aliases
 alias code="$EDITOR"
 alias byebye="Rundll32.exe powrprof.dll,SetSuspendState Sleep"
+alias gpt="chatgpt"
+alias emacs-start="emacs --daemon"
+alias emacs-stop="emacsclient --eval \"(kill-emacs)\""
