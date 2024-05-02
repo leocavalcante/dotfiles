@@ -24,6 +24,7 @@
   (setq tab-width 4)
   (setq vc-follow-symlinks t)
   (setq visible-bell t)
+  (setq read-file-name-completion-ignore-case t)
   :config
   (menu-bar-mode -1)
   (add-hook 'prog-mode-hook 'display-line-numbers-mode))
