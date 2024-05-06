@@ -29,11 +29,3 @@ antigen bundle zsh-users/zsh-completions
 antigen bundle zsh-users/zsh-history-substring-search
 antigen theme robbyrussell
 antigen apply
-
-# Aliases
-alias code="$EDITOR"
-alias byebye="Rundll32.exe powrprof.dll,SetSuspendState Sleep"
-alias gpt="chatgpt"
-alias emacs-start="emacs --daemon"
-alias emacs-stop="emacsclient --eval \"(kill-emacs)\""
-alias emacs-restart="emacs-stop && emacs-start"
