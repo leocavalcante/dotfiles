@@ -30,11 +30,6 @@ antigen bundle zsh-users/zsh-history-substring-search
 antigen theme robbyrussell
 antigen apply
 
-# Functions
-note() {
-	emacsclient -nw -c "~/notes/$1.md"
-}
-
 # Aliases
 alias code="$EDITOR"
 alias byebye="Rundll32.exe powrprof.dll,SetSuspendState Sleep"
