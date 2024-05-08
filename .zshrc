@@ -1,16 +1,25 @@
 # Environment variables
 export LANG=en_US.UTF-8
-export EDITOR="emacsclient -nw -c"
+export EDITOR="code"
 export GIT_EDITOR=$EDITOR
 export KUBE_EDITOR=$EDITOR
 export SUDO_EDITOR=$EDITOR
+
+# PHP
+if [ -d "$HOME/.composer" ]; then
+    COMPOSER_PATH="$HOME/.composer"
+elif [ -d "$HOME/.config/composer" ]; then
+    COMPOSER_PATH="$HOME/.config/composer"
+fi
+if [ -n "$COMPOSER_PATH" ]; then
+    export COMPOSER_AUTH="$(cat "$COMPOSER_PATH/auth.json")"
+    export PATH="$PATH:$COMPOSER_PATH/vendor/bin"
+fi
+
+# Go
 export GOPATH="$(go env GOPATH)"
 export GOBIN="$GOPATH/bin"
 export PATH="$PATH:$GOBIN"
-
-if [ -s "$HOME/.composer/auth.json" ]; then
-    export COMPOSER_AUTH="$(cat "$HOME/.composer/auth.json")"
-fi
 
 # Sources
 source $HOME/.oh-my-zsh/oh-my-zsh.sh
