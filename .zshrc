@@ -6,15 +6,9 @@ export KUBE_EDITOR=$EDITOR
 export SUDO_EDITOR=$EDITOR
 
 # PHP
-if [ -d "$HOME/.composer" ]; then
-    COMPOSER_PATH="$HOME/.composer"
-elif [ -d "$HOME/.config/composer" ]; then
-    COMPOSER_PATH="$HOME/.config/composer"
-fi
-if [ -n "$COMPOSER_PATH" ]; then
-    export COMPOSER_AUTH="$(cat "$COMPOSER_PATH/auth.json")"
-    export PATH="$PATH:$COMPOSER_PATH/vendor/bin"
-fi
+export COMPOSER_PATH="$HOME/.config/composer"
+export COMPOSER_BIN="$COMPOSER_PATH/vendor/bin"
+export PATH="$PATH:$COMPOSER_BIN"
 
 # Go
 export GOPATH="$(go env GOPATH)"
@@ -23,10 +17,6 @@ export PATH="$PATH:$GOBIN"
 
 # Sources
 source $HOME/.oh-my-zsh/oh-my-zsh.sh
-
-if [ ! -f "$HOME/antigen.zsh" ]; then
-    curl -sL git.io/antigen > "$HOME/antigen.zsh"
-fi
 source "$HOME/antigen.zsh"
 
 # Antigen (https://antigen.sharats.me/)
@@ -38,3 +28,4 @@ antigen bundle zsh-users/zsh-completions
 antigen bundle zsh-users/zsh-history-substring-search
 antigen theme robbyrussell
 antigen apply
+
