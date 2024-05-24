@@ -29,3 +29,12 @@ antigen bundle zsh-users/zsh-history-substring-search
 antigen theme robbyrussell
 antigen apply
 
+# Functions
+hi() {
+  cd "$HOME/.dotfiles"
+  git pull
+  cd "$HOME"
+  sudo apt update
+  sudo apt upgrade -y
+}
+
