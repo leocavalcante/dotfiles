@@ -1,10 +1,11 @@
 [font]
-size = 14.0
+normal = { family = "JetBrains Mono", style = "Regular" }
+size = 12.0
 
 [window]
 startup_mode = "Fullscreen"
+padding = { x = 10, y = 10 }
 
 [shell]
 program = "/bin/zsh"
 args = ["-c", "ssh PPVM"]
-
