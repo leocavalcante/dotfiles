@@ -4,6 +4,7 @@ export EDITOR="code"
 export GIT_EDITOR=$EDITOR
 export KUBE_EDITOR=$EDITOR
 export SUDO_EDITOR=$EDITOR
+export PATH="$PATH:$HOME/.local/bin"
 
 # PHP
 export COMPOSER_PATH="$HOME/.config/composer"
@@ -18,6 +19,9 @@ export PATH="$PATH:$GOBIN"
 # Sources
 source $HOME/.oh-my-zsh/oh-my-zsh.sh
 source "$HOME/antigen.zsh"
+
+# Aliases
+alias l="exa -lha"
 
 # Antigen (https://antigen.sharats.me/)
 antigen use oh-my-zsh
@@ -38,3 +42,5 @@ hi() {
   sudo apt upgrade -y
 }
 
+# Starship
+eval "$(starship init zsh)"
