@@ -20,6 +20,9 @@ export PATH="$PATH:$GOBIN"
 source $HOME/.oh-my-zsh/oh-my-zsh.sh
 source "$HOME/antigen.zsh"
 
+# Aliases
+alias l="exa -lha"
+
 # Antigen (https://antigen.sharats.me/)
 antigen use oh-my-zsh
 antigen bundle git
