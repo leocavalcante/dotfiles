@@ -4,6 +4,7 @@ export EDITOR="code"
 export GIT_EDITOR=$EDITOR
 export KUBE_EDITOR=$EDITOR
 export SUDO_EDITOR=$EDITOR
+export PATH="$PATH:$HOME/.local/bin"
 
 # PHP
 export COMPOSER_PATH="$HOME/.config/composer"
