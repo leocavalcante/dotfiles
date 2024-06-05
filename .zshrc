@@ -38,3 +38,5 @@ hi() {
   sudo apt upgrade -y
 }
 
+# Starship
+eval "$(starship init zsh)"
