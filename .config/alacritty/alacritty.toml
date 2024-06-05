@@ -12,4 +12,3 @@ args = ["-c", "ssh PPVM"]
 
 [env]
 TERM = "xterm-256color"
-
