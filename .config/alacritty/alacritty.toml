@@ -1,3 +1,7 @@
+import = [
+  "~/.config/alacritty/catppuccin-mocha.toml"
+]
+
 [font]
 normal = { family = "JetBrainsMono Nerd Font Mono", style = "Regular" }
 size = 14.0
@@ -9,3 +13,7 @@ padding = { x = 10, y = 10 }
 [shell]
 program = "/bin/zsh"
 args = ["-c", "ssh PPVM"]
+
+[env]
+TERM = "xterm-256color"
+
