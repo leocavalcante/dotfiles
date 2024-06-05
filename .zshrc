@@ -1,6 +1,6 @@
 # Environment variables
 export LANG=en_US.UTF-8
-export EDITOR="code"
+export EDITOR="nvim"
 export GIT_EDITOR=$EDITOR
 export KUBE_EDITOR=$EDITOR
 export SUDO_EDITOR=$EDITOR
