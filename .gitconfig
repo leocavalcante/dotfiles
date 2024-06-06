@@ -14,10 +14,10 @@
     colorMoved = default
 
 [push]
-	autoSetupRemote = true
+    autoSetupRemote = true
 
 [pull]
-	rebase = false
+    rebase = false
 
 [include]
-path = ~/.gitconfig.local
+    path = ~/.gitconfig.local
