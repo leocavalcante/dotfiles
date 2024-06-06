@@ -33,6 +33,9 @@ antigen bundle zsh-users/zsh-history-substring-search
 antigen theme robbyrussell
 antigen apply
 
+# Bindings
+bindkey '^ ' autosuggest-accept
+
 # Functions
 hi() {
   cd "$HOME/.dotfiles"
