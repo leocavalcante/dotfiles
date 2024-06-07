@@ -3,3 +3,6 @@ disabled = true
 
 [hostname]
 disabled = true
+
+[kubernetes]
+disabled = true
