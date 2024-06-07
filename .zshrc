@@ -22,7 +22,6 @@ source "$HOME/antigen.zsh"
 
 # Aliases
 alias l="exa -lha"
-alias cd="z"
 
 # Antigen (https://antigen.sharats.me/)
 antigen use oh-my-zsh
@@ -48,4 +47,4 @@ hi() {
 
 # Tools
 eval "$(starship init zsh)"
-eval "$(zoxide init zsh)"
+eval "$(zoxide init --cmd cd zsh)"
