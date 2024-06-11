@@ -21,7 +21,7 @@ source $HOME/.oh-my-zsh/oh-my-zsh.sh
 source "$HOME/antigen.zsh"
 
 # Aliases
-alias l="exa -lha"
+alias l="exa --all --icons --git"
 
 # Antigen (https://antigen.sharats.me/)
 antigen use oh-my-zsh
