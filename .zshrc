@@ -9,6 +9,7 @@ export PATH="$PATH:$HOME/.local/bin"
 # PHP
 export COMPOSER_PATH="$HOME/.config/composer"
 export COMPOSER_BIN="$COMPOSER_PATH/vendor/bin"
+export COMPOSER_AUTH="$(cat $COMPOSER_PATH/auth.json)"
 export PATH="$PATH:$COMPOSER_BIN"
 
 # Go
