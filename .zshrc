@@ -21,9 +21,6 @@ export PATH="$PATH:$GOBIN"
 source $HOME/.oh-my-zsh/oh-my-zsh.sh
 source "$HOME/antigen.zsh"
 
-# Aliases
-alias l="exa --all --icons --git"
-
 # Antigen (https://antigen.sharats.me/)
 antigen use oh-my-zsh
 antigen bundle git
@@ -33,6 +30,10 @@ antigen bundle zsh-users/zsh-completions
 antigen bundle zsh-users/zsh-history-substring-search
 antigen theme robbyrussell
 antigen apply
+
+# Aliases
+alias l="exa --all --icons --git"
+alias gpt="chatgpt"
 
 # Bindings
 bindkey '^ ' autosuggest-accept
