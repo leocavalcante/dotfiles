@@ -34,6 +34,7 @@ antigen apply
 # Aliases
 alias l="exa --all --icons --git"
 alias gpt="chatgpt"
+alias c="clear"
 
 # Bindings
 bindkey '^ ' autosuggest-accept
