@@ -23,18 +23,18 @@ source "$HOME/antigen.zsh"
 
 # Antigen (https://antigen.sharats.me/)
 antigen use oh-my-zsh
+antigen theme robbyrussell
 antigen bundle git
-antigen bundle zsh-users/zsh-syntax-highlighting
 antigen bundle zsh-users/zsh-autosuggestions
 antigen bundle zsh-users/zsh-completions
 antigen bundle zsh-users/zsh-history-substring-search
-antigen theme robbyrussell
+antigen bundle zsh-users/zsh-syntax-highlighting
 antigen apply
 
 # Aliases
-alias l="exa --all --icons --git"
-alias gpt="chatgpt"
 alias c="clear"
+alias gpt="chatgpt"
+alias l="exa --all --icons --git"
 
 # Bindings
 bindkey '^ ' autosuggest-accept
