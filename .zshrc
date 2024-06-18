@@ -48,6 +48,11 @@ hi() {
   sudo apt upgrade -y
 }
 
+code() {
+  z "$1"
+  nvim .
+}
+
 # Tools
 eval "$(zoxide init zsh)"
 eval "$(starship init zsh)"
