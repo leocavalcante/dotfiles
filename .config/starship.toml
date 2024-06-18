@@ -6,3 +6,6 @@ disabled = true
 
 [kubernetes]
 disabled = true
+
+[aws]
+disabled = true
