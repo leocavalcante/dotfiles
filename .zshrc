@@ -1,3 +1,6 @@
+# Config
+ZSH_TMUX_AUTOSTART=true
+
 # Environment variables
 export LANG=en_US.UTF-8
 export EDITOR="nvim"
@@ -25,6 +28,7 @@ source "$HOME/antigen.zsh"
 antigen use oh-my-zsh
 antigen theme robbyrussell
 antigen bundle git
+antigen bundle tmux
 antigen bundle zsh-users/zsh-autosuggestions
 antigen bundle zsh-users/zsh-completions
 antigen bundle zsh-users/zsh-history-substring-search
