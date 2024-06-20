@@ -26,8 +26,6 @@ source "$HOME/antigen.zsh"
 
 # Antigen (https://antigen.sharats.me/)
 antigen use oh-my-zsh
-antigen theme robbyrussell
-antigen bundle git
 antigen bundle tmux
 antigen bundle zsh-users/zsh-autosuggestions
 antigen bundle zsh-users/zsh-completions
