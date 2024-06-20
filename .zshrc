@@ -22,6 +22,7 @@ export PATH="$PATH:$GOBIN"
 
 # Antigen (https://antigen.sharats.me/)
 source "$HOME/antigen.zsh"
+antigen use oh-my-zsh
 antigen bundle tmux
 antigen bundle zsh-users/zsh-autosuggestions
 antigen bundle zsh-users/zsh-completions
