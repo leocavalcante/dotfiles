@@ -20,12 +20,8 @@ export GOPATH="$(go env GOPATH)"
 export GOBIN="$GOPATH/bin"
 export PATH="$PATH:$GOBIN"
 
-# Sources
-source $HOME/.oh-my-zsh/oh-my-zsh.sh
-source "$HOME/antigen.zsh"
-
 # Antigen (https://antigen.sharats.me/)
-antigen use oh-my-zsh
+source "$HOME/antigen.zsh"
 antigen bundle tmux
 antigen bundle zsh-users/zsh-autosuggestions
 antigen bundle zsh-users/zsh-completions
@@ -42,12 +38,11 @@ alias l="exa --all --icons --git"
 bindkey '^ ' autosuggest-accept
 
 # Functions
-hi() {
+dot() {
   cd "$HOME/.dotfiles"
   git pull
+  stow .
   cd "$HOME"
-  sudo apt update
-  sudo apt upgrade -y
 }
 
 code() {
