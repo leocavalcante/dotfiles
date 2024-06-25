@@ -36,9 +36,6 @@ alias c="clear"
 alias gpt="chatgpt"
 alias l="exa --all --icons --git"
 
-# Bindings
-bindkey '^ ' autosuggest-accept
-
 # Functions
 d() {
   cd "$HOME/.dotfiles"
