@@ -39,14 +39,14 @@ alias l="exa --all --icons --git"
 bindkey '^ ' autosuggest-accept
 
 # Functions
-dot() {
+d() {
   cd "$HOME/.dotfiles"
   git pull
   stow .
   cd "$HOME"
 }
 
-code() {
+v() {
   z "$1"
   nvim .
 }
