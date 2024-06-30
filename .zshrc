@@ -46,6 +46,12 @@ v() {
   nvim .
 }
 
+u() {
+    sudo apt update
+    sudo apt upgrade -y
+    sudo do-release-upgrade
+}
+
 # Tools
 eval "$(zoxide init zsh)"
 eval "$(starship init zsh)"
