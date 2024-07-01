@@ -29,7 +29,6 @@ antigen bundle zsh-users/zsh-syntax-highlighting
 antigen apply
 
 # Aliases
-alias c="clear"
 alias gpt="chatgpt"
 alias l="exa --all --icons --git"
 
