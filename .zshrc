@@ -34,19 +34,19 @@ alias gpt="chatgpt"
 alias l="exa --all --icons --git"
 
 # Functions
-d() {
+dotfiles() {
   cd "$HOME/.dotfiles"
   git pull
   stow .
   cd "$HOME"
 }
 
-v() {
+code() {
   z "$1"
   nvim .
 }
 
-u() {
+update() {
     sudo apt update
     sudo apt upgrade -y
     sudo do-release-upgrade
