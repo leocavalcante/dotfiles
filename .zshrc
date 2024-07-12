@@ -49,6 +49,7 @@ update() {
     sudo apt update
     sudo apt upgrade -y
     sudo do-release-upgrade
+    sudo apt autoremove -y
 }
 
 # Tools
