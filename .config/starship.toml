@@ -2,7 +2,7 @@
 disabled = true
 
 [hostname]
-disabled = true
+disabled = false
 
 [kubernetes]
 disabled = true
