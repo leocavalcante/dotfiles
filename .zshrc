@@ -1,6 +1,6 @@
 # Environment variables
 export LANG=en_US.UTF-8
-export EDITOR="nvim"
+export EDITOR="code"
 export GIT_EDITOR=$EDITOR
 export KUBE_EDITOR=$EDITOR
 export SUDO_EDITOR=$EDITOR
@@ -31,7 +31,7 @@ antigen apply
 
 # Aliases
 alias gpt="chatgpt"
-alias l="exa --all --icons --git"
+alias l="eza --all --icons --git"
 
 # Functions
 dotfiles() {
@@ -39,11 +39,6 @@ dotfiles() {
   git pull
   stow .
   cd "$HOME"
-}
-
-code() {
-  z "$1"
-  nvim .
 }
 
 update() {
