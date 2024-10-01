@@ -42,12 +42,12 @@ dotfiles() {
 }
 
 update() {
-  if [ "$(uname)" == "Linux" ]; then
+  if [[ "$(uname)" == "Linux" ]]; then
     sudo apt update
     sudo apt upgrade -y
     sudo do-release-upgrade
     sudo apt autoremove -y
-  elif [ "$(uname)" == "Darwin" ]; then
+  elif [[ "$(uname)" == "Darwin" ]]; then
     brew update
     brew upgrade
     brew cleanup
