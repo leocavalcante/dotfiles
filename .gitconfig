@@ -21,3 +21,6 @@
 
 [include]
     path = ~/.gitconfig.local
+
+[pack]
+	threads = 1
