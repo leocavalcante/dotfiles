@@ -17,6 +17,7 @@ export PATH="$PATH:$COMPOSER_BIN"
 export GOPATH="$(go env GOPATH)"
 export GOBIN="$GOPATH/bin"
 export PATH="$PATH:$GOBIN"
+export CGO_ENABLED=0
 
 # Antigen (https://antigen.sharats.me/)
 source "$HOME/antigen.zsh"
