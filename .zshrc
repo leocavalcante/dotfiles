@@ -40,7 +40,7 @@ dotfiles() {
   cd "$HOME"
 }
 
-update() {
+up() {
   if [[ "$(uname)" == "Linux" ]]; then
     sudo apt update
     sudo apt upgrade -y
