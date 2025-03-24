@@ -33,7 +33,7 @@ alias gpt="chatgpt"
 alias l="eza --all --icons --git"
 
 # Functions
-dotfiles() {
+dot() {
   cd "$HOME/.dotfiles"
   git pull
   stow .
