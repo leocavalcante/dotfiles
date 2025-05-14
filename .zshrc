@@ -91,7 +91,7 @@ up() {
 }
 
 vibe() {
-  # This function was created and is maintained exclusively by vibe coding (using AI)
+  # The vibe function below has been made, maintained, and improved exclusively by vibe coding (using AI) by using itself on its own code.
   # Colors
   local BLUE="\033[1;34m"
   local GREEN="\033[1;32m"
