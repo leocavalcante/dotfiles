@@ -90,20 +90,52 @@ up() {
   esac
 }
 
-improve_file() {
-  if [ -z "$1" ]; then
-    echo "Usage: improve_file <filename>"
+vibe() {
+  # Colors
+  local BLUE="\033[1;34m"
+  local GREEN="\033[1;32m"
+  local YELLOW="\033[1;33m"
+  local RED="\033[1;31m"
+  local CYAN="\033[1;36m"
+  local RESET="\033[0m"
+  local BOLD="\033[1m"
+
+  if [ $# -lt 1 ]; then
+    echo -e "${RED}❗${RESET} ${BOLD}Usage:${RESET} vibe <filename> [additional prompt]"
     return 1
   fi
   local file="$1"
+  shift
   if [ ! -f "$file" ]; then
-    echo "File not found: $file"
+    echo -e "${RED}❌ File not found:${RESET} $file"
     return 1
   fi
-  local content improved
-  content="$(cat "$file")"
-  improved="$(chatgpt "Improve this file:\n$content")"
+
+  local prompt content improved
+  echo -e "${BLUE}📖 Reading file:${RESET} ${CYAN}$file${RESET}"
+  content="$(<"$file")"
+  if [ -n "$*" ]; then
+    echo -e "${YELLOW}📝 Building prompt for chatgpt...${RESET}"
+    prompt="Improve this file with the following instructions: $*"$'\n'"$content"
+  else
+    echo -e "${YELLOW}📝 Building default prompt for chatgpt...${RESET}"
+    prompt="Improve this file:\n$content"
+  fi
+
+  echo -e "${CYAN}🤖 Requesting improvements from chatgpt...${RESET}"
+  improved="$(chatgpt "$prompt")"
+  if [ -z "$improved" ]; then
+    echo -e "${RED}❌ No improvements made to ${RESET}${CYAN}$file${RESET}${RED}.${RESET}"
+    return 1
+  fi
+
+  local backup="$file.bak.$(date +%s)"
+  echo -e "${YELLOW}🗄️  Creating backup at${RESET} ${CYAN}$backup${RESET}"
+  cp "$file" "$backup"
+
+  echo -e "${GREEN}✍️  Overwriting${RESET} ${CYAN}$file${RESET} ${GREEN}with improvements...${RESET}"
   printf "%s\n" "$improved" > "$file"
+  echo -e "${GREEN}✅ Improvement complete!${RESET} ${BOLD}Backup saved as${RESET} ${CYAN}$backup${RESET} ${GREEN}🎉${RESET}"
 }
 
 # Tools
