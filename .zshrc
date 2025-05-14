@@ -21,17 +21,20 @@ fi
 
 # Antigen (https://antigen.sharats.me/)
 if [ ! -f "$HOME/antigen.zsh" ]; then
-  curl -sL git.io/antigen > "$HOME/antigen.zsh"
+  curl -sSL git.io/antigen -o "$HOME/antigen.zsh"
 fi
-source "$HOME/antigen.zsh"
-antigen use oh-my-zsh
-antigen bundle git
-antigen bundle tmux
-antigen bundle zsh-users/zsh-autosuggestions
-antigen bundle zsh-users/zsh-completions
-antigen bundle zsh-users/zsh-history-substring-search
-antigen bundle zsh-users/zsh-syntax-highlighting
-antigen apply
+
+if [ -f "$HOME/antigen.zsh" ]; then
+  source "$HOME/antigen.zsh"
+  antigen use oh-my-zsh
+  antigen bundle git
+  antigen bundle tmux
+  antigen bundle zsh-users/zsh-autosuggestions
+  antigen bundle zsh-users/zsh-completions
+  antigen bundle zsh-users/zsh-history-substring-search
+  antigen bundle zsh-users/zsh-syntax-highlighting
+  antigen apply
+fi
 
 # Aliases
 alias gpt="chatgpt"
@@ -47,7 +50,7 @@ commit() {
   fi
   local gd cp
   gd="$(git diff --staged)"
-  cp="write an english git commit message based on the changes: $gd"
+  cp="write an English git commit message based on the following changes:\n$gd"
   git commit -m "$(chatgpt "$cp")"
 }
 
@@ -58,8 +61,8 @@ pr() {
   fi
   local gd tp bp t b
   gd="$(git diff --staged)"
-  tp="write an english title for a pull request based on the changes: $gd"
-  bp="write an english body for a pull request based on the changes: $gd"
+  tp="write an English title for a pull request based on the following changes:\n$gd"
+  bp="write an English body for a pull request based on the following changes:\n$gd"
   t="$(chatgpt "$tp")"
   b="$(chatgpt "$bp")"
   gh pr create -a @me -t "$t" -b "$b"
@@ -68,7 +71,7 @@ pr() {
 dot() {
   cd "$HOME/.dotfiles" || return
   git pull --quiet
-  if command -v stow >/dev/null; then
+  if command -v stow >/dev/null 2>&1; then
     stow .
   else
     echo "GNU Stow not installed!"
@@ -77,22 +80,40 @@ dot() {
 }
 
 up() {
-  if [[ "$(uname)" == "Linux" ]]; then
-    sudo apt update
-    sudo apt upgrade -y
-    sudo apt autoremove -y
-  elif [[ "$(uname)" == "Darwin" ]]; then
-    brew update
-    brew upgrade
-    brew cleanup
+  case "$(uname)" in
+    Linux)
+      sudo apt update
+      sudo apt upgrade -y
+      sudo apt autoremove -y
+      ;;
+    Darwin)
+      brew update
+      brew upgrade
+      brew cleanup
+      ;;
+  esac
+}
+
+improve_file() {
+  if [ -z "$1" ]; then
+    echo "Usage: improve_file <filename>"
+    return 1
   fi
+  local file="$1"
+  if [ ! -f "$file" ]; then
+    echo "File not found: $file"
+    return 1
+  fi
+  local content improved
+  content="$(cat "$file")"
+  improved="$(chatgpt "Improve this file:\n$content")"
+  printf "%s\n" "$improved" > "$file"
 }
 
 # Tools
-if command -v zoxide >/dev/null; then
+if command -v zoxide >/dev/null 2>&1; then
   eval "$(zoxide init zsh)"
 fi
-if command -v starship >/dev/null; then
+if command -v starship >/dev/null 2>&1; then
   eval "$(starship init zsh)"
 fi
-
