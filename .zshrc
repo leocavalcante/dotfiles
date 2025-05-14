@@ -10,22 +10,22 @@ export SUDO_EDITOR="$EDITOR"
 export COMPOSER_PATH="$HOME/.config/composer"
 export COMPOSER_BIN="$COMPOSER_PATH/vendor/bin"
 export COMPOSER_AUTH="$(cat "$COMPOSER_PATH/auth.json" 2>/dev/null || echo '')"
-export PATH="$PATH:$COMPOSER_BIN"
+export PATH="$COMPOSER_BIN:$PATH"
 
 # Go
 if command -v go >/dev/null 2>&1; then
   export GOPATH="$(go env GOPATH)"
   export GOBIN="$GOPATH/bin"
-  export PATH="$PATH:$GOBIN"
+  export PATH="$GOBIN:$PATH"
 fi
 
 # Antigen (https://antigen.sharats.me/)
-if [ ! -f "$HOME/antigen.zsh" ]; then
-  curl -sSL git.io/antigen -o "$HOME/antigen.zsh"
+ANTIGEN="$HOME/antigen.zsh"
+if [ ! -f "$ANTIGEN" ]; then
+  curl -sSL git.io/antigen -o "$ANTIGEN"
 fi
-
-if [ -f "$HOME/antigen.zsh" ]; then
-  source "$HOME/antigen.zsh"
+if [ -f "$ANTIGEN" ]; then
+  source "$ANTIGEN"
   antigen use oh-my-zsh
   antigen bundle git
   antigen bundle tmux
@@ -82,14 +82,10 @@ dot() {
 up() {
   case "$(uname)" in
     Linux)
-      sudo apt update
-      sudo apt upgrade -y
-      sudo apt autoremove -y
+      sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y
       ;;
     Darwin)
-      brew update
-      brew upgrade
-      brew cleanup
+      brew update && brew upgrade && brew cleanup
       ;;
   esac
 }
@@ -114,6 +110,7 @@ improve_file() {
 if command -v zoxide >/dev/null 2>&1; then
   eval "$(zoxide init zsh)"
 fi
+
 if command -v starship >/dev/null 2>&1; then
   eval "$(starship init zsh)"
 fi
