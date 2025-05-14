@@ -35,19 +35,18 @@ alias l="eza --all --icons --git"
 # Functions
 commit() {
   gd="$(git diff --staged)"
-  cp="white an english git commit message based on the changes: $gd"
+  cp="write an english git commit message based on the changes: $gd"
   git commit -m "$(chatgpt $cp)"
 }
 
 pr() {
   gd="$(git diff --staged)"
   tp="write an english title for a pull request based on the changes: $gd"
-  bp="write an english body for a pull request based on the chagens: $gd"
+  bp="write an english body for a pull request based on the changes: $gd"
   t="$(chatgpt $tp)"
   b="$(chatgpt $bp)"
   gh pr create -a @me -t $t -b $b 
 }
-
 
 dot() {
   cd "$HOME/.dotfiles"
