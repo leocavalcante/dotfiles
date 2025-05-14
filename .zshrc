@@ -91,6 +91,7 @@ up() {
 }
 
 vibe() {
+  # This function was created and is maintained exclusively by vibe coding (using AI)
   # Colors
   local BLUE="\033[1;34m"
   local GREEN="\033[1;32m"
