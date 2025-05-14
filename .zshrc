@@ -101,19 +101,22 @@ vibe() {
   local BOLD="\033[1m"
 
   local backup_flag=0
+  local push_flag=0
 
-  # Parse for --backup flag
+  # Parse for --backup and --push flags
   local args=()
   for arg in "$@"; do
     if [ "$arg" = "--backup" ]; then
       backup_flag=1
+    elif [ "$arg" = "--push" ]; then
+      push_flag=1
     else
       args+=("$arg")
     fi
   done
 
   if [ ${#args[@]} -lt 1 ]; then
-    echo -e "${RED}❗${RESET} ${BOLD}Usage:${RESET} vibe <filename> [additional prompt] [--backup]"
+    echo -e "${RED}❗${RESET} ${BOLD}Usage:${RESET} vibe <filename> [additional prompt] [--backup] [--push]"
     return 1
   fi
 
@@ -157,6 +160,18 @@ vibe() {
     echo -e "${GREEN}✅ Improvement complete!${RESET} ${BOLD}Backup saved as${RESET} ${CYAN}$backup${RESET} ${GREEN}🎉${RESET}"
   else
     echo -e "${GREEN}✅ Improvement complete!${RESET} ${CYAN}$file${RESET} ${GREEN}overwritten.${RESET}"
+  fi
+
+  if [ "$push_flag" -eq 1 ]; then
+    if git rev-parse --is-inside-work-tree >/dev/null 2>&1 && [ -f "$file" ]; then
+      git add "$file"
+      commit
+      if [ $? -eq 0 ]; then
+        git push
+      fi
+    else
+      echo -e "${RED}❗ Not in a git repository or file not found for git add.${RESET}"
+    fi
   fi
 }
 
