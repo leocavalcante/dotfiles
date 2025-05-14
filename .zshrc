@@ -120,7 +120,7 @@ vibe() {
     return 1
   fi
 
-  local file="${args[0]}"
+  local file="${args[1]:-${args[0]}}"
   shift $((backup_flag ? 1 : 0))
   if [ ! -f "$file" ]; then
     echo -e "${RED}❌ File not found:${RESET} $file"
@@ -128,16 +128,20 @@ vibe() {
   fi
 
   local content prompt improved
+  echo -e "${BLUE}📖 Reading file:${RESET} ${CYAN}$file${RESET}"
   content="$(<"$file")"
   shift # remove filename
   # Reconstruct prompt from args (skip the file name)
   local prompt_args=("${args[@]:1}")
   if [ ${#prompt_args[@]} -gt 0 ]; then
+    echo -e "${YELLOW}📝 Building prompt for chatgpt...${RESET}"
     prompt="Improve this file with the following instructions: ${prompt_args[*]}"$'\n'"$content"
   else
+    echo -e "${YELLOW}📝 Building default prompt for chatgpt...${RESET}"
     prompt="Improve this file:\n$content"
   fi
 
+  echo -e "${CYAN}🤖 Requesting improvements from chatgpt...${RESET}"
   improved="$(chatgpt "$prompt")"
   if [ -z "$improved" ]; then
     echo -e "${RED}❌ No improvements made to ${RESET}${CYAN}$file${RESET}${RED}.${RESET}"
@@ -146,9 +150,11 @@ vibe() {
 
   if [ "$backup_flag" -eq 1 ]; then
     local backup="$file.bak.$(date +%s)"
+    echo -e "${YELLOW}🗄️  Creating backup at${RESET} ${CYAN}$backup${RESET}"
     cp "$file" "$backup"
   fi
 
+  echo -e "${GREEN}✍️  Overwriting${RESET} ${CYAN}$file${RESET} ${GREEN}with improvements...${RESET}"
   printf "%s\n" "$improved" > "$file"
   if [ "$backup_flag" -eq 1 ]; then
     echo -e "${GREEN}✅ Improvement complete!${RESET} ${BOLD}Backup saved as${RESET} ${CYAN}$backup${RESET} ${GREEN}🎉${RESET}"
