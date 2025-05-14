@@ -1,6 +1,6 @@
 # Environment variables
-export LANG=en_US.UTF-8
-export COMPOSE_BAKE=true
+export LANG="en_US.UTF-8"
+export COMPOSE_BAKE="true"
 export EDITOR="code"
 export GIT_EDITOR="$EDITOR"
 export KUBE_EDITOR="$EDITOR"
@@ -21,7 +21,7 @@ fi
 
 # Antigen (https://antigen.sharats.me/)
 if [ ! -f "$HOME/antigen.zsh" ]; then
-  curl -L git.io/antigen > "$HOME/antigen.zsh"
+  curl -sL git.io/antigen > "$HOME/antigen.zsh"
 fi
 source "$HOME/antigen.zsh"
 antigen use oh-my-zsh
@@ -45,6 +45,7 @@ commit() {
     echo "No staged changes to commit."
     return 1
   fi
+  local gd cp
   gd="$(git diff --staged)"
   cp="write an english git commit message based on the changes: $gd"
   git commit -m "$(chatgpt "$cp")"
@@ -55,6 +56,7 @@ pr() {
     echo "No staged changes for PR."
     return 1
   fi
+  local gd tp bp t b
   gd="$(git diff --staged)"
   tp="write an english title for a pull request based on the changes: $gd"
   bp="write an english body for a pull request based on the changes: $gd"
@@ -65,7 +67,7 @@ pr() {
 
 dot() {
   cd "$HOME/.dotfiles" || return
-  git pull
+  git pull --quiet
   if command -v stow >/dev/null; then
     stow .
   else
@@ -78,8 +80,6 @@ up() {
   if [[ "$(uname)" == "Linux" ]]; then
     sudo apt update
     sudo apt upgrade -y
-    # Uncomment the following line if you want to include a release upgrade every time
-    # sudo do-release-upgrade
     sudo apt autoremove -y
   elif [[ "$(uname)" == "Darwin" ]]; then
     brew update
@@ -95,3 +95,4 @@ fi
 if command -v starship >/dev/null; then
   eval "$(starship init zsh)"
 fi
+
