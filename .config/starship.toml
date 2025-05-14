@@ -7,7 +7,7 @@ disabled = true
 disabled = false
 
 [kubernetes]
-disabled = true
+disabled = false
 
 [aws]
 disabled = true
