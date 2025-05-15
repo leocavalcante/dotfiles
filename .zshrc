@@ -99,5 +99,6 @@ if command -v starship >/dev/null 2>&1; then
 fi
 
 if [ -f "$ANTIGEN" ]; then
+  antigen theme robbyrussell
   antigen apply
 fi
