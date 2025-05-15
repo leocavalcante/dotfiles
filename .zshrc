@@ -91,8 +91,13 @@ up() {
 }
 
 vibe() {  
-  # The vibe function below has been made, maintained, and improved exclusively by vibe coding (using AI) by using itself on its own code.
-  # Colors
+  # The vibe function is designed to automate the process of improving files with AI assistance.
+  # It parses input for instructions, an optional filename, and flags for backup and push actions.
+  # The function generates and sends a prompt to ChatGPT, receives the improved file, and overwrites the original.
+  # It supports automatic backup creation by filename and can stage & commit the improved file to git (and optionally push).
+  # If a filename is not provided, it queries ChatGPT to extract the filename from the given instructions.
+
+  # Define color variables for terminal output
   local BLUE="\033[1;34m"
   local GREEN="\033[1;32m"
   local YELLOW="\033[1;33m"
@@ -104,11 +109,11 @@ vibe() {
   local backup_flag=0
   local push_flag=0
 
-  # System prompt for code generations
+  # System prompt for code generations, sets the behavior of the AI code assistant
   local VIBE_SYSTEM_PROMPT="You are a helpful assistant who answers questions clearly and directly, focusing only on the essential information.
 When asked to write or modify code in a file, always provide the entire content of the file, including unchanged lines and your modifications. Do not include any explanations or additional comments—only output the complete, updated file."
 
-  # Parse for --backup and --push flags
+  # Parse arguments for --backup and --push flags, separating them from actual arguments
   local args=()
   for arg in "$@"; do
     if [ "$arg" = "--backup" ]; then
@@ -120,33 +125,41 @@ When asked to write or modify code in a file, always provide the entire content 
     fi
   done
 
+  # Require at least instructions to be provided
   if [ ${#args[@]} -lt 1 ]; then
     echo -e "${RED}❗${RESET} ${BOLD}Usage:${RESET} vibe <instructions> [<filename>] [--backup] [--push]"
     return 1
   fi
 
-  local instructions="${args[0]}"
+  # First argument: instructions to improve the file
+  local instructions="${args[1]}"
   local file=""
 
-  # Ask chatgpt for the filename if none is provided
+  # If the filename is missing, ask ChatGPT to extract it from the instructions
   if [ ${#args[@]} -lt 2 ]; then
     local ask_file_prompt="Given these instructions, extract the file that should be modified. Only output the path/filename and nothing else. Instructions: $instructions"
     file="$(chatgpt "$ask_file_prompt" | head -n 1 | tr -d '\"')"
   else
-    file="${args[1]}"
+    file="${args[2]}"
   fi
 
+  # Ensure the identified file exists before proceeding
   if [ ! -f "$file" ]; then
     echo -e "${RED}❌ File not found:${RESET} $file"
     return 1
   fi
 
   local content prompt improved
+
+  # Read the file's original content
   echo -e "${BLUE}📖 Reading file:${RESET} ${CYAN}$file${RESET}"
   content="$(<"$file")"
+
+  # Build the prompt for ChatGPT with explicit instructions
   echo -e "${YELLOW}📝 Building prompt for chatgpt...${RESET}"
   prompt="Improve this file with the following instructions: $instructions"$'\n'"$content"
 
+  # Request file improvements from ChatGPT
   echo -e "${CYAN}🤖 Requesting improvements from chatgpt...${RESET}"
   improved="$(chatgpt --role "$VIBE_SYSTEM_PROMPT" "$prompt")"
   if [ -z "$improved" ]; then
@@ -154,12 +167,14 @@ When asked to write or modify code in a file, always provide the entire content 
     return 1
   fi
 
+  # If requested, make a timestamped backup before overwriting the file
   if [ "$backup_flag" -eq 1 ]; then
     local backup="$file.bak.$(date +%s)"
     echo -e "${YELLOW}🗄️  Creating backup at${RESET} ${CYAN}$backup${RESET}"
     cp "$file" "$backup"
   fi
 
+  # Overwrite the file with the improved content
   echo -e "${GREEN}✍️  Overwriting${RESET} ${CYAN}$file${RESET} ${GREEN}with improvements...${RESET}"
   printf "%s\n" "$improved" > "$file"
   if [ "$backup_flag" -eq 1 ]; then
@@ -168,6 +183,7 @@ When asked to write or modify code in a file, always provide the entire content 
     echo -e "${GREEN}✅ Improvement complete!${RESET} ${CYAN}$file${RESET} ${GREEN}overwritten.${RESET}"
   fi
 
+  # If in a Git repository, automatically stage, commit, and optionally push the changes
   if git rev-parse --is-inside-work-tree >/dev/null 2>&1 && [ -f "$file" ]; then
     git add "$file"
     commit
