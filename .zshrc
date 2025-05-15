@@ -90,7 +90,7 @@ up() {
   esac
 }
 
-vibe() {
+vibe() {  
   # The vibe function below has been made, maintained, and improved exclusively by vibe coding (using AI) by using itself on its own code.
   # Colors
   local BLUE="\033[1;34m"
@@ -163,16 +163,14 @@ vibe() {
     echo -e "${GREEN}✅ Improvement complete!${RESET} ${CYAN}$file${RESET} ${GREEN}overwritten.${RESET}"
   fi
 
-  if [ "$push_flag" -eq 1 ]; then
-    if git rev-parse --is-inside-work-tree >/dev/null 2>&1 && [ -f "$file" ]; then
-      git add "$file"
-      commit
-      if [ $? -eq 0 ]; then
-        git push
-      fi
-    else
-      echo -e "${RED}❗ Not in a git repository or file not found for git add.${RESET}"
+  if git rev-parse --is-inside-work-tree >/dev/null 2>&1 && [ -f "$file" ]; then
+    git add "$file"
+    commit
+    if [ "$push_flag" -eq 1 ] && [ $? -eq 0 ]; then
+      git push
     fi
+  else
+    echo -e "${RED}❗ Not in a git repository or file not found for git add.${RESET}"
   fi
 }
 
