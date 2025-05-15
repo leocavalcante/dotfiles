@@ -138,9 +138,16 @@ When asked to write or modify code in a file, always provide the entire content 
   # If the filename is missing, ask ChatGPT to extract it from the instructions
   if [ ${#args[@]} -lt 2 ]; then
     local ask_file_prompt="Given these instructions, extract the file that should be modified. Only output the path/filename and nothing else. Instructions: $instructions"
+    echo -e "${YELLOW}🔍 Extracting target filename from instructions via chatgpt...${RESET}"
     file="$(chatgpt "$ask_file_prompt" | head -n 1 | tr -d '\"')"
+    echo -e "${CYAN}📄 ChatGPT extracted filename:${RESET} ${BOLD}$file${RESET}"
+    if [ -z "$file" ]; then
+      echo -e "${RED}❌ No filename could be extracted from the instructions.${RESET}"
+      return 1
+    fi
   else
     file="${args[2]}"
+    echo -e "${CYAN}📄 Filename provided as argument:${RESET} ${BOLD}$file${RESET}"
   fi
 
   # Ensure the identified file exists before proceeding
