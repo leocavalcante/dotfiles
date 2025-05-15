@@ -104,6 +104,10 @@ vibe() {
   local backup_flag=0
   local push_flag=0
 
+  # System prompt for code generations
+  local VIBE_SYSTEM_PROMPT="You are a helpful assistant who answers questions clearly and directly, focusing only on the essential information.
+When asked to write or modify code in a file, always provide the entire content of the file, including unchanged lines and your modifications. Do not include any explanations or additional comments—only output the complete, updated file."
+
   # Parse for --backup and --push flags
   local args=()
   for arg in "$@"; do
@@ -143,7 +147,7 @@ vibe() {
   fi
 
   echo -e "${CYAN}🤖 Requesting improvements from chatgpt...${RESET}"
-  improved="$(chatgpt "$prompt")"
+  improved="$(chatgpt --role "$VIBE_SYSTEM_PROMPT" "$prompt")"
   if [ -z "$improved" ]; then
     echo -e "${RED}❌ No improvements made to ${RESET}${CYAN}$file${RESET}${RED}.${RESET}"
     return 1
