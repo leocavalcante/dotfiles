@@ -117,15 +117,14 @@ When asked to write or modify code in a file, always provide the entire content 
   done
 
   if [ ${#args[@]} -lt 1 ]; then
-    echo -e "${CYAN}"
-    echo " __     __ _ _           ";
-    echo " \ \   / /(_) |__   ___  ";
-    echo "  \ \ / / | | '_ \ / _ \ ";
-    echo "   \ V /  | | | | | (_) |";
-    echo "    \_/   |_|_| |_|\___/ ";
-    echo "                         ";
-    echo -e "${RESET}${GREEN}Welcome to Vibe!${RESET}"
-    echo -e "${BOLD}Usage:${RESET} vibe <instructions> [<filename>] [--backup] [--push]"
+    echo -e "${CYAN}" >&2
+    echo " __     __ _ _           " >&2
+    echo " \ \   / /(_) |__   ___  " >&2
+    echo "  \ \ / / | | '_ \ / _ \ " >&2
+    echo "   \ V /  | | | | | (_) |" >&2
+    echo "    \_/   |_|_| |_|\___/ " >&2
+    echo -e "${RESET}${GREEN}Welcome to Vibe!${RESET}" >&2
+    echo -e "${BOLD}Usage:${RESET} vibe <instructions> [<filename>] [--backup] [--push]" >&2
     return 1
   fi
 
@@ -134,14 +133,13 @@ When asked to write or modify code in a file, always provide the entire content 
   local output_to_stdout=""
   local target_type=""
 
-  # Use a single instruction to determine the type and filename/stdout intent
   local ask_target_prompt="Given these instructions, reply with 'stdout' if the output should go to the terminal or stdout, reply with the filename (just the file path, nothing else) if it should modify a file. Never reply with both. Instructions: $instructions"
 
   if [ ${#args[@]} -lt 2 ]; then
-    echo -e "${YELLOW}🔍 Determining target (file or stdout) via chatgpt...${RESET}"
+    echo -e "${YELLOW}🔍 Determining target (file or stdout) via chatgpt...${RESET}" >&2
     target_type="$(chatgpt "$ask_target_prompt" | head -n 1 | tr -d '\"')"
     if [ -z "$target_type" ]; then
-      echo -e "${RED}❌ No target could be extracted from the instructions.${RESET}"
+      echo -e "${RED}❌ No target could be extracted from the instructions.${RESET}" >&2
       return 1
     fi
     if [ "$target_type" = "stdout" ]; then
@@ -150,70 +148,69 @@ When asked to write or modify code in a file, always provide the entire content 
       output_to_stdout="no"
       file="$target_type"
     fi
-    echo -e "${CYAN}🔎 ChatGPT decided:${RESET} ${BOLD}$target_type${RESET}"
+    echo -e "${CYAN}🔎 ChatGPT decided:${RESET} ${BOLD}$target_type${RESET}" >&2
   else
     file="${args[2]}"
-    echo -e "${CYAN}📄 Filename provided as argument:${RESET} ${BOLD}$file${RESET}"
+    echo -e "${CYAN}📄 Filename provided as argument:${RESET} ${BOLD}$file${RESET}" >&2
     output_to_stdout="no"
   fi
 
   if [ "$output_to_stdout" = "yes" ]; then
     local content prompt improved
-    echo -e "${YELLOW}📝 Building prompt for chatgpt...${RESET}"
+    echo -e "${YELLOW}📝 Building prompt for chatgpt...${RESET}" >&2
     prompt="Improve this file with the following instructions: $instructions"
-    echo -e "${CYAN}🤖 Requesting improvements from chatgpt...${RESET}"
+    echo -e "${CYAN}🤖 Requesting improvements from chatgpt...${RESET}" >&2
     improved="$(chatgpt --role "$VIBE_SYSTEM_PROMPT" "$prompt")"
     if [ -z "$improved" ]; then
-      echo -e "${RED}❌ No improvement result produced.${RESET}"
+      echo -e "${RED}❌ No improvement result produced.${RESET}" >&2
       return 1
     fi
-    echo -e "${GREEN}🎉 Improvement result:${RESET}"
     printf "%s\n" "$improved"
     return 0
   fi
 
   if [ -z "$file" ]; then
-    echo -e "${RED}❌ No filename was determined for file update.${RESET}"
+    echo -e "${RED}❌ No filename was determined for file update.${RESET}" >&2
     return 1
   fi
 
   if [ ! -f "$file" ]; then
-    echo -e "${YELLOW}🆕 File does not exist. Creating file:${RESET} $file"
+    echo -e "${YELLOW}🆕 File does not exist. Creating file:${RESET} $file" >&2
     touch "$file"
   fi
 
   if [ ! -f "$file" ]; then
-    echo -e "${RED}❌ File not found:${RESET} $file"
+    echo -e "${RED}❌ File not found:${RESET} $file" >&2
     return 1
   fi
 
   local content prompt improved
 
-  echo -e "${BLUE}📖 Reading file:${RESET} ${CYAN}$file${RESET}"
+  echo -e "${BLUE}📖 Reading file:${RESET} ${CYAN}$file${RESET}" >&2
   content="$(<"$file")"
 
-  echo -e "${YELLOW}📝 Building prompt for chatgpt...${RESET}"
+  echo -e "${YELLOW}📝 Building prompt for chatgpt...${RESET}" >&2
   prompt="Improve this file with the following instructions: $instructions"$'\n'"$content"
 
-  echo -e "${CYAN}🤖 Requesting improvements from chatgpt...${RESET}"
+  echo -e "${CYAN}🤖 Requesting improvements from chatgpt...${RESET}" >&2
   improved="$(chatgpt --role "$VIBE_SYSTEM_PROMPT" "$prompt")"
   if [ -z "$improved" ]; then
-    echo -e "${RED}❌ No improvements made to ${RESET}${CYAN}$file${RESET}${RED}.${RESET}"
+    echo -e "${RED}❌ No improvements made to ${RESET}${CYAN}$file${RESET}${RED}.${RESET}" >&2
     return 1
   fi
 
   if [ "$backup_flag" -eq 1 ]; then
     local backup="$file.bak.$(date +%s)"
-    echo -e "${YELLOW}🗄️  Creating backup at${RESET} ${CYAN}$backup${RESET}"
+    echo -e "${YELLOW}🗄️  Creating backup at${RESET} ${CYAN}$backup${RESET}" >&2
     cp "$file" "$backup"
   fi
 
-  echo -e "${GREEN}✍️  Overwriting${RESET} ${CYAN}$file${RESET} ${GREEN}with improvements...${RESET}"
+  echo -e "${GREEN}✍️  Overwriting${RESET} ${CYAN}$file${RESET} ${GREEN}with improvements...${RESET}" >&2
   printf "%s\n" "$improved" > "$file"
   if [ "$backup_flag" -eq 1 ]; then
-    echo -e "${GREEN}✅ Improvement complete!${RESET} ${BOLD}Backup saved as${RESET} ${CYAN}$backup${RESET} ${GREEN}🎉${RESET}"
+    echo -e "${GREEN}✅ Improvement complete!${RESET} ${BOLD}Backup saved as${RESET} ${CYAN}$backup${RESET} ${GREEN}🎉${RESET}" >&2
   else
-    echo -e "${GREEN}✅ Improvement complete!${RESET} ${CYAN}$file${RESET} ${GREEN}overwritten.${RESET}"
+    echo -e "${GREEN}✅ Improvement complete!${RESET} ${CYAN}$file${RESET} ${GREEN}overwritten.${RESET}" >&2
   fi
 
   if git rev-parse --is-inside-work-tree >/dev/null 2>&1 && [ -f "$file" ]; then
@@ -223,7 +220,7 @@ When asked to write or modify code in a file, always provide the entire content 
       git push
     fi
   else
-    echo -e "${RED}❗ Not in a git repository or file not found for git add.${RESET}"
+    echo -e "${RED}❗ Not in a git repository or file not found for git add.${RESET}" >&2
   fi
 }
 
