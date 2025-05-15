@@ -158,6 +158,22 @@ When asked to write or modify code in a file, always provide the entire content 
     echo -e "${CYAN}📄 Filename provided as argument:${RESET} ${BOLD}$file${RESET}"
   fi
 
+  # Check if the instructions mean to output to stdout and not edit a file (e.g. asking for a result/output, not a file)
+  if [[ "$file" == "-" ]] || [[ "$file" == "/dev/stdout" ]]; then
+    local content prompt improved
+    echo -e "${YELLOW}📝 Building prompt for chatgpt...${RESET}"
+    prompt="Improve this file with the following instructions: $instructions"
+    echo -e "${CYAN}🤖 Requesting improvements from chatgpt...${RESET}"
+    improved="$(chatgpt --role "$VIBE_SYSTEM_PROMPT" "$prompt")"
+    if [ -z "$improved" ]; then
+      echo -e "${RED}❌ No improvement result produced.${RESET}"
+      return 1
+    fi
+    echo -e "${GREEN}🎉 Improvement result:${RESET}"
+    printf "%s\n" "$improved"
+    return 0
+  fi
+
   # Create the file if a file is provided and it does not exist
   if [ ! -f "$file" ]; then
     echo -e "${YELLOW}🆕 File does not exist. Creating file:${RESET} $file"
