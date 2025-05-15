@@ -121,12 +121,21 @@ When asked to write or modify code in a file, always provide the entire content 
   done
 
   if [ ${#args[@]} -lt 1 ]; then
-    echo -e "${RED}❗${RESET} ${BOLD}Usage:${RESET} vibe <filename> [additional prompt] [--backup] [--push]"
+    echo -e "${RED}❗${RESET} ${BOLD}Usage:${RESET} vibe <instructions> [<filename>] [--backup] [--push]"
     return 1
   fi
 
-  local file="${args[1]:-${args[0]}}"
-  shift $((backup_flag ? 1 : 0))
+  local instructions="${args[0]}"
+  local file=""
+
+  # Ask chatgpt for the filename if none is provided
+  if [ ${#args[@]} -lt 2 ]; then
+    local ask_file_prompt="Given these instructions, extract the file that should be modified. Only output the path/filename and nothing else. Instructions: $instructions"
+    file="$(chatgpt "$ask_file_prompt" | head -n 1 | tr -d '\"')"
+  else
+    file="${args[1]}"
+  fi
+
   if [ ! -f "$file" ]; then
     echo -e "${RED}❌ File not found:${RESET} $file"
     return 1
@@ -135,16 +144,8 @@ When asked to write or modify code in a file, always provide the entire content 
   local content prompt improved
   echo -e "${BLUE}📖 Reading file:${RESET} ${CYAN}$file${RESET}"
   content="$(<"$file")"
-  shift # remove filename
-  # Reconstruct prompt from args (skip the file name)
-  local prompt_args=("${args[@]:1}")
-  if [ ${#prompt_args[@]} -gt 0 ]; then
-    echo -e "${YELLOW}📝 Building prompt for chatgpt...${RESET}"
-    prompt="Improve this file with the following instructions: ${prompt_args[*]}"$'\n'"$content"
-  else
-    echo -e "${YELLOW}📝 Building default prompt for chatgpt...${RESET}"
-    prompt="Improve this file:\n$content"
-  fi
+  echo -e "${YELLOW}📝 Building prompt for chatgpt...${RESET}"
+  prompt="Improve this file with the following instructions: $instructions"$'\n'"$content"
 
   echo -e "${CYAN}🤖 Requesting improvements from chatgpt...${RESET}"
   improved="$(chatgpt --role "$VIBE_SYSTEM_PROMPT" "$prompt")"
