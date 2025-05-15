@@ -32,7 +32,7 @@ if [ -f "$ANTIGEN" ]; then
   antigen bundle zsh-users/zsh-autosuggestions
   antigen bundle zsh-users/zsh-completions
   antigen bundle zsh-users/zsh-history-substring-search
-  antigen bundle zsh-users/zsh-syntax-highlighting
+  antigen bundle zsh-syntax-highlighting
   antigen apply
 fi
 
@@ -142,24 +142,30 @@ When asked to write or modify code in a file, always provide the entire content 
   # First argument: instructions to improve the file
   local instructions="${args[1]}"
   local file=""
+  local output_to_stdout=""
 
-  # If the filename is missing, ask ChatGPT to extract it from the instructions
+  # If the filename is missing, ask ChatGPT to extract it from the instructions,
+  # and also ask if the output should be to stdout.
   if [ ${#args[@]} -lt 2 ]; then
     local ask_file_prompt="Given these instructions, extract the file that should be modified. Only output the path/filename and nothing else. Instructions: $instructions"
+    local ask_stdout_prompt="Given these instructions, should the output be printed to stdout instead of updating a file? Answer only yes or no. Instructions: $instructions"
     echo -e "${YELLOW}🔍 Extracting target filename from instructions via chatgpt...${RESET}"
     file="$(chatgpt "$ask_file_prompt" | head -n 1 | tr -d '\"')"
+    output_to_stdout="$(chatgpt "$ask_stdout_prompt" | head -n 1 | tr '[:upper:]' '[:lower:]' | grep -q "^yes" && echo "yes" || echo "no")"
     echo -e "${CYAN}📄 ChatGPT extracted filename:${RESET} ${BOLD}$file${RESET}"
-    if [ -z "$file" ]; then
+    echo -e "${CYAN}🖥️  ChatGPT says output to stdout:${RESET} ${BOLD}$output_to_stdout${RESET}"
+    if [ -z "$file" ] && [ "$output_to_stdout" != "yes" ]; then
       echo -e "${RED}❌ No filename could be extracted from the instructions.${RESET}"
       return 1
     fi
   else
     file="${args[2]}"
     echo -e "${CYAN}📄 Filename provided as argument:${RESET} ${BOLD}$file${RESET}"
+    output_to_stdout="no"
   fi
 
-  # Check if the instructions mean to output to stdout and not edit a file (e.g. asking for a result/output, not a file)
-  if [[ "$file" == "-" ]] || [[ "$file" == "/dev/stdout" ]]; then
+  # Check if ChatGPT decided output should go to stdout
+  if [ "$output_to_stdout" = "yes" ] || [[ "$file" == "-" ]] || [[ "$file" == "/dev/stdout" ]]; then
     local content prompt improved
     echo -e "${YELLOW}📝 Building prompt for chatgpt...${RESET}"
     prompt="Improve this file with the following instructions: $instructions"
