@@ -33,7 +33,6 @@ if [ -f "$ANTIGEN" ]; then
   antigen bundle zsh-users/zsh-completions
   antigen bundle zsh-users/zsh-history-substring-search
   antigen bundle zsh-syntax-highlighting
-  antigen apply
 fi
 
 # Aliases
@@ -97,4 +96,8 @@ fi
 
 if command -v starship >/dev/null 2>&1; then
   eval "$(starship init zsh)"
+fi
+
+if [ -f "$ANTIGEN" ]; then
+  antigen apply
 fi
