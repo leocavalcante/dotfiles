@@ -90,14 +90,7 @@ up() {
   esac
 }
 
-vibe() {  
-  # The vibe function is designed to automate the process of improving files with AI assistance.
-  # It parses input for instructions, an optional filename, and flags for backup and push actions.
-  # The function generates and sends a prompt to ChatGPT, receives the improved file, and overwrites the original.
-  # It supports automatic backup creation by filename and can stage & commit the improved file to git (and optionally push).
-  # If a filename is not provided, it queries ChatGPT to extract the filename from the given instructions.
-
-  # Define color variables for terminal output
+vibe() {
   local BLUE="\033[1;34m"
   local GREEN="\033[1;32m"
   local YELLOW="\033[1;33m"
@@ -109,11 +102,9 @@ vibe() {
   local backup_flag=0
   local push_flag=0
 
-  # System prompt for code generations, sets the behavior of the AI code assistant
   local VIBE_SYSTEM_PROMPT="You are a helpful assistant who answers questions clearly and directly, focusing only on the essential information.
 When asked to write or modify code in a file, always provide the entire content of the file, including unchanged lines and your modifications. Do not include any explanations or additional comments—only output the complete, updated file."
 
-  # Parse arguments for --backup and --push flags, separating them from actual arguments
   local args=()
   for arg in "$@"; do
     if [ "$arg" = "--backup" ]; then
@@ -125,7 +116,6 @@ When asked to write or modify code in a file, always provide the entire content 
     fi
   done
 
-  # If run with no arguments, display badge and usage
   if [ ${#args[@]} -lt 1 ]; then
     echo -e "${CYAN}"
     echo " __     __ _ _           ";
@@ -139,33 +129,35 @@ When asked to write or modify code in a file, always provide the entire content 
     return 1
   fi
 
-  # First argument: instructions to improve the file
   local instructions="${args[1]}"
   local file=""
   local output_to_stdout=""
+  local target_type=""
 
-  # If the filename is missing, ask ChatGPT to extract it from the instructions,
-  # and also ask if the output should be to stdout.
+  # Use a single instruction to determine the type and filename/stdout intent
+  local ask_target_prompt="Given these instructions, reply with 'stdout' if the output should go to the terminal or stdout, reply with the filename (just the file path, nothing else) if it should modify a file. Never reply with both. Instructions: $instructions"
+
   if [ ${#args[@]} -lt 2 ]; then
-    local ask_file_prompt="Given these instructions, extract the file that should be modified. Only output the path/filename and nothing else. Instructions: $instructions"
-    local ask_stdout_prompt="Given these instructions, should the output be printed to stdout instead of updating a file? Answer only yes or no. Instructions: $instructions"
-    echo -e "${YELLOW}🔍 Extracting target filename from instructions via chatgpt...${RESET}"
-    file="$(chatgpt "$ask_file_prompt" | head -n 1 | tr -d '\"')"
-    output_to_stdout="$(chatgpt "$ask_stdout_prompt" | head -n 1 | tr '[:upper:]' '[:lower:]' | grep -q "^yes" && echo "yes" || echo "no")"
-    echo -e "${CYAN}📄 ChatGPT extracted filename:${RESET} ${BOLD}$file${RESET}"
-    echo -e "${CYAN}🖥️  ChatGPT says output to stdout:${RESET} ${BOLD}$output_to_stdout${RESET}"
-    if [ -z "$file" ] && [ "$output_to_stdout" != "yes" ]; then
-      echo -e "${RED}❌ No filename could be extracted from the instructions.${RESET}"
+    echo -e "${YELLOW}🔍 Determining target (file or stdout) via chatgpt...${RESET}"
+    target_type="$(chatgpt "$ask_target_prompt" | head -n 1 | tr -d '\"')"
+    if [ -z "$target_type" ]; then
+      echo -e "${RED}❌ No target could be extracted from the instructions.${RESET}"
       return 1
     fi
+    if [ "$target_type" = "stdout" ]; then
+      output_to_stdout="yes"
+    else
+      output_to_stdout="no"
+      file="$target_type"
+    fi
+    echo -e "${CYAN}🔎 ChatGPT decided:${RESET} ${BOLD}$target_type${RESET}"
   else
     file="${args[2]}"
     echo -e "${CYAN}📄 Filename provided as argument:${RESET} ${BOLD}$file${RESET}"
     output_to_stdout="no"
   fi
 
-  # Check if ChatGPT decided output should go to stdout
-  if [ "$output_to_stdout" = "yes" ] || [[ "$file" == "-" ]] || [[ "$file" == "/dev/stdout" ]]; then
+  if [ "$output_to_stdout" = "yes" ]; then
     local content prompt improved
     echo -e "${YELLOW}📝 Building prompt for chatgpt...${RESET}"
     prompt="Improve this file with the following instructions: $instructions"
@@ -180,13 +172,16 @@ When asked to write or modify code in a file, always provide the entire content 
     return 0
   fi
 
-  # Create the file if a file is provided and it does not exist
+  if [ -z "$file" ]; then
+    echo -e "${RED}❌ No filename was determined for file update.${RESET}"
+    return 1
+  fi
+
   if [ ! -f "$file" ]; then
     echo -e "${YELLOW}🆕 File does not exist. Creating file:${RESET} $file"
     touch "$file"
   fi
 
-  # Ensure the identified file exists before proceeding
   if [ ! -f "$file" ]; then
     echo -e "${RED}❌ File not found:${RESET} $file"
     return 1
@@ -194,15 +189,12 @@ When asked to write or modify code in a file, always provide the entire content 
 
   local content prompt improved
 
-  # Read the file's original content
   echo -e "${BLUE}📖 Reading file:${RESET} ${CYAN}$file${RESET}"
   content="$(<"$file")"
 
-  # Build the prompt for ChatGPT with explicit instructions
   echo -e "${YELLOW}📝 Building prompt for chatgpt...${RESET}"
   prompt="Improve this file with the following instructions: $instructions"$'\n'"$content"
 
-  # Request file improvements from ChatGPT
   echo -e "${CYAN}🤖 Requesting improvements from chatgpt...${RESET}"
   improved="$(chatgpt --role "$VIBE_SYSTEM_PROMPT" "$prompt")"
   if [ -z "$improved" ]; then
@@ -210,14 +202,12 @@ When asked to write or modify code in a file, always provide the entire content 
     return 1
   fi
 
-  # If requested, make a timestamped backup before overwriting the file
   if [ "$backup_flag" -eq 1 ]; then
     local backup="$file.bak.$(date +%s)"
     echo -e "${YELLOW}🗄️  Creating backup at${RESET} ${CYAN}$backup${RESET}"
     cp "$file" "$backup"
   fi
 
-  # Overwrite the file with the improved content
   echo -e "${GREEN}✍️  Overwriting${RESET} ${CYAN}$file${RESET} ${GREEN}with improvements...${RESET}"
   printf "%s\n" "$improved" > "$file"
   if [ "$backup_flag" -eq 1 ]; then
@@ -226,7 +216,6 @@ When asked to write or modify code in a file, always provide the entire content 
     echo -e "${GREEN}✅ Improvement complete!${RESET} ${CYAN}$file${RESET} ${GREEN}overwritten.${RESET}"
   fi
 
-  # If in a Git repository, automatically stage, commit, and optionally push the changes
   if git rev-parse --is-inside-work-tree >/dev/null 2>&1 && [ -f "$file" ]; then
     git add "$file"
     commit
