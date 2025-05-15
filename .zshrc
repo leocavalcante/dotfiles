@@ -150,6 +150,12 @@ When asked to write or modify code in a file, always provide the entire content 
     echo -e "${CYAN}📄 Filename provided as argument:${RESET} ${BOLD}$file${RESET}"
   fi
 
+  # Create the file if a file is provided and it does not exist
+  if [ ! -f "$file" ]; then
+    echo -e "${YELLOW}🆕 File does not exist. Creating file:${RESET} $file"
+    touch "$file"
+  fi
+
   # Ensure the identified file exists before proceeding
   if [ ! -f "$file" ]; then
     echo -e "${RED}❌ File not found:${RESET} $file"
