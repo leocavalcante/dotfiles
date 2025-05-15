@@ -19,22 +19,6 @@ if command -v go >/dev/null 2>&1; then
   export PATH="$GOBIN:$PATH"
 fi
 
-# Antigen (https://antigen.sharats.me/)
-ANTIGEN="$HOME/antigen.zsh"
-if [ ! -f "$ANTIGEN" ]; then
-  curl -sSL git.io/antigen -o "$ANTIGEN"
-fi
-if [ -f "$ANTIGEN" ]; then
-  source "$ANTIGEN"
-  antigen use oh-my-zsh
-  antigen bundle git
-  antigen bundle tmux
-  antigen bundle zsh-users/zsh-autosuggestions
-  antigen bundle zsh-users/zsh-completions
-  antigen bundle zsh-users/zsh-history-substring-search
-  antigen bundle zsh-syntax-highlighting
-fi
-
 # Aliases
 alias gpt="chatgpt"
 alias l="eza --all --icons --git"
@@ -98,7 +82,24 @@ if command -v starship >/dev/null 2>&1; then
   eval "$(starship init zsh)"
 fi
 
+# Antigen (https://antigen.sharats.me/)
+ANTIGEN="$HOME/antigen.zsh"
+if [ ! -f "$ANTIGEN" ]; then
+  curl -sSL git.io/antigen -o "$ANTIGEN"
+fi
 if [ -f "$ANTIGEN" ]; then
-  antigen theme robbyrussell
+  source "$ANTIGEN"
+  antigen use oh-my-zsh
+  antigen bundle git
+  antigen bundle tmux
+  antigen bundle zsh-users/zsh-autosuggestions
+  antigen bundle zsh-users/zsh-completions
+  antigen bundle zsh-users/zsh-history-substring-search
+  antigen bundle zsh-users/zsh-syntax-highlighting
   antigen apply
+fi
+
+# Source the vibe.sh script
+if [ -f "$HOME/vibe.sh" ]; then
+  source "$HOME/vibe.sh"
 fi
