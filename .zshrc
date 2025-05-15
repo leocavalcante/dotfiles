@@ -125,9 +125,17 @@ When asked to write or modify code in a file, always provide the entire content 
     fi
   done
 
-  # Require at least instructions to be provided
+  # If run with no arguments, display badge and usage
   if [ ${#args[@]} -lt 1 ]; then
-    echo -e "${RED}❗${RESET} ${BOLD}Usage:${RESET} vibe <instructions> [<filename>] [--backup] [--push]"
+    echo -e "${CYAN}"
+    echo " __     __ _ _           ";
+    echo " \ \   / /(_) |__   ___  ";
+    echo "  \ \ / / | | '_ \ / _ \ ";
+    echo "   \ V /  | | | | | (_) |";
+    echo "    \_/   |_|_| |_|\___/ ";
+    echo "                         ";
+    echo -e "${RESET}${GREEN}Welcome to Vibe!${RESET}"
+    echo -e "${BOLD}Usage:${RESET} vibe <instructions> [<filename>] [--backup] [--push]"
     return 1
   fi
 
