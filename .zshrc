@@ -180,7 +180,7 @@ When asked to write or modify code in a file, always provide the entire content 
   fi
 
   if [ ! -f "$file" ]; then
-    echo -e "${RED}❌ File not found:${RESET} $file" >&2
+    echo -e "${RED}❌ File not found:${RESET} $file${RESET}" >&2
     return 1
   fi
 
