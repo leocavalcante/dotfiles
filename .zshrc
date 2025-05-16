@@ -24,6 +24,7 @@ alias gpt="chatgpt"
 alias l="eza --all --icons --git"
 alias ls="eza --all --icons"
 alias ll="eza --long --all --git --icons"
+alias push="git push"
 
 # Functions
 commit() {
