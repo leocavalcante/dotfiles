@@ -9,6 +9,7 @@ vibe() {
 
   local backup_flag=0
   local push_flag=0
+  local pr_flag=0
 
   local VIBE_SYSTEM_PROMPT="You are a helpful assistant who answers questions clearly and directly, focusing only on the essential information.
 When asked to write or modify code in a file, always provide the entire content of the file, including unchanged lines and your modifications. Do not include any explanations or additional comments—only output the complete, updated file. Always ensure that the entire file contents are returned in your response, preserving all content unless explicitly instructed otherwise. Never add markdown code block quotes or any additional formatting—output the file content exactly as it should appear in the file."
@@ -19,6 +20,8 @@ When asked to write or modify code in a file, always provide the entire content 
       backup_flag=1
     elif [ "$arg" = "--push" ]; then
       push_flag=1
+    elif [ "$arg" = "--pr" ]; then
+      pr_flag=1
     else
       args+=("$arg")
     fi
@@ -32,7 +35,7 @@ When asked to write or modify code in a file, always provide the entire content 
     echo "   \ V /  | | | | | (_) |" >&2
     echo "    \_/   |_|_| |_|\___/ " >&2
     echo -e "${RESET}${GREEN}Welcome to Vibe!${RESET}" >&2
-    echo -e "${BOLD}Usage:${RESET} vibe <instructions> [<filename>] [--backup] [--push]" >&2
+    echo -e "${BOLD}Usage:${RESET} vibe <instructions> [<filename>] [--backup] [--push] [--pr]" >&2
     return 1
   fi
 
@@ -73,6 +76,9 @@ When asked to write or modify code in a file, always provide the entire content 
       return 1
     fi
     printf "%s\n" "$improved"
+    if [ "$pr_flag" -eq 1 ]; then
+      pr
+    fi
     return 0
   fi
 
@@ -126,6 +132,9 @@ $content"
     commit
     if [ "$push_flag" -eq 1 ] && [ $? -eq 0 ]; then
       git push
+    fi
+    if [ "$pr_flag" -eq 1 ] && [ $? -eq 0 ]; then
+      pr
     fi
   fi
 }
