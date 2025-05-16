@@ -39,17 +39,18 @@ commit() {
 }
 
 pr() {
-  if git diff --staged --quiet; then
-    echo "No staged changes for PR."
+  if git log -p -1 | grep -q '^diff'; then
+    local gd tp bp t b
+    gd="$(git log -p -1)"
+    tp="write an English title for a pull request based on the following changes:\n$gd"
+    bp="write an English body for a pull request based on the following changes:\n$gd"
+    t="$(chatgpt "$tp")"
+    b="$(chatgpt "$bp")"
+    gh pr create -a @me -t "$t" -b "$b"
+  else
+    echo "No commits to create a PR from."
     return 1
   fi
-  local gd tp bp t b
-  gd="$(git diff --staged)"
-  tp="write an English title for a pull request based on the following changes:\n$gd"
-  bp="write an English body for a pull request based on the following changes:\n$gd"
-  t="$(chatgpt "$tp")"
-  b="$(chatgpt "$bp")"
-  gh pr create -a @me -t "$t" -b "$b"
 }
 
 dot() {
