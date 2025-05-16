@@ -127,7 +127,5 @@ $content"
     if [ "$push_flag" -eq 1 ] && [ $? -eq 0 ]; then
       git push
     fi
-  else
-    echo -e "${RED}❗ Not in a git repository or file not found for git add.${RESET}" >&2
   fi
 }
