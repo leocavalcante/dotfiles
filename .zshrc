@@ -52,14 +52,21 @@ pr() {
 }
 
 dot() {
-  cd "$HOME/.dotfiles" || return
-  git pull --quiet
+  echo "🌟 Starting dotfiles update process! 🌟"
+  cd "$HOME/.dotfiles" || {
+    echo "⚠️ Could not find the .dotfiles directory!"
+    return 1
+  }
+  echo "🔄 Pulling latest changes from git repository..."
+  git pull --quiet && echo "✅ Repository updated."
   if command -v stow >/dev/null 2>&1; then
-    stow .
+    echo "📦 Restowing dotfiles using GNU Stow..."
+    stow . && echo "✅ Dotfiles stowed successfully."
   else
-    echo "GNU Stow not installed!"
+    echo "❌ GNU Stow not installed! Please install it to continue."
   fi
-  cd "$HOME" || return
+  cd "$HOME" || echo "⚠️ Could not return to the home directory!"
+  echo "🏁 Dotfiles update process completed."
 }
 
 up() {
