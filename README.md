@@ -4,4 +4,4 @@
 stow .
 ```
 
-<!-- Insignificant change for testing the PR feature -->
+<!-- Insignificant change to test the PR feature -->
