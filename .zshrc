@@ -74,6 +74,7 @@ up() {
   case "$(uname)" in
     Linux)
       sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y
+      brew update && brew upgrade && brew cleanup
       ;;
     Darwin)
       brew update && brew upgrade && brew cleanup
