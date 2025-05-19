@@ -3,7 +3,7 @@ normal = { family = "JetBrainsMono Nerd Font Mono", style = "Regular" }
 size = 12
 
 [window]
-padding = { x = 5, y = 5 }
+padding = { x = 10, y = 10 }
 decorations = "Buttonless"
 opacity = 0.95
 blur = true
