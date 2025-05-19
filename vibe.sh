@@ -172,6 +172,7 @@ Current file content:
 Respond ONLY with the complete updated file content, exactly as it should be saved."
 
   echo -e "${CYAN}🤖 Applying improvements via AI...${RESET}" >&2
+  echo -e "${YELLOW}⏳ Please wait while the AI is processing your request...${RESET}" >&2
   local improved="$(chatgpt --omit-history --role "$VIBE_SYSTEM_PROMPT" "$file_modification_prompt")"
   
   if [ -z "$improved" ]; then
