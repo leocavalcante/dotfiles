@@ -25,7 +25,7 @@ alias l="eza --all --icons --git"
 alias ls="eza --all --icons"
 alias ll="eza --long --all --git --icons"
 alias push="git push"
-alias vibe="source $HOME/vibe.sh"  # Added alias for the vibe function
+alias v="source $HOME/vibe.sh"  # Added alias for the vibe function
 
 # Functions
 commit() {
