@@ -114,10 +114,10 @@ When asked to write or modify code in a file, always provide the entire content 
 
   echo -e "${YELLOW}📝 Building prompt for chatgpt...${RESET}" >&2
   prompt="Improve this file with the following instructions: $instructions
-$content"
+\`$content\`"
 
   echo -e "${CYAN}🤖 Requesting improvements from chatgpt...${RESET}" >&2
-  improved="$(chatgpt --role "$VIBE_SYSTEM_PROMPT" "$prompt" -p)" # Fixed the coprocess issue by using the -p option
+  improved="$(chatgpt --role "$VIBE_SYSTEM_PROMPT" "$prompt")"
   if [ -z "$improved" ]; then
     echo -e "${RED}❌ No improvements made to ${RESET}${CYAN}$file${RESET}${RED}.${RESET}" >&2
     return 1
