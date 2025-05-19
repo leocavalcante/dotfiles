@@ -65,6 +65,15 @@ When asked to write or modify code in a file, always provide the entire content 
     output_to_stdout="no"
   fi
 
+  if git rev-parse --abbrev-ref HEAD | grep -q -E 'main|master'; then
+    echo -e "${YELLOW}💡 You are on the main or master branch. It is recommended to create a dev or feat branch for new changes.${RESET}" >&2
+    read -p "Do you want to continue? (y/n): " approval
+    if [[ "$approval" != "y" ]]; then
+      echo -e "${RED}❌ Operation canceled.${RESET}" >&2
+      return 1
+    fi
+  fi
+
   if [ "$output_to_stdout" = "yes" ]; then
     local content prompt improved
     echo -e "${YELLOW}📝 Building prompt for chatgpt...${RESET}" >&2
@@ -135,15 +144,6 @@ $content"
     fi
     if [ "$pr_flag" -eq 1 ] && [ $? -eq 0 ]; then
       pr
-    fi
-  fi
-
-  if git rev-parse --abbrev-ref HEAD | grep -q -E 'main|master'; then
-    echo -e "${YELLOW}💡 You are on the main or master branch. It is recommended to create a dev or feat branch for new changes.${RESET}" >&2
-    read -p "Do you want to continue? (y/n): " approval
-    if [[ "$approval" != "y" ]]; then
-      echo -e "${RED}❌ Operation canceled.${RESET}" >&2
-      return 1
     fi
   fi
 }
