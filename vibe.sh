@@ -114,7 +114,7 @@ vibe() {
   echo -e "${YELLOW}📝 Building prompt for chatgpt...${RESET}" >&2
   prompt="Improve this file with the following instructions: $instructions
 \`\`\`
-$content
+${content//\\n/\\n}
 \`\`\`"
 
   echo -e "${CYAN}🤖 Requesting improvements from chatgpt...${RESET}" >&2
