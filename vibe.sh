@@ -76,7 +76,7 @@ WHEN ANSWERING GENERAL QUESTIONS:
   fi
 
   # Get instructions and determine target
-  local instructions="${args[0]}"
+  local instructions="${args[1]}"
   local file=""
   local output_to_stdout=""
   
@@ -111,7 +111,7 @@ Your response should be ONLY the filename or 'stdout', nothing else."
     fi
   else
     # User provided filename explicitly
-    file="${args[1]}"
+    file="${args[2]}"
     echo -e "${CYAN}📄 Using provided filename:${RESET} ${BOLD}$file${RESET}" >&2
     output_to_stdout="no"
   fi
@@ -178,6 +178,9 @@ Respond ONLY with the complete updated file content, exactly as it should be sav
     echo -e "${RED}❌ AI returned empty content for${RESET} ${CYAN}$file${RESET}" >&2
     return 1
   fi
+
+  # Add --omit-history flag to chatgpt command calls
+  improved="${improved//chatgpt/chatgpt --omit-history}"
 
   # Create backup if requested
   if [ "$backup_flag" -eq 1 ]; then
