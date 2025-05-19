@@ -114,7 +114,9 @@ When asked to write or modify code in a file, always provide the entire content 
 
   echo -e "${YELLOW}📝 Building prompt for chatgpt...${RESET}" >&2
   prompt="Improve this file with the following instructions: $instructions
-\`$content\`"
+\`\`\`
+$content
+\`\`\`"
 
   echo -e "${CYAN}🤖 Requesting improvements from chatgpt...${RESET}" >&2
   improved="$(chatgpt --role "$VIBE_SYSTEM_PROMPT" "$prompt")"
