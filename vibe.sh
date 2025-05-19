@@ -44,6 +44,11 @@ vibe() {
   local target_type=""
   local ask_target_prompt="Determine if the target of the instructions is a file or the stdout. I need to know if a file should be created/modified or the result should be echoed in the terminal. Here is the instructions: $instructions. If it is a file, please provide the filename. If it is stdout, please say 'stdout'."
 
+  if ! command -v chatgpt &> /dev/null; then
+    echo -e "${RED}❌ chatgpt command not found. Please install the dependency from https://github.com/kardolus/chatgpt-cli.${RESET}" >&2
+    return 1
+  fi
+
   if [ ${#args[@]} -lt 2 ]; then
     echo -e "${YELLOW}🔍 Determining target (file or stdout) via chatgpt...${RESET}" >&2
     target_type="$(chatgpt "$ask_target_prompt" | head -n 1 | tr -d '\"')"
