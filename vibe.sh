@@ -94,7 +94,7 @@ Your response should be ONLY the filename or 'stdout', nothing else."
     echo -e "${YELLOW}🔍 Analyzing instructions to determine target...${RESET}" >&2
     
     # Get target from AI
-    target_type="$(chatgpt --role "$VIBE_SYSTEM_PROMPT" "$target_detection_prompt" | head -n 1 | tr -d '\"')"
+    target_type="$(chatgpt --omit-history --role "$VIBE_SYSTEM_PROMPT" "$target_detection_prompt" | head -n 1 | tr -d '\"')"
     
     if [ -z "$target_type" ]; then
       echo -e "${RED}❌ Failed to determine target from instructions.${RESET}" >&2
@@ -124,7 +124,7 @@ Your response should be ONLY the filename or 'stdout', nothing else."
     local query_prompt="Provide a clear, concise response to this query: $instructions"
     
     echo -e "${CYAN}🤖 Consulting AI...${RESET}" >&2
-    local response="$(chatgpt --role "$VIBE_SYSTEM_PROMPT" "$query_prompt")"
+    local response="$(chatgpt --omit-history --role "$VIBE_SYSTEM_PROMPT" "$query_prompt")"
     
     if [ -z "$response" ]; then
       echo -e "${RED}❌ Failed to get a response.${RESET}" >&2
@@ -172,15 +172,12 @@ Current file content:
 Respond ONLY with the complete updated file content, exactly as it should be saved."
 
   echo -e "${CYAN}🤖 Applying improvements via AI...${RESET}" >&2
-  local improved="$(chatgpt --role "$VIBE_SYSTEM_PROMPT" "$file_modification_prompt")"
+  local improved="$(chatgpt --omit-history --role "$VIBE_SYSTEM_PROMPT" "$file_modification_prompt")"
   
   if [ -z "$improved" ]; then
     echo -e "${RED}❌ AI returned empty content for${RESET} ${CYAN}$file${RESET}" >&2
     return 1
   fi
-
-  # Add --omit-history flag to chatgpt command calls
-  improved="${improved//chatgpt/chatgpt --omit-history}"
 
   # Create backup if requested
   if [ "$backup_flag" -eq 1 ]; then
