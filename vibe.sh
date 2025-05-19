@@ -122,7 +122,7 @@ vibe() {
   content="$(<"$file")"
 
   echo -e "${YELLOW}📝 Building prompt for chatgpt...${RESET}" >&2
-  prompt="$content\n---\n$instructions"
+  prompt="Instructions: $instructions\nContent:\n$content"
 
   echo -e "${CYAN}🤖 Requesting improvements from chatgpt...${RESET}" >&2
   improved="$(chatgpt --role "$VIBE_SYSTEM_PROMPT" "$prompt")"
