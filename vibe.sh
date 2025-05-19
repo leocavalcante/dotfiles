@@ -67,7 +67,8 @@ When asked to write or modify code in a file, always provide the entire content 
 
   if git rev-parse --abbrev-ref HEAD | grep -q -E 'main|master'; then
     echo -e "${YELLOW}💡 You are on the main or master branch. It is recommended to create a dev or feat branch for new changes.${RESET}" >&2
-    read -p "Do you want to continue? (y/n): " approval
+    echo -e "Do you want to continue? (y/n): "
+    read approval
     if [[ "$approval" != "y" ]]; then
       echo -e "${RED}❌ Operation canceled.${RESET}" >&2
       return 1
