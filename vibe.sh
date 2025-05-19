@@ -93,8 +93,9 @@ Your response should be ONLY the filename or 'stdout', nothing else."
   if [ ${#args[@]} -lt 2 ]; then
     echo -e "${YELLOW}🔍 Analyzing instructions to determine target...${RESET}" >&2
     
-    # Get target from AI
-    target_type="$(chatgpt --omit-history --role "$VIBE_SYSTEM_PROMPT" "$target_detection_prompt" | head -n 1 | tr -d '\"')"
+    # Get target from AI with spinner
+    echo -e "${CYAN}🤖 Consulting AI...${RESET}" >&2
+    target_type="$(run_with_spinner chatgpt --omit-history --role "$VIBE_SYSTEM_PROMPT" "$target_detection_prompt" | head -n 1 | tr -d '\"')"
     
     if [ -z "$target_type" ]; then
       echo -e "${RED}❌ Failed to determine target from instructions.${RESET}" >&2
@@ -124,7 +125,7 @@ Your response should be ONLY the filename or 'stdout', nothing else."
     local query_prompt="Provide a clear, concise response to this query: $instructions"
     
     echo -e "${CYAN}🤖 Consulting AI...${RESET}" >&2
-    local response="$(chatgpt --omit-history --role "$VIBE_SYSTEM_PROMPT" "$query_prompt")"
+    local response="$(run_with_spinner chatgpt --omit-history --role "$VIBE_SYSTEM_PROMPT" "$query_prompt")"
     
     if [ -z "$response" ]; then
       echo -e "${RED}❌ Failed to get a response.${RESET}" >&2
@@ -171,9 +172,46 @@ Current file content:
 
 Respond ONLY with the complete updated file content, exactly as it should be saved."
 
+  # Display animated progress indicator while waiting for AI response
   echo -e "${CYAN}🤖 Applying improvements via AI...${RESET}" >&2
-  echo -e "${YELLOW}⏳ Please wait while the AI is processing your request...${RESET}" >&2
-  local improved="$(chatgpt --omit-history --role "$VIBE_SYSTEM_PROMPT" "$file_modification_prompt")"
+  
+  # Simplified spinner that works reliably in iTerm2/macOS/zsh
+  run_with_spinner() {
+    local temp_file=$(mktemp)
+    
+    # Start the spinner in background
+    (
+      local spinchars=('⣾' '⣽' '⣻' '⢿' '⡿' '⣟' '⣯' '⣷')
+      local i=0
+      while :; do
+        printf "\r ${spinchars[$i]} " >&2
+        i=$(( (i+1) % ${#spinchars[@]} ))
+        sleep 0.1
+      done
+    ) &
+    local SPINNER_PID=$!
+    
+    # Make sure we kill the spinner on exit
+    trap "kill $SPINNER_PID 2>/dev/null" EXIT
+    
+    # Run the actual command
+    "$@" > "$temp_file"
+    
+    # Kill the spinner
+    kill $SPINNER_PID 2>/dev/null
+    wait $SPINNER_PID 2>/dev/null
+    trap - EXIT
+    
+    # Clear the spinner line
+    printf "\r%*s\r" 10 "" >&2
+    
+    # Return the result
+    cat "$temp_file"
+    rm -f "$temp_file"
+  }
+  
+  # Run chatgpt with spinner and capture output
+  local improved=$(run_with_spinner chatgpt --omit-history --role "$VIBE_SYSTEM_PROMPT" "$file_modification_prompt")
   
   if [ -z "$improved" ]; then
     echo -e "${RED}❌ AI returned empty content for${RESET} ${CYAN}$file${RESET}" >&2
