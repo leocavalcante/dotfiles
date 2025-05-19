@@ -11,8 +11,7 @@ vibe() {
   local push_flag=0
   local pr_flag=0
 
-  local VIBE_SYSTEM_PROMPT="You are a helpful assistant who answers questions clearly and directly, focusing only on the essential information.
-When asked to write or modify code in a file, always provide the entire content of the file, including unchanged lines and your modifications. Do not include any explanations or additional comments—only output the complete, updated file. Always ensure that the entire file contents are returned in your response, preserving all content unless explicitly instructed otherwise. Never add markdown code block quotes or any additional formatting—output the file content exactly as it should appear in the file."
+  local VIBE_SYSTEM_PROMPT="You are a helpful assistant who answers questions clearly and directly, focusing only on the essential information.\nWhen asked to write or modify code in a file, always provide the entire content of the file, including unchanged lines and your modifications. Do not include any explanations or additional comments—only output the complete, updated file. Always ensure that the entire file contents are returned in your response, preserving all content unless explicitly instructed otherwise. Never add markdown code block quotes or any additional formatting—output the file content exactly as it should appear in the file."
 
   local args=()
   for arg in "$@"; do
