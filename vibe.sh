@@ -137,4 +137,7 @@ $content"
       pr
     fi
   fi
+  
+  # Suggest creating a branch for development
+  echo -e "${YELLOW}💡 It is recommended to create a dev or feat branch for new changes instead of committing directly to the main/master branch.${RESET}" >&2
 }
