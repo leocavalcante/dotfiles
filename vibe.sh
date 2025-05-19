@@ -53,11 +53,12 @@ WHEN ANSWERING GENERAL QUESTIONS:
   # Display usage if no arguments provided
   if [ ${#args[@]} -lt 1 ]; then
     echo -e "${CYAN}" >&2
-    echo " __     __ _ _           " >&2
-    echo " \ \   / /(_) |__   ___  " >&2
-    echo "  \ \ / / | | '_ \ / _ \ " >&2
-    echo "   \ V /  | | | | | (_) |" >&2
-    echo "    \_/   |_|_| |_|\___/ " >&2
+    echo " __      __  _____   ____    ______  " >&2
+    echo " \ \    / / |_   _| |  _ \  |  ____| " >&2
+    echo "  \ \  / /    | |   | |_) | | |__    " >&2
+    echo "   \ \/ /     | |   |  _ <  |  __|   " >&2
+    echo "    \  /     _| |_  | |_) | | |____  " >&2
+    echo "     \/     |_____| |____/  |______| " >&2
     echo -e "${RESET}${GREEN}Welcome to Vibe!${RESET}" >&2
     echo -e "${BOLD}Usage:${RESET} vibe <instructions> [<filename>] [--backup] [--push] [--pr]" >&2
     echo -e "" >&2
