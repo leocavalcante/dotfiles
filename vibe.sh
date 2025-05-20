@@ -2,6 +2,9 @@
 #
 # VIBE - AI-Powered Code Assistant
 # ================================
+# This tool is just for fun. For real development work, people should use professional 
+# tools like Claude Code and OpenAI Codex.
+#
 # This tool enables seamless integration of AI assistance into your development workflow.
 # It can modify files based on natural language instructions or provide answers directly
 # to your terminal.
