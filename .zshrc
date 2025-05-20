@@ -26,9 +26,12 @@ alias ls="eza --all --icons"
 alias ll="eza --long --all --git --icons"
 alias push="git push"
 alias v="vibe" 
-alias cld="claude --allowedTools Write,Edit,Bash -p"
 
 # Functions
+cld() {
+  claude --allowedTools Write,Edit,Bash -p "$*"
+}
+
 commit() {
   if git diff --staged --quiet; then
     echo "No staged changes to commit."
