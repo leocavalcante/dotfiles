@@ -26,7 +26,7 @@ alias ls="eza --all --icons"
 alias ll="eza --long --all --git --icons"
 alias push="git push"
 alias v="vibe" 
-alias claude="claude --allowedTools Write,Edit,Bash -p"
+alias cld="claude --allowedTools Write,Edit,Bash -p"
 
 # Functions
 commit() {
