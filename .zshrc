@@ -115,3 +115,8 @@ fi
 if [ -f "$HOME/vibe.sh" ]; then
   source "$HOME/vibe.sh"
 fi
+
+# Source the ghc.sh script
+if [ -f "$HOME/ghc.sh" ]; then
+  source "$HOME/ghc.sh"
+fi
