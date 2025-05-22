@@ -24,3 +24,4 @@
 
 [pack]
 	threads = 1
+	clean = git-lfs clean -- %f
