@@ -27,6 +27,7 @@ alias ll="eza --long --all --git --icons"
 alias push="git push"
 alias v="vibe" 
 alias cl="clear"
+alias stk="starship toggle kubernetes"
 
 # Functions
 cld() {
