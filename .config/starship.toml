@@ -23,3 +23,9 @@ disabled = true
 
 [docker_context]
 disabled = true
+
+[cmd_duration]
+disabled = false
+min_time = 0
+show_milliseconds = true
+
