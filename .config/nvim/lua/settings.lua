@@ -19,3 +19,14 @@ vim.opt.splitbelow = true
 vim.opt.splitright = true
 vim.opt.tabstop = 4
 vim.opt.undofile = true
+
+-- In your init.lua or a dedicated file like lua/autocommands.lua
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "go",
+  callback = function()
+    vim.opt.tabstop = 4   -- Set tabstop to 4 spaces for Go files
+    vim.opt.shiftwidth = 4 -- Set shiftwidth to 4 spaces for Go files
+    vim.opt.expandtab = true -- Ensure tabs are expanded to spaces
+    -- Add any other vim.opt settings specific to Go files here
+  end,
+})
