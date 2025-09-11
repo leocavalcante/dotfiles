@@ -105,6 +105,7 @@ if [ -f "$ANTIGEN" ]; then
   source "$ANTIGEN"
   antigen use oh-my-zsh
   antigen bundle git
+  antigen bundle jeffreytse/zsh-vi-mode
   antigen bundle tmux
   antigen bundle zsh-users/zsh-autosuggestions
   antigen bundle zsh-users/zsh-completions
@@ -122,3 +123,4 @@ fi
 if [ -f "$HOME/ghc.sh" ]; then
   source "$HOME/ghc.sh"
 fi
+
