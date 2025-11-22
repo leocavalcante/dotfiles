@@ -28,6 +28,8 @@ alias push="git push"
 alias v="vibe" 
 alias cl="clear"
 alias stk="starship toggle kubernetes"
+alias python="python3"
+alias pip="pip3"
 
 # Functions
 cld() {
