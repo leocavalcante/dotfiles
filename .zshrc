@@ -1,3 +1,15 @@
+# Anthropic
+export ANTHROPIC_BASE_URL="http://localhost:4141"
+export ANTHROPIC_API_URL="http://localhost:4141"
+export ANTHROPIC_API_BASE="http://localhost:4141"
+export ANTHROPIC_API_KEY="copilot-api"
+export ANTHROPIC_AUTH_TOKEN="copilot-api"
+export ANTHROPIC_DEFAULT_HAIKU_MODEL="claude-haiku-4.5"
+export ANTHROPIC_DEFAULT_SONNET_MODEL="claude-sonnet-4.5"
+export ANTHROPIC_DEFAULT_OPUS_MODEL="claude-opus-4.5"
+export ANTHROPIC_MODEL=$ANTHROPIC_DEFAULT_OPUS_MODEL
+export ANTHROPIC_SMALL_FAST_MODEL=$ANTHROPIC_DEFAULT_HAIKU_MODEL
+
 # Environment variables
 export LANG="en_US.UTF-8"
 export COMPOSE_BAKE="true"
