@@ -138,3 +138,13 @@ if [ -f "$HOME/ghc.sh" ]; then
   source "$HOME/ghc.sh"
 fi
 
+
+# bun completions
+[ -s "/Users/leocavalcante/.bun/_bun" ] && source "/Users/leocavalcante/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+eval "$(goose term init zsh)"
+
