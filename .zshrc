@@ -80,6 +80,10 @@ if command -v starship >/dev/null 2>&1; then
   eval "$(starship init zsh)"
 fi
 
+if command -v goose >/dev/null 2>&1; then
+  eval "$(goose term init zsh)"
+fi
+
 # Antigen (https://antigen.sharats.me/)
 ANTIGEN="$HOME/antigen.zsh"
 if [ ! -f "$ANTIGEN" ]; then
@@ -97,6 +101,4 @@ if [ -f "$ANTIGEN" ]; then
   antigen bundle zsh-users/zsh-syntax-highlighting
   antigen apply
 fi
-
-eval "$(goose term init zsh)"
 
