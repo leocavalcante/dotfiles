@@ -44,36 +44,6 @@ alias python="python3"
 alias pip="pip3"
 
 # Functions
-cld() {
-  claude --allowedTools Write,Edit,Bash -p "$*"
-}
-
-commit() {
-  if git diff --staged --quiet; then
-    echo "No staged changes to commit."
-    return 1
-  fi
-  local gd cp
-  gd="$(git diff --staged)"
-  cp="write an English git commit message based on the following changes:\n$gd"
-  git commit -m "$(chatgpt "$cp")"
-}
-
-pr() {
-  if git log -p -1 | grep -q '^diff'; then
-    local gd tp bp t b
-    gd="$(git log -p -1)"
-    tp="write an English title for a pull request based on the following changes:\n$gd"
-    bp="write an English body for a pull request based on the following changes:\n$gd"
-    t="$(chatgpt "$tp")"
-    b="$(chatgpt "$bp")"
-    gh pr create -a @me -t "$t" -b "$b"
-  else
-    echo "No commits to create a PR from."
-    return 1
-  fi
-}
-
 dot() {
   echo "🌟 Starting dotfiles update process! 🌟"
   cd "$HOME/.dotfiles" || {
@@ -127,24 +97,6 @@ if [ -f "$ANTIGEN" ]; then
   antigen bundle zsh-users/zsh-syntax-highlighting
   antigen apply
 fi
-
-# Source the vibe.sh script
-if [ -f "$HOME/vibe.sh" ]; then
-  source "$HOME/vibe.sh"
-fi
-
-# Source the ghc.sh script
-if [ -f "$HOME/ghc.sh" ]; then
-  source "$HOME/ghc.sh"
-fi
-
-
-# bun completions
-[ -s "/Users/leocavalcante/.bun/_bun" ] && source "/Users/leocavalcante/.bun/_bun"
-
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
 
 eval "$(goose term init zsh)"
 
