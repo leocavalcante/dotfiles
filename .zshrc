@@ -18,6 +18,9 @@ export GIT_EDITOR="$EDITOR"
 export KUBE_EDITOR="$EDITOR"
 export SUDO_EDITOR="$EDITOR"
 
+# Local bin
+export PATH="$HOME/.local/bin:$PATH"
+
 # PHP
 export COMPOSER_PATH="$HOME/.config/composer"
 export COMPOSER_BIN="$COMPOSER_PATH/vendor/bin"
