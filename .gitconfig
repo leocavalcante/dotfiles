@@ -7,6 +7,25 @@
 
 [delta]
     navigate = true
+    side-by-side = false
+    line-numbers = true
+    # GitHub Dark theme
+    syntax-theme = base16
+    minus-style = "syntax #3d2028"
+    minus-emph-style = "syntax #6e2f35"
+    plus-style = "syntax #244032"
+    plus-emph-style = "syntax #347148"
+    line-numbers-minus-style = "#ff7b72"
+    line-numbers-plus-style = "#3fb950"
+    line-numbers-zero-style = "#6e7681"
+    line-numbers-left-style = "#30363d"
+    line-numbers-right-style = "#30363d"
+    hunk-header-style = "syntax #161b22"
+    hunk-header-decoration-style = "box #30363d"
+    file-style = "#58a6ff bold"
+    file-decoration-style = "none"
+    commit-style = "#d29922"
+    commit-decoration-style = "none"
 
 [merge]
     conflictstyle = diff3
