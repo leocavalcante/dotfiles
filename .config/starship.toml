@@ -32,7 +32,7 @@ disabled = true
 [directory]
 truncation_length = 2
 truncate_to_repo = false
-style = "bold blue"
+style = "bold fg"
 
 [package]
 disabled = true
