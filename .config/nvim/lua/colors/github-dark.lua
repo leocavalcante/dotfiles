@@ -12,16 +12,30 @@ M.colors = {
   fg_muted = "#8b949e",
   fg_subtle = "#6e7681",
 
+  -- Terminal colors (ANSI)
+  black = "#484f58",
+  bright_black = "#6e7681",
+  white = "#b1bac4",
+  bright_white = "#ffffff",
+
   -- Syntax colors
   red = "#ff7b72",
+  bright_red = "#ffa198",
   orange = "#ffa657",
   yellow = "#d29922",
+  bright_yellow = "#e3b341",
   green = "#3fb950",
+  bright_green = "#56d364",
   cyan = "#39c5cf",
+  bright_cyan = "#56d4dd",
   blue = "#58a6ff",
+  bright_blue = "#79c0ff",
   purple = "#bc8cff",
   magenta = "#d2a8ff",
   pink = "#ff9bce",
+
+  -- Special
+  cursor = "#2f81f7",
 
   -- Diff colors
   diff_add = "#238636",
