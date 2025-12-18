@@ -18,8 +18,11 @@ vim.opt.softtabstop = 4
 vim.opt.splitbelow = true
 vim.opt.splitright = true
 vim.opt.tabstop = 4
-vim.opt.termguicolors = false
+vim.opt.termguicolors = true
 vim.opt.undofile = true
+
+-- Load GitHub Dark colorscheme
+require("colors.github-dark").setup()
 
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "go",
