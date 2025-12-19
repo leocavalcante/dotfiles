@@ -57,7 +57,7 @@ style = "yellow"
 style = "purple"
 
 [git_status]
-style = "red"
+disabled = true
 
 [character]
 success_symbol = "[❯](green)"
