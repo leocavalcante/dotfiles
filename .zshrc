@@ -45,6 +45,7 @@ alias stk="starship toggle kubernetes"
 alias python="python3"
 alias pip="pip3"
 alias cld="claude --dangerously-skip-permissions"
+alias cldp="claude -p"
 
 # Functions
 dot() {
