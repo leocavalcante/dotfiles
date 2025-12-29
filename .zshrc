@@ -1,14 +1,3 @@
-# Anthropic
-export ANTHROPIC_BASE_URL="http://localhost:4141"
-export ANTHROPIC_API_URL="http://localhost:4141"
-export ANTHROPIC_API_BASE="http://localhost:4141"
-export ANTHROPIC_API_KEY="copilot-api"
-export ANTHROPIC_DEFAULT_HAIKU_MODEL="claude-haiku-4.5"
-export ANTHROPIC_DEFAULT_SONNET_MODEL="claude-sonnet-4.5"
-export ANTHROPIC_DEFAULT_OPUS_MODEL="claude-opus-4.5"
-export ANTHROPIC_MODEL=$ANTHROPIC_DEFAULT_OPUS_MODEL
-export ANTHROPIC_SMALL_FAST_MODEL=$ANTHROPIC_DEFAULT_HAIKU_MODEL
-
 # Environment variables
 export LANG="en_US.UTF-8"
 export COMPOSE_BAKE="true"
@@ -48,6 +37,32 @@ alias cld="claude --allow-dangerously-skip-permissions"
 alias cldp="claude -p"
 
 # Functions
+enable_copilot_api() {
+  export ANTHROPIC_BASE_URL="http://localhost:4141"
+  export ANTHROPIC_API_URL="http://localhost:4141"
+  export ANTHROPIC_API_BASE="http://localhost:4141"
+  export ANTHROPIC_API_KEY="copilot-api"
+  export ANTHROPIC_DEFAULT_HAIKU_MODEL="claude-haiku-4.5"
+  export ANTHROPIC_DEFAULT_SONNET_MODEL="claude-sonnet-4.5"
+  export ANTHROPIC_DEFAULT_OPUS_MODEL="claude-opus-4.5"
+  export ANTHROPIC_MODEL="${ANTHROPIC_DEFAULT_SONNET_MODEL}"
+  export ANTHROPIC_SMALL_FAST_MODEL="${ANTHROPIC_DEFAULT_HAIKU_MODEL}"
+  echo "✨ Copilot API enabled"
+}
+
+disable_copilot_api() {
+  unset ANTHROPIC_BASE_URL
+  unset ANTHROPIC_API_URL
+  unset ANTHROPIC_API_BASE
+  unset ANTHROPIC_API_KEY
+  unset ANTHROPIC_DEFAULT_HAIKU_MODEL
+  unset ANTHROPIC_DEFAULT_SONNET_MODEL
+  unset ANTHROPIC_DEFAULT_OPUS_MODEL
+  unset ANTHROPIC_MODEL
+  unset ANTHROPIC_SMALL_FAST_MODEL
+  echo "⚫ Copilot API disabled"
+}
+
 dot() {
   echo "🌟 Starting dotfiles update process! 🌟"
   cd "$HOME/.dotfiles" || {
