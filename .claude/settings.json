@@ -10,9 +10,9 @@
   "permissions": {
     "defaultMode": "acceptEdits"
   },
-  "model": "opus",
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.sh"
-  }
+  },
+  "model": "haiku"
 }
