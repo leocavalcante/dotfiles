@@ -67,6 +67,22 @@ disable_copilot_api() {
   echo "⚫ Copilot API disabled"
 }
 
+enable_bedrock() {
+  export CLAUDE_CODE_USE_BEDROCK="1"
+  export AWS_REGION="us-east-1"
+  export ANTHROPIC_MODEL="global.anthropic.claude-sonnet-4-5-20250929-v1:0"
+  export ANTHROPIC_SMALL_FAST_MODEL="us.anthropic.claude-haiku-4-5-20251001-v1:0"
+  echo "☁️  Bedrock enabled"
+}
+
+disable_bedrock() {
+  unset CLAUDE_CODE_USE_BEDROCK
+  unset AWS_REGION
+  unset ANTHROPIC_MODEL
+  unset ANTHROPIC_SMALL_FAST_MODEL
+  echo "⚫ Bedrock disabled"
+}
+
 dot() {
   echo "🌟 Starting dotfiles update process! 🌟"
   cd "$HOME/.dotfiles" || {
