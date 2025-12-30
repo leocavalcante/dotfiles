@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a personal dotfiles repository managed with GNU Stow. Configuration files are symlinked from this directory to the home directory.
 
+**IMPORTANT**: This repository is publicly available at github.com/leocavalcante/dotfiles. Always verify that no sensitive data (API keys, tokens, passwords, credentials, or personal information) is being committed and pushed.
+
 ## Installation & Management
 
 ```shell
