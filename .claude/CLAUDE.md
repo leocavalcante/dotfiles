@@ -88,3 +88,12 @@ When the user asks to "save to memory", "remember this", or "store in memory", u
 - `~/.config/goose/.goosehints`
 
 This keeps preferences synchronized across different AI assistants and allows persistent context across sessions.
+
+# Claude Code Configuration
+
+## Local/Work-Specific Settings
+
+For work-specific or local machine configuration that shouldn't be committed to public repositories, see:
+- `~/.claude/CLAUDE.local.md` - Contains work-specific settings, credentials, team information, and environment details
+
+This file is automatically loaded by Claude Code and provides context about the local work environment.
