@@ -63,3 +63,8 @@ disabled = true
 success_symbol = "[❯](green)"
 error_symbol = "[❯](red)"
 
+[nodejs]
+detect_files = ["package.json", ".node-version", ".nvmrc"]
+detect_folders = ["node_modules"]
+detect_extensions = []
+
