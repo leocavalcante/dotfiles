@@ -1,5 +1,7 @@
-CLAUDE.md
-README.md
+.claude/settings.local.json
+.git/
 AGENTS.md
+CLAUDE.md
 LICENSE
+README.md
 
