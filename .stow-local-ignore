@@ -1,8 +1,8 @@
-.claude/settings.local.json
 .git
-.gitignore
-AGENTS.md
-CLAUDE.md
-LICENSE
-README.md
+/.claude/settings.local.json
+/.gitignore
+/AGENTS.md
+/CLAUDE.md
+/LICENSE
+/README.md
 
