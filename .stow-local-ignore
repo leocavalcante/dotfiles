@@ -1,5 +1,6 @@
 .claude/settings.local.json
-.git/
+.git
+.gitignore
 AGENTS.md
 CLAUDE.md
 LICENSE
