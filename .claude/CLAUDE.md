@@ -48,9 +48,24 @@
 - **Conventional Commits for PR Titles**: Use the same Conventional Commits format for PR titles as used for commit messages
   - Format: `<type>[optional scope]: <description>`
   - Examples: `feat(auth): add OAuth2 login support`, `fix: resolve null pointer in user service`
-- **Labels**: Apply appropriate labels to categorize the PR (e.g., `feature`, `bug`, `documentation`, `refactor`, `chore`)
+- **Labels**: Apply appropriate labels to categorize the PR using GitHub's standard labels
+  - GitHub provides default labels that should be used when applicable:
+    - `bug` - Something isn't working
+    - `documentation` - Improvements or additions to documentation
+    - `enhancement` - New feature or request
+    - `good first issue` - Good for newcomers
+    - `help wanted` - Extra attention is needed
+    - `question` - Further information is requested
+    - `duplicate` - This issue or pull request already exists
+    - `invalid` - This doesn't seem right
+    - `wontfix` - This will not be worked on
+  - Label mapping from Conventional Commits:
+    - `feat` → use `enhancement`
+    - `fix` → use `bug`
+    - `docs` → use `documentation`
+    - `refactor`, `chore`, `style`, `build`, `ci`, `test`, `perf` → use `enhancement` or no label
 - **Assignment**: Always assign PRs to me using: `--assignee @me`
-- Example: `gh pr create --title "feat: add feature" --body "Description" --label feature --assignee @me`
+- Example: `gh pr create --title "feat: add feature" --body "Description" --label enhancement --assignee @me`
 
 # User Preferences
 
