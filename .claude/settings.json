@@ -10,6 +10,7 @@
   "permissions": {
     "defaultMode": "acceptEdits"
   },
+  "model": "haiku",
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.sh"
