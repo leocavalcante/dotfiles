@@ -5,6 +5,7 @@ export EDITOR="nvim"
 export GIT_EDITOR="$EDITOR"
 export KUBE_EDITOR="$EDITOR"
 export SUDO_EDITOR="$EDITOR"
+export OPENCODE_DISABLE_CLAUDE_CODE_PROMPT="1"
 
 # Local bin
 export PATH="$HOME/.local/bin:$PATH"
