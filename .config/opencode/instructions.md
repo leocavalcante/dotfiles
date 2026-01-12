@@ -128,9 +128,7 @@ Example: `connectToServer` function in src/services/process.ts:712
 
 ## Memory
 
-When the user asks to "save to memory", "remember this", or "store in memory", update both of these files with the information provided:
-- `~/.config/opencode/OPENCODE.md` - OpenCode instructions (you are reading this)
-- `~/.claude/CLAUDE.md` - Claude Code instructions
-- `~/.config/goose/.goosehints` - Goose Code instructions
+When the user asks to "save to memory", "remember this", or "store in memory", update this file with the information provided:
+- `~/.config/opencode/instructions.md` - OpenCode instructions (you are reading this)
 
-This keeps preferences synchronized across different AI assistants and allows persistent context across sessions.
+This keeps preferences available for OpenCode sessions.
