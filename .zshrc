@@ -106,7 +106,11 @@ dot() {
 up() {
   case "$(uname)" in
     Linux)
-      sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y
+      if [ -n "$TERMUX_VERSION" ]; then
+        pkg update && pkg upgrade -y
+      else
+        sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y
+      fi
       ;;
   esac
   brew update && brew upgrade && brew cleanup
@@ -134,7 +138,7 @@ if [ -f "$ANTIGEN" ]; then
   source "$ANTIGEN"
   antigen use oh-my-zsh
   antigen bundle git
-  antigen bundle jeffreytse/zsh-vi-mode
+  # antigen bundle jeffreytse/zsh-vi-mode
   antigen bundle tmux
   antigen bundle zsh-users/zsh-autosuggestions
   antigen bundle zsh-users/zsh-completions
@@ -143,3 +147,10 @@ if [ -f "$ANTIGEN" ]; then
   antigen apply
 fi
 
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# opencode
+export PATH=/data/data/com.termux/files/home/.opencode/bin:$PATH
