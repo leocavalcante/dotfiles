@@ -35,6 +35,8 @@ alias python="python3"
 alias pip="pip3"
 alias cld="claude --allow-dangerously-skip-permissions"
 alias cldp="claude -p"
+alias oc="opencode"
+alias ocp="opencode --prompt"
 
 # Functions
 enable_copilot_api() {
