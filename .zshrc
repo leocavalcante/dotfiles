@@ -39,7 +39,6 @@ alias pip="pip3"
 alias cld="claude --allow-dangerously-skip-permissions"
 alias cldp="claude -p"
 alias oc="opencode"
-alias ocp="opencode --prompt"
 alias occ="opencode --continue"
 
 # Functions
