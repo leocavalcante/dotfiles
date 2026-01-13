@@ -156,3 +156,7 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 
 # opencode
 export PATH=/data/data/com.termux/files/home/.opencode/bin:$PATH
+
+if command -v opencode >/dev/null 2>&1; then
+  eval "$(opencode completion zsh)"
+fi
