@@ -52,7 +52,6 @@ fi
 alias l="eza --all --icons --git"
 alias ls="eza --all --icons --git"
 alias ll="eza --long --all --icons --git"
-alias h="cd ~"
 alias stk="starship toggle kubernetes"
 alias python="python3"
 alias pip="pip3"
