@@ -20,8 +20,6 @@ This is a personal dotfiles repository for **leocavalcante** (Leo Cavalcante) co
 ├── .gitconfig              # Git configuration
 ├── .tmux.conf              # Tmux terminal multiplexer config
 ├── .zshrc                  # Zsh shell configuration (main file)
-├── ghc.sh                  # GitHub Copilot CLI wrappers (ghcs, ghce)
-├── vibe.sh                 # AI-powered code assistant tool
 └── README.md               # User-facing documentation
 ```
 
@@ -85,22 +83,10 @@ This creates symlinks from the repository to `$HOME`.
 5. **up()** - System update utility
    - Updates apt packages (Linux) and Homebrew
 
-6. **vibe()** - AI-powered code assistant (from vibe.sh)
-   - Modifies files based on natural language instructions
-   - Can answer questions in terminal
-   - Supports `--backup`, `--push`, `--pr` flags
-
-### GitHub Copilot Wrappers (ghc.sh)
-
-- **ghcs()** - GitHub Copilot suggest (shell/git/gh commands)
-- **ghce()** - GitHub Copilot explain commands
-
 ### Important Aliases
 
 ```bash
-gpt         # chatgpt CLI
 l, ls, ll   # eza (modern ls replacement)
-v           # vibe
 cl          # clear
 stk         # starship toggle kubernetes
 python      # python3
@@ -134,7 +120,6 @@ push        # git push
 ## Dependencies
 
 Required CLI tools:
-- `chatgpt` - https://github.com/kardolus/chatgpt-cli
 - `gh` - GitHub CLI
 - `stow` - GNU Stow
 - `eza` - Modern ls replacement
@@ -173,7 +158,6 @@ Optional tools:
 
 ## Special Notes
 
-- **vibe.sh** was generated using the Vibe Coding process - only modify for prompt improvements or critical fixes
 - **Antigen plugin manager**: The repository uses Antigen for Zsh plugin management (auto-installed on first run). Do NOT recommend replacing it with alternatives like zinit, sheldon, etc. - this is a deliberate choice by the user. Antigen's startup overhead is acceptable for the simplicity and stability it provides.
 - Symlinks are managed by GNU Stow - use `stow .` to apply changes
 - Local git config can be added to `~/.gitconfig.local` (included automatically)
