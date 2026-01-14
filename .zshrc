@@ -143,6 +143,10 @@ if command -v goose >/dev/null 2>&1; then
   eval "$(goose term init zsh)"
 fi
 
+if command -v opencode >/dev/null 2>&1; then
+  eval "$(opencode completion zsh)"
+fi
+
 # Antigen (https://antigen.sharats.me/)
 ANTIGEN="$HOME/antigen.zsh"
 if [ ! -f "$ANTIGEN" ]; then
@@ -161,7 +165,6 @@ if [ -f "$ANTIGEN" ]; then
   antigen apply
 fi
 
-
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
@@ -174,3 +177,4 @@ fi
 if command -v opencode >/dev/null 2>&1; then
   eval "$(opencode completion zsh)"
 fi
+
