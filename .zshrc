@@ -1,3 +1,6 @@
+# Ensure unique PATH entries
+typeset -U PATH
+
 # Environment variables
 export LANG="en_US.UTF-8"
 export COMPOSE_BAKE="true"
@@ -14,12 +17,18 @@ export PATH="$HOME/.local/bin:$PATH"
 # PHP
 export COMPOSER_PATH="$HOME/.config/composer"
 export COMPOSER_BIN="$COMPOSER_PATH/vendor/bin"
-export COMPOSER_AUTH="$(cat "$COMPOSER_PATH/auth.json" 2>/dev/null || echo '')"
 export PATH="$COMPOSER_BIN:$PATH"
 
-# Go
+# Lazy-load COMPOSER_AUTH only when needed
+composer_auth() {
+  if [ -z "$COMPOSER_AUTH" ] && [ -f "$COMPOSER_PATH/auth.json" ]; then
+    export COMPOSER_AUTH="$(cat "$COMPOSER_PATH/auth.json")"
+  fi
+}
+
+# Go (lazy-load to avoid running go env on every shell startup)
 if command -v go >/dev/null 2>&1; then
-  export GOPATH="$(go env GOPATH)"
+  export GOPATH="${GOPATH:-$(go env GOPATH)}"
   export GOBIN="$GOPATH/bin"
   export PATH="$GOBIN:$PATH"
 fi
@@ -27,8 +36,8 @@ fi
 # Aliases
 alias gpt="chatgpt"
 alias l="eza --all --icons --git"
-alias ls="eza --all --icons"
-alias ll="eza --long --all --git --icons"
+alias ls="eza --all --icons --git"
+alias ll="eza --long --all --icons --git"
 alias push="git push"
 alias v="vibe" 
 alias c="clear"
@@ -36,7 +45,7 @@ alias h="cd ~ && clear"
 alias stk="starship toggle kubernetes"
 alias python="python3"
 alias pip="pip3"
-alias cld="claude --allow-dangerously-skip-permissions"
+alias cld="claude --dangerously-skip-permissions"  # ⚠️ Skips permission prompts - use with caution
 alias cldp="claude -p"
 alias oc="opencode"
 alias occ="opencode --continue"
@@ -116,7 +125,9 @@ up() {
       fi
       ;;
   esac
-  brew update && brew upgrade && brew cleanup
+  if command -v brew >/dev/null 2>&1; then
+    brew update && brew upgrade && brew cleanup
+  fi
 }
 
 # Tools
@@ -135,7 +146,7 @@ fi
 # Antigen (https://antigen.sharats.me/)
 ANTIGEN="$HOME/antigen.zsh"
 if [ ! -f "$ANTIGEN" ]; then
-  curl -sSL git.io/antigen -o "$ANTIGEN"
+  curl -sSL https://raw.githubusercontent.com/zsh-users/antigen/master/bin/antigen.zsh -o "$ANTIGEN"
 fi
 if [ -f "$ANTIGEN" ]; then
   source "$ANTIGEN"
@@ -156,7 +167,9 @@ export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
 # opencode
-export PATH=/data/data/com.termux/files/home/.opencode/bin:$PATH
+if [ -n "$TERMUX_VERSION" ]; then
+  export PATH="$HOME/.opencode/bin:$PATH"
+fi
 
 if command -v opencode >/dev/null 2>&1; then
   eval "$(opencode completion zsh)"
