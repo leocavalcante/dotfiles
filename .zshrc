@@ -154,5 +154,3 @@ if [ -f "$ANTIGEN" ]; then
   antigen apply
 fi
 
-
-
