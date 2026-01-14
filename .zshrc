@@ -11,6 +11,9 @@ export SUDO_EDITOR="$EDITOR"
 export OPENCODE_DISABLE_CLAUDE_CODE_PROMPT="1"
 export OPENCODE_ENABLE_EXA="1"
 
+# ─── System Information (cached) ───
+_UNAME="$(uname)"
+
 # ─── History ───
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=50000
@@ -20,7 +23,6 @@ setopt HIST_FIND_NO_DUPS
 setopt HIST_IGNORE_SPACE
 setopt SHARE_HISTORY
 setopt EXTENDED_HISTORY
-setopt APPEND_HISTORY
 setopt INC_APPEND_HISTORY
 
 # PHP
@@ -147,7 +149,7 @@ dot() {
 # System update utility
 up() {
   emulate -L zsh
-  if [[ "$(uname)" == "Linux" ]]; then
+  if [[ "$_UNAME" == "Linux" ]]; then
     if [[ -n "$TERMUX_VERSION" ]]; then
       pkg update && pkg upgrade -y
     else
@@ -185,13 +187,12 @@ fi
 
 # Starship with cache invalidation
 if (( $+commands[starship] )); then
-  _starship_bin="$(command -v starship)"
   _starship_cache="$_zsh_cache_dir/starship_init.zsh"
-  if [[ ! -f "$_starship_cache" ]] || [[ "$_starship_bin" -nt "$_starship_cache" ]]; then
+  if [[ ! -f "$_starship_cache" ]] || [[ "$commands[starship]" -nt "$_starship_cache" ]]; then
     starship init zsh > "$_starship_cache"
   fi
   source "$_starship_cache"
-  unset _starship_bin _starship_cache
+  unset _starship_cache
 fi
 
 unset _zsh_cache_dir
