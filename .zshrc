@@ -23,31 +23,35 @@ setopt EXTENDED_HISTORY
 # PHP
 export COMPOSER_PATH="$HOME/.config/composer"
 
-# Go
-export GOPATH="${GOPATH:-$HOME/go}"
-export GOBIN="$GOPATH/bin"
+# Go (only if installed)
+if command -v go >/dev/null 2>&1; then
+  export GOPATH="${GOPATH:-$HOME/go}"
+  export GOBIN="$GOPATH/bin"
+fi
 
 # ─── PATH Configuration ───
 path=(
   "$HOME/.local/bin"
   "$HOME/.config/composer/vendor/bin"
-  "$GOBIN"
-  "$HOME/.bun/bin"
   $path
 )
+
+# Add Go bin to PATH if Go is installed
+if command -v go >/dev/null 2>&1; then
+  path+=("$GOBIN")
+fi
+
+# Add Bun to PATH
+path+=("$HOME/.bun/bin")
 
 # Termux-specific
 [[ -n "$TERMUX_VERSION" ]] && path=("$HOME/.opencode/bin" $path)
 
 # ─── Aliases ───
-alias gpt="chatgpt"
 alias l="eza --all --icons --git"
 alias ls="eza --all --icons --git"
 alias ll="eza --long --all --icons --git"
-alias push="git push"
-alias v="vibe"
-alias c="clear"
-alias h="cd ~ && clear"
+alias h="cd ~"
 alias stk="starship toggle kubernetes"
 alias python="python3"
 alias pip="pip3"
@@ -58,36 +62,54 @@ alias occ="opencode --continue"
 
 # ─── Functions ───
 
+# Helper: Set Anthropic environment variables
+_set_anthropic_vars() {
+  local -a vars=("$@")
+  for var in "${vars[@]}"; do
+    export "$var"
+  done
+}
+
+# Helper: Unset Anthropic environment variables
+_unset_anthropic_vars() {
+  local -a vars=("$@")
+  for var in "${vars[@]}"; do
+    unset "$var"
+  done
+}
+
 # Enable Anthropic Copilot API (local routing)
 enable_copilot_api() {
   local anthropic_url="http://localhost:4141"
-  export ANTHROPIC_BASE_URL="$anthropic_url"
-  export ANTHROPIC_API_URL="$anthropic_url"
-  export ANTHROPIC_API_BASE="$anthropic_url"
-  export ANTHROPIC_API_KEY="copilot-api"
-  export ANTHROPIC_DEFAULT_HAIKU_MODEL="claude-haiku-4.5"
-  export ANTHROPIC_DEFAULT_SONNET_MODEL="claude-sonnet-4.5"
-  export ANTHROPIC_DEFAULT_OPUS_MODEL="claude-opus-4.5"
-  export ANTHROPIC_MODEL="${ANTHROPIC_DEFAULT_SONNET_MODEL}"
-  export ANTHROPIC_SMALL_FAST_MODEL="${ANTHROPIC_DEFAULT_HAIKU_MODEL}"
-  export DISABLE_NON_ESSENTIAL_MODEL_CALLS="1"
-  export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC="1"
+  _set_anthropic_vars \
+    "ANTHROPIC_BASE_URL=$anthropic_url" \
+    "ANTHROPIC_API_URL=$anthropic_url" \
+    "ANTHROPIC_API_BASE=$anthropic_url" \
+    "ANTHROPIC_API_KEY=copilot-api" \
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-4.5" \
+    "ANTHROPIC_DEFAULT_SONNET_MODEL=claude-sonnet-4.5" \
+    "ANTHROPIC_DEFAULT_OPUS_MODEL=claude-opus-4.5" \
+    "ANTHROPIC_MODEL=claude-sonnet-4.5" \
+    "ANTHROPIC_SMALL_FAST_MODEL=claude-haiku-4.5" \
+    "DISABLE_NON_ESSENTIAL_MODEL_CALLS=1" \
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1"
   echo "✨ Copilot API enabled"
 }
 
 # Disable Anthropic Copilot API
 disable_copilot_api() {
-  unset ANTHROPIC_BASE_URL
-  unset ANTHROPIC_API_URL
-  unset ANTHROPIC_API_BASE
-  unset ANTHROPIC_API_KEY
-  unset ANTHROPIC_DEFAULT_HAIKU_MODEL
-  unset ANTHROPIC_DEFAULT_SONNET_MODEL
-  unset ANTHROPIC_DEFAULT_OPUS_MODEL
-  unset ANTHROPIC_MODEL
-  unset ANTHROPIC_SMALL_FAST_MODEL
-  unset DISABLE_NON_ESSENTIAL_MODEL_CALLS
-  unset CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC
+  _unset_anthropic_vars \
+    ANTHROPIC_BASE_URL \
+    ANTHROPIC_API_URL \
+    ANTHROPIC_API_BASE \
+    ANTHROPIC_API_KEY \
+    ANTHROPIC_DEFAULT_HAIKU_MODEL \
+    ANTHROPIC_DEFAULT_SONNET_MODEL \
+    ANTHROPIC_DEFAULT_OPUS_MODEL \
+    ANTHROPIC_MODEL \
+    ANTHROPIC_SMALL_FAST_MODEL \
+    DISABLE_NON_ESSENTIAL_MODEL_CALLS \
+    CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC
   echo "⚫ Copilot API disabled"
 }
 
@@ -120,13 +142,26 @@ dot() {
   }
   
   echo "🔄 Pulling latest changes from git repository..."
-  git pull --quiet && echo "✅ Repository updated."
+  if ! git pull --quiet; then
+    echo "❌ Failed to pull latest changes from git!"
+    cd "$HOME"
+    return 1
+  fi
+  echo "✅ Repository updated."
   
   if command -v stow >/dev/null 2>&1; then
     echo "📦 Restowing dotfiles using GNU Stow..."
-    stow . && echo "✅ Dotfiles stowed successfully."
+    if stow .; then
+      echo "✅ Dotfiles stowed successfully."
+    else
+      echo "❌ Failed to stow dotfiles!"
+      cd "$HOME"
+      return 1
+    fi
   else
     echo "❌ GNU Stow not installed! Please install it to continue."
+    cd "$HOME"
+    return 1
   fi
   
   cd "$HOME" || echo "⚠️ Could not return to the home directory!"
@@ -160,6 +195,11 @@ composer() {
   command composer "$@"
 }
 
+# Cache Composer auth on startup if available
+if [[ -f "$COMPOSER_PATH/auth.json" ]]; then
+  export COMPOSER_AUTH="$(<"$COMPOSER_PATH/auth.json")"
+fi
+
 # ─── Tool Initialization (Eager) ───
 if command -v zoxide >/dev/null 2>&1; then
   eval "$(zoxide init zsh)"
@@ -192,7 +232,10 @@ fi
 # ─── Antigen Plugin Manager ───
 ANTIGEN="$HOME/antigen.zsh"
 if [[ ! -f "$ANTIGEN" ]]; then
-  curl -sSL https://raw.githubusercontent.com/zsh-users/antigen/master/bin/antigen.zsh -o "$ANTIGEN"
+  echo "📥 Downloading Antigen plugin manager..."
+  if ! curl -sSL https://raw.githubusercontent.com/zsh-users/antigen/master/bin/antigen.zsh -o "$ANTIGEN"; then
+    echo "⚠️ Failed to download Antigen. Some shell features may be unavailable."
+  fi
 fi
 if [[ -f "$ANTIGEN" ]]; then
   source "$ANTIGEN"
