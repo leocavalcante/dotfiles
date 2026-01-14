@@ -16,18 +16,15 @@ HISTFILE="$HOME/.zsh_history"
 HISTSIZE=50000
 SAVEHIST=50000
 setopt HIST_IGNORE_DUPS
+setopt HIST_FIND_NO_DUPS
 setopt HIST_IGNORE_SPACE
 setopt SHARE_HISTORY
 setopt EXTENDED_HISTORY
+setopt APPEND_HISTORY
+setopt INC_APPEND_HISTORY
 
 # PHP
 export COMPOSER_PATH="$HOME/.config/composer"
-
-# Go (only if installed)
-if command -v go >/dev/null 2>&1; then
-  export GOPATH="${GOPATH:-$HOME/go}"
-  export GOBIN="$GOPATH/bin"
-fi
 
 # ─── PATH Configuration ───
 path=(
@@ -36,13 +33,15 @@ path=(
   $path
 )
 
-# Add Go bin to PATH if Go is installed
+# Go (only if installed)
 if command -v go >/dev/null 2>&1; then
+  export GOPATH="${GOPATH:-$HOME/go}"
+  export GOBIN="$GOPATH/bin"
   path+=("$GOBIN")
 fi
 
-# Add Bun to PATH
-path+=("$HOME/.bun/bin")
+# Bun (only if installed)
+[[ -d "$HOME/.bun/bin" ]] && path+=("$HOME/.bun/bin")
 
 # Termux-specific
 [[ -n "$TERMUX_VERSION" ]] && path=("$HOME/.opencode/bin" $path)
@@ -62,136 +61,105 @@ alias occ="opencode --continue"
 
 # ─── Functions ───
 
-# Helper: Set Anthropic environment variables
-_set_anthropic_vars() {
-  local -a vars=("$@")
-  for var in "${vars[@]}"; do
-    export "$var"
-  done
-}
-
-# Helper: Unset Anthropic environment variables
-_unset_anthropic_vars() {
-  local -a vars=("$@")
-  for var in "${vars[@]}"; do
-    unset "$var"
-  done
-}
-
 # Enable Anthropic Copilot API (local routing)
 enable_copilot_api() {
+  emulate -L zsh
   local anthropic_url="http://localhost:4141"
-  _set_anthropic_vars \
-    "ANTHROPIC_BASE_URL=$anthropic_url" \
-    "ANTHROPIC_API_URL=$anthropic_url" \
-    "ANTHROPIC_API_BASE=$anthropic_url" \
-    "ANTHROPIC_API_KEY=copilot-api" \
-    "ANTHROPIC_DEFAULT_HAIKU_MODEL=claude-haiku-4.5" \
-    "ANTHROPIC_DEFAULT_SONNET_MODEL=claude-sonnet-4.5" \
-    "ANTHROPIC_DEFAULT_OPUS_MODEL=claude-opus-4.5" \
-    "ANTHROPIC_MODEL=claude-sonnet-4.5" \
-    "ANTHROPIC_SMALL_FAST_MODEL=claude-haiku-4.5" \
-    "DISABLE_NON_ESSENTIAL_MODEL_CALLS=1" \
-    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1"
-  echo "✨ Copilot API enabled"
+  export ANTHROPIC_BASE_URL="$anthropic_url"
+  export ANTHROPIC_API_URL="$anthropic_url"
+  export ANTHROPIC_API_BASE="$anthropic_url"
+  export ANTHROPIC_API_KEY="copilot-api"
+  export ANTHROPIC_DEFAULT_HAIKU_MODEL="claude-haiku-4.5"
+  export ANTHROPIC_DEFAULT_SONNET_MODEL="claude-sonnet-4.5"
+  export ANTHROPIC_DEFAULT_OPUS_MODEL="claude-opus-4.5"
+  export ANTHROPIC_MODEL="claude-sonnet-4.5"
+  export ANTHROPIC_SMALL_FAST_MODEL="claude-haiku-4.5"
+  export DISABLE_NON_ESSENTIAL_MODEL_CALLS="1"
+  export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC="1"
+  echo "Copilot API enabled"
 }
 
 # Disable Anthropic Copilot API
 disable_copilot_api() {
-  _unset_anthropic_vars \
-    ANTHROPIC_BASE_URL \
-    ANTHROPIC_API_URL \
-    ANTHROPIC_API_BASE \
-    ANTHROPIC_API_KEY \
-    ANTHROPIC_DEFAULT_HAIKU_MODEL \
-    ANTHROPIC_DEFAULT_SONNET_MODEL \
-    ANTHROPIC_DEFAULT_OPUS_MODEL \
-    ANTHROPIC_MODEL \
-    ANTHROPIC_SMALL_FAST_MODEL \
-    DISABLE_NON_ESSENTIAL_MODEL_CALLS \
-    CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC
-  echo "⚫ Copilot API disabled"
+  emulate -L zsh
+  unset ANTHROPIC_BASE_URL ANTHROPIC_API_URL ANTHROPIC_API_BASE ANTHROPIC_API_KEY
+  unset ANTHROPIC_DEFAULT_HAIKU_MODEL ANTHROPIC_DEFAULT_SONNET_MODEL ANTHROPIC_DEFAULT_OPUS_MODEL
+  unset ANTHROPIC_MODEL ANTHROPIC_SMALL_FAST_MODEL
+  unset DISABLE_NON_ESSENTIAL_MODEL_CALLS CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC
+  echo "Copilot API disabled"
 }
 
 # Enable AWS Bedrock
 enable_bedrock() {
+  emulate -L zsh
   export CLAUDE_CODE_USE_BEDROCK="1"
   export AWS_REGION="us-east-1"
   export ANTHROPIC_MODEL="global.anthropic.claude-sonnet-4-5-20250929-v1:0"
   export ANTHROPIC_SMALL_FAST_MODEL="us.anthropic.claude-haiku-4-5-20251001-v1:0"
-  echo "☁️  Bedrock enabled"
+  echo "Bedrock enabled"
 }
 
 # Disable AWS Bedrock
 disable_bedrock() {
-  unset CLAUDE_CODE_USE_BEDROCK
-  unset AWS_REGION
-  unset ANTHROPIC_MODEL
-  unset ANTHROPIC_SMALL_FAST_MODEL
-  echo "⚫ Bedrock disabled"
+  emulate -L zsh
+  unset CLAUDE_CODE_USE_BEDROCK AWS_REGION ANTHROPIC_MODEL ANTHROPIC_SMALL_FAST_MODEL
+  echo "Bedrock disabled"
 }
 
 # Update dotfiles from repository
 dot() {
+  emulate -L zsh
   local dotfiles_dir="$HOME/.dotfiles"
-  echo "🌟 Starting dotfiles update process! 🌟"
+  echo "Starting dotfiles update process..."
   
   cd "$dotfiles_dir" || {
-    echo "⚠️ Could not find the .dotfiles directory!"
+    echo "Could not find the .dotfiles directory!"
     return 1
   }
   
-  echo "🔄 Pulling latest changes from git repository..."
+  echo "Pulling latest changes from git repository..."
   if ! git pull --quiet; then
-    echo "❌ Failed to pull latest changes from git!"
+    echo "Failed to pull latest changes from git!"
     cd "$HOME"
     return 1
   fi
-  echo "✅ Repository updated."
+  echo "Repository updated."
   
   if command -v stow >/dev/null 2>&1; then
-    echo "📦 Restowing dotfiles using GNU Stow..."
+    echo "Restowing dotfiles using GNU Stow..."
     if stow .; then
-      echo "✅ Dotfiles stowed successfully."
+      echo "Dotfiles stowed successfully."
     else
-      echo "❌ Failed to stow dotfiles!"
+      echo "Failed to stow dotfiles!"
       cd "$HOME"
       return 1
     fi
   else
-    echo "❌ GNU Stow not installed! Please install it to continue."
+    echo "GNU Stow not installed! Please install it to continue."
     cd "$HOME"
     return 1
   fi
   
-  cd "$HOME" || echo "⚠️ Could not return to the home directory!"
-  echo "🏁 Dotfiles update process completed."
+  cd "$HOME" || echo "Could not return to the home directory!"
+  echo "Dotfiles update process completed."
 }
 
 # System update utility
 up() {
-  case "$(uname)" in
-    Linux)
-      if [[ -n "$TERMUX_VERSION" ]]; then
-        pkg update && pkg upgrade -y
-      else
-        sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y
-      fi
-      ;;
-    Darwin)
-      # Handled by brew below
-      ;;
-  esac
-  if command -v brew >/dev/null 2>&1; then
-    brew update && brew upgrade && brew cleanup
+  emulate -L zsh
+  if [[ "$(uname)" == "Linux" ]]; then
+    if [[ -n "$TERMUX_VERSION" ]]; then
+      pkg update && pkg upgrade -y
+    else
+      sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y
+    fi
   fi
+  command -v brew >/dev/null 2>&1 && brew update && brew upgrade && brew cleanup
 }
 
 # Composer with auto-loaded auth
 composer() {
-  if [[ -z "$COMPOSER_AUTH" && -f "$COMPOSER_PATH/auth.json" ]]; then
-    export COMPOSER_AUTH="$(<"$COMPOSER_PATH/auth.json")"
-  fi
+  emulate -L zsh
   command composer "$@"
 }
 
@@ -200,14 +168,40 @@ if [[ -f "$COMPOSER_PATH/auth.json" ]]; then
   export COMPOSER_AUTH="$(<"$COMPOSER_PATH/auth.json")"
 fi
 
-# ─── Tool Initialization (Eager) ───
+# ─── Tool Initialization (Cached) ───
+_zsh_cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
+[[ -d "$_zsh_cache_dir" ]] || mkdir -p "$_zsh_cache_dir"
+
+# Zoxide with lazy-load
 if command -v zoxide >/dev/null 2>&1; then
-  eval "$(zoxide init zsh)"
+  z() {
+    unfunction z zi 2>/dev/null
+    eval "$(zoxide init zsh)"
+    z "$@"
+  }
+  zi() {
+    unfunction z zi 2>/dev/null
+    eval "$(zoxide init zsh)"
+    zi "$@"
+  }
 fi
 
+# Starship with cache invalidation
 if command -v starship >/dev/null 2>&1; then
-  eval "$(starship init zsh)"
+  _starship_bin="$(command -v starship)"
+  _starship_version="$(starship --version 2>/dev/null | head -1)"
+  _starship_cache="$_zsh_cache_dir/starship_init.zsh"
+  _starship_hash="$_zsh_cache_dir/starship.hash"
+  if [[ ! -f "$_starship_cache" ]] || [[ "$_starship_bin" -nt "$_starship_cache" ]] || \
+     [[ ! -f "$_starship_hash" ]] || [[ "$_starship_version" != "$(<"$_starship_hash")" ]]; then
+    starship init zsh > "$_starship_cache"
+    echo "$_starship_version" > "$_starship_hash"
+  fi
+  source "$_starship_cache"
+  unset _starship_bin _starship_version _starship_cache _starship_hash
 fi
+
+unset _zsh_cache_dir
 
 # ─── Lazy-loaded Tools ───
 
@@ -227,6 +221,15 @@ if command -v opencode >/dev/null 2>&1; then
     eval "$(command opencode completion zsh)"
     command opencode "$@"
   }
+fi
+
+# ─── Completion System ───
+autoload -Uz compinit
+# Rebuild completion cache if older than 24 hours
+if [[ -n ~/.zcompdump(#qN.mh+24) ]]; then
+  compinit
+else
+  compinit -C
 fi
 
 # ─── Antigen Plugin Manager ───
