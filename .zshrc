@@ -1,7 +1,7 @@
-# Ensure unique PATH entries
-typeset -U PATH
+# ─── Early Setup ───
+typeset -U PATH path
 
-# Environment variables
+# ─── Environment Variables ───
 export LANG="en_US.UTF-8"
 export COMPOSE_BAKE="true"
 export EDITOR="nvim"
@@ -11,35 +11,32 @@ export SUDO_EDITOR="$EDITOR"
 export OPENCODE_DISABLE_CLAUDE_CODE_PROMPT="1"
 export OPENCODE_ENABLE_EXA="1"
 
-# Local bin
-export PATH="$HOME/.local/bin:$PATH"
-
 # PHP
 export COMPOSER_PATH="$HOME/.config/composer"
-export COMPOSER_BIN="$COMPOSER_PATH/vendor/bin"
-export PATH="$COMPOSER_BIN:$PATH"
 
-# Lazy-load COMPOSER_AUTH only when needed
-composer_auth() {
-  if [ -z "$COMPOSER_AUTH" ] && [ -f "$COMPOSER_PATH/auth.json" ]; then
-    export COMPOSER_AUTH="$(cat "$COMPOSER_PATH/auth.json")"
-  fi
-}
+# Go
+export GOPATH="${GOPATH:-$HOME/go}"
+export GOBIN="$GOPATH/bin"
 
-# Go (lazy-load to avoid running go env on every shell startup)
-if command -v go >/dev/null 2>&1; then
-  export GOPATH="${GOPATH:-$(go env GOPATH)}"
-  export GOBIN="$GOPATH/bin"
-  export PATH="$GOBIN:$PATH"
-fi
+# ─── PATH Configuration ───
+path=(
+  "$HOME/.local/bin"
+  "$HOME/.config/composer/vendor/bin"
+  "$HOME/go/bin"
+  "$HOME/.bun/bin"
+  $path
+)
 
-# Aliases
+# Termux-specific
+[[ -n "$TERMUX_VERSION" ]] && path=("$HOME/.opencode/bin" $path)
+
+# ─── Aliases ───
 alias gpt="chatgpt"
 alias l="eza --all --icons --git"
 alias ls="eza --all --icons --git"
 alias ll="eza --long --all --icons --git"
 alias push="git push"
-alias v="vibe" 
+alias v="vibe"
 alias c="clear"
 alias h="cd ~ && clear"
 alias stk="starship toggle kubernetes"
@@ -50,11 +47,14 @@ alias cldp="claude -p"
 alias oc="opencode"
 alias occ="opencode --continue"
 
-# Functions
+# ─── Functions ───
+
+# Enable Anthropic Copilot API (local routing)
 enable_copilot_api() {
-  export ANTHROPIC_BASE_URL="http://localhost:4141"
-  export ANTHROPIC_API_URL="http://localhost:4141"
-  export ANTHROPIC_API_BASE="http://localhost:4141"
+  local anthropic_url="http://localhost:4141"
+  export ANTHROPIC_BASE_URL="$anthropic_url"
+  export ANTHROPIC_API_URL="$anthropic_url"
+  export ANTHROPIC_API_BASE="$anthropic_url"
   export ANTHROPIC_API_KEY="copilot-api"
   export ANTHROPIC_DEFAULT_HAIKU_MODEL="claude-haiku-4.5"
   export ANTHROPIC_DEFAULT_SONNET_MODEL="claude-sonnet-4.5"
@@ -66,6 +66,7 @@ enable_copilot_api() {
   echo "✨ Copilot API enabled"
 }
 
+# Disable Anthropic Copilot API
 disable_copilot_api() {
   unset ANTHROPIC_BASE_URL
   unset ANTHROPIC_API_URL
@@ -81,6 +82,7 @@ disable_copilot_api() {
   echo "⚫ Copilot API disabled"
 }
 
+# Enable AWS Bedrock
 enable_bedrock() {
   export CLAUDE_CODE_USE_BEDROCK="1"
   export AWS_REGION="us-east-1"
@@ -89,6 +91,7 @@ enable_bedrock() {
   echo "☁️  Bedrock enabled"
 }
 
+# Disable AWS Bedrock
 disable_bedrock() {
   unset CLAUDE_CODE_USE_BEDROCK
   unset AWS_REGION
@@ -97,28 +100,35 @@ disable_bedrock() {
   echo "⚫ Bedrock disabled"
 }
 
+# Update dotfiles from repository
 dot() {
+  local dotfiles_dir="$HOME/.dotfiles"
   echo "🌟 Starting dotfiles update process! 🌟"
-  cd "$HOME/.dotfiles" || {
+  
+  cd "$dotfiles_dir" || {
     echo "⚠️ Could not find the .dotfiles directory!"
     return 1
   }
+  
   echo "🔄 Pulling latest changes from git repository..."
   git pull --quiet && echo "✅ Repository updated."
+  
   if command -v stow >/dev/null 2>&1; then
     echo "📦 Restowing dotfiles using GNU Stow..."
     stow . && echo "✅ Dotfiles stowed successfully."
   else
     echo "❌ GNU Stow not installed! Please install it to continue."
   fi
+  
   cd "$HOME" || echo "⚠️ Could not return to the home directory!"
   echo "🏁 Dotfiles update process completed."
 }
 
+# System update utility
 up() {
   case "$(uname)" in
     Linux)
-      if [ -n "$TERMUX_VERSION" ]; then
+      if [[ -n "$TERMUX_VERSION" ]]; then
         pkg update && pkg upgrade -y
       else
         sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y
@@ -130,7 +140,15 @@ up() {
   fi
 }
 
-# Tools
+# Composer with auto-loaded auth
+composer() {
+  if [[ -z "$COMPOSER_AUTH" && -f "$COMPOSER_PATH/auth.json" ]]; then
+    export COMPOSER_AUTH="$(<"$COMPOSER_PATH/auth.json")"
+  fi
+  command composer "$@"
+}
+
+# ─── Tool Initialization (Eager) ───
 if command -v zoxide >/dev/null 2>&1; then
   eval "$(zoxide init zsh)"
 fi
@@ -139,20 +157,32 @@ if command -v starship >/dev/null 2>&1; then
   eval "$(starship init zsh)"
 fi
 
+# ─── Lazy-loaded Tools ───
+
+# Lazy-load goose terminal initialization
 if command -v goose >/dev/null 2>&1; then
-  eval "$(goose term init zsh)"
+  goose() {
+    unfunction goose
+    eval "$(command goose term init zsh)"
+    command goose "$@"
+  }
 fi
 
+# Lazy-load opencode completion
 if command -v opencode >/dev/null 2>&1; then
-  eval "$(opencode completion zsh)"
+  _opencode_load_completion() {
+    unfunction _opencode_load_completion
+    eval "$(command opencode completion zsh)"
+  }
+  compctl -K _opencode_load_completion opencode
 fi
 
-# Antigen (https://antigen.sharats.me/)
+# ─── Antigen Plugin Manager ───
 ANTIGEN="$HOME/antigen.zsh"
-if [ ! -f "$ANTIGEN" ]; then
+if [[ ! -f "$ANTIGEN" ]]; then
   curl -sSL https://raw.githubusercontent.com/zsh-users/antigen/master/bin/antigen.zsh -o "$ANTIGEN"
 fi
-if [ -f "$ANTIGEN" ]; then
+if [[ -f "$ANTIGEN" ]]; then
   source "$ANTIGEN"
   antigen use oh-my-zsh
   antigen bundle git
@@ -161,20 +191,7 @@ if [ -f "$ANTIGEN" ]; then
   antigen bundle zsh-users/zsh-autosuggestions
   antigen bundle zsh-users/zsh-completions
   antigen bundle zsh-users/zsh-history-substring-search
-  antigen bundle zsh-users/zsh-syntax-highlighting
+  antigen bundle zdharma-continuum/fast-syntax-highlighting
   antigen apply
-fi
-
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
-
-# opencode
-if [ -n "$TERMUX_VERSION" ]; then
-  export PATH="$HOME/.opencode/bin:$PATH"
-fi
-
-if command -v opencode >/dev/null 2>&1; then
-  eval "$(opencode completion zsh)"
 fi
 
