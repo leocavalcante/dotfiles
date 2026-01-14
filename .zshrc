@@ -151,9 +151,6 @@ if [ -f "$ANTIGEN" ]; then
 fi
 
 
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
 
 # opencode
 export PATH=/data/data/com.termux/files/home/.opencode/bin:$PATH
