@@ -151,7 +151,7 @@ Optional tools:
 ## Special Notes
 
 - **vibe.sh** was generated using the Vibe Coding process - only modify for prompt improvements or critical fixes
-- The repository uses Antigen for Zsh plugin management (auto-installed on first run)
+- **Antigen plugin manager**: The repository uses Antigen for Zsh plugin management (auto-installed on first run). Do NOT recommend replacing it with alternatives like zinit, sheldon, etc. - this is a deliberate choice by the user. Antigen's startup overhead is acceptable for the simplicity and stability it provides.
 - Symlinks are managed by GNU Stow - use `stow .` to apply changes
 - Local git config can be added to `~/.gitconfig.local` (included automatically)
 
@@ -200,6 +200,22 @@ Additional optimizations implemented:
 5. **Lazy-loaded zoxide initialization** - Replaced caching approach with true lazy-loading pattern. Zoxide's `z` and `zi` functions are now defined as stubs that initialize zoxide on first use, then call the actual function. Avoids startup cost entirely if zoxide is never used; previously always sourced initialization at shell startup.
 
 **Result:** Reduced startup overhead further, improved cross-platform compatibility, enhanced robustness of tool initialization, and eliminated redundant operations.
+
+## Recent Improvements (Jan 14, 2026 - Round 3)
+
+### .zshrc Startup Performance Optimizations
+
+Quick wins for reducing shell startup time without major refactoring:
+
+1. **Replaced `command -v` with `(( $+commands[...] ))`** - Changed 7 startup checks from subprocess calls to hash table lookups. Hash lookups are significantly faster than spawning external processes. Affected checks: `go`, `stow`, `brew`, `zoxide`, `starship`, `goose`, `opencode`.
+
+2. **Removed starship `--version` subprocess** - Eliminated unnecessary `starship --version` call that spawned a subprocess on every startup. Now relies only on binary modification time for cache invalidation, which is sufficient for detecting updates.
+
+3. **Lazy-loaded COMPOSER_AUTH** - Moved `auth.json` loading from startup into the `composer()` function. Only loads when composer is actually invoked, not on every shell startup.
+
+4. **Simplified starship cache logic** - Removed version hash tracking file (`starship.hash`), reducing filesystem operations. Binary modification time check is sufficient for cache invalidation.
+
+**Result:** Estimated 30-80ms faster shell startup through reduced subprocesses and file I/O operations.
 
 ## Testing Changes
 

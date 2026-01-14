@@ -34,7 +34,7 @@ path=(
 )
 
 # Go (only if installed)
-if command -v go >/dev/null 2>&1; then
+if (( $+commands[go] )); then
   export GOPATH="${GOPATH:-$HOME/go}"
   export GOBIN="$GOPATH/bin"
   path+=("$GOBIN")
@@ -125,7 +125,7 @@ dot() {
   fi
   echo "Repository updated."
   
-  if command -v stow >/dev/null 2>&1; then
+  if (( $+commands[stow] )); then
     echo "Restowing dotfiles using GNU Stow..."
     if stow .; then
       echo "Dotfiles stowed successfully."
@@ -154,26 +154,23 @@ up() {
       sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y
     fi
   fi
-  command -v brew >/dev/null 2>&1 && brew update && brew upgrade && brew cleanup
+  (( $+commands[brew] )) && brew update && brew upgrade && brew cleanup
 }
 
 # Composer with auto-loaded auth
 composer() {
   emulate -L zsh
+  [[ -z "$COMPOSER_AUTH" && -f "$COMPOSER_PATH/auth.json" ]] && \
+    export COMPOSER_AUTH="$(<"$COMPOSER_PATH/auth.json")"
   command composer "$@"
 }
-
-# Cache Composer auth on startup if available
-if [[ -f "$COMPOSER_PATH/auth.json" ]]; then
-  export COMPOSER_AUTH="$(<"$COMPOSER_PATH/auth.json")"
-fi
 
 # ─── Tool Initialization (Cached) ───
 _zsh_cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
 [[ -d "$_zsh_cache_dir" ]] || mkdir -p "$_zsh_cache_dir"
 
 # Zoxide with lazy-load
-if command -v zoxide >/dev/null 2>&1; then
+if (( $+commands[zoxide] )); then
   z() {
     unfunction z zi 2>/dev/null
     eval "$(zoxide init zsh)"
@@ -187,18 +184,14 @@ if command -v zoxide >/dev/null 2>&1; then
 fi
 
 # Starship with cache invalidation
-if command -v starship >/dev/null 2>&1; then
+if (( $+commands[starship] )); then
   _starship_bin="$(command -v starship)"
-  _starship_version="$(starship --version 2>/dev/null | head -1)"
   _starship_cache="$_zsh_cache_dir/starship_init.zsh"
-  _starship_hash="$_zsh_cache_dir/starship.hash"
-  if [[ ! -f "$_starship_cache" ]] || [[ "$_starship_bin" -nt "$_starship_cache" ]] || \
-     [[ ! -f "$_starship_hash" ]] || [[ "$_starship_version" != "$(<"$_starship_hash")" ]]; then
+  if [[ ! -f "$_starship_cache" ]] || [[ "$_starship_bin" -nt "$_starship_cache" ]]; then
     starship init zsh > "$_starship_cache"
-    echo "$_starship_version" > "$_starship_hash"
   fi
   source "$_starship_cache"
-  unset _starship_bin _starship_version _starship_cache _starship_hash
+  unset _starship_bin _starship_cache
 fi
 
 unset _zsh_cache_dir
@@ -206,7 +199,7 @@ unset _zsh_cache_dir
 # ─── Lazy-loaded Tools ───
 
 # Lazy-load goose terminal initialization
-if command -v goose >/dev/null 2>&1; then
+if (( $+commands[goose] )); then
   goose() {
     unfunction goose
     eval "$(command goose term init zsh)"
@@ -215,7 +208,7 @@ if command -v goose >/dev/null 2>&1; then
 fi
 
 # Lazy-load opencode completion
-if command -v opencode >/dev/null 2>&1; then
+if (( $+commands[opencode] )); then
   opencode() {
     unfunction opencode
     eval "$(command opencode completion zsh)"
