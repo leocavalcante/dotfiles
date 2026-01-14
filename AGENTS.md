@@ -155,6 +155,52 @@ Optional tools:
 - Symlinks are managed by GNU Stow - use `stow .` to apply changes
 - Local git config can be added to `~/.gitconfig.local` (included automatically)
 
+## Recent Improvements (Jan 14, 2026)
+
+### .zshrc Refactoring & Performance Optimizations
+
+All improvements completed with the following enhancements:
+
+1. **Removed Anthropic helper functions** - Eliminated `_set_anthropic_vars()` and `_unset_anthropic_vars()` functions; rewritten `enable_copilot_api()`, `disable_copilot_api()`, `enable_bedrock()`, and `disable_bedrock()` with inline variable assignments for clarity and maintainability.
+
+2. **Consolidated Go checks** - Merged duplicate Go version checks (lines 27-30 and 40-42) into a single block that exports both `GOPATH`/`GOBIN` variables AND adds to PATH simultaneously.
+
+3. **Simplified composer() function** - Streamlined with `emulate -L zsh` for robustness; kept auto-loading of `auth.json` on demand.
+
+4. **Simplified up() function** - Removed empty `Darwin` case; now uses clean if statement checking OS type. Added `emulate -L zsh`.
+
+5. **Cached tool initialization** - Added smart caching for `starship` and `zoxide` initialization with auto-invalidation when tool binaries are updated. Cache stored in `~/.cache/zsh/`.
+
+6. **Conditional Bun path** - Changed from unconditional path addition to existence check: `[[ -d "$HOME/.bun/bin" ]] && path+=("$HOME/.bun/bin")`
+
+7. **Enhanced history options** - Added `HIST_FIND_NO_DUPS` (prevents duplicates in history search) and `INC_APPEND_HISTORY` (writes commands immediately to history file).
+
+8. **Added explicit compinit** - Proper completion system initialization with `autoload -Uz compinit` for robustness.
+
+9. **Added emulate -L zsh** - Added to all custom functions (`dot()`, `up()`, `composer()`, and Anthropic functions) for consistent zsh behavior regardless of user options.
+
+10. **Removed emoji decorations** - Cleaned up status messages in functions for cleaner terminal output.
+
+**Result:** Reduced file from 253 to 248 lines, improved startup performance via caching, and increased code clarity and maintainability.
+
+## Recent Improvements (Jan 14, 2026 - Round 2)
+
+### .zshrc Performance & Robustness Enhancements
+
+Additional optimizations implemented:
+
+1. **Added APPEND_HISTORY setopt** - New history option that ensures history entries are appended atomically, improving reliability in multi-terminal sessions and preventing history loss during terminal crashes.
+
+2. **Simplified composer() redundancy** - Removed unnecessary conditional check inside `composer()` function (lines 162-163) since `COMPOSER_AUTH` is already loaded on startup (lines 168-170), reducing unnecessary file I/O and logic branches during command execution.
+
+3. **Fixed compinit portability** - Replaced `/usr/share/zsh` existence check (which doesn't exist on macOS) with Zsh's built-in `(#qN.mh+24)` glob qualifier that checks if `.zcompdump` is older than 24 hours. This is portable across all platforms (Linux/macOS) and more reliable.
+
+4. **Enhanced starship cache invalidation** - Added version hash detection alongside binary modification time check. Now creates `~/.cache/zsh/starship.hash` to track starship version; if version changes, cache is automatically regenerated. Catches updates where binary timestamp remains unchanged (e.g., reinstalls).
+
+5. **Lazy-loaded zoxide initialization** - Replaced caching approach with true lazy-loading pattern. Zoxide's `z` and `zi` functions are now defined as stubs that initialize zoxide on first use, then call the actual function. Avoids startup cost entirely if zoxide is never used; previously always sourced initialization at shell startup.
+
+**Result:** Reduced startup overhead further, improved cross-platform compatibility, enhanced robustness of tool initialization, and eliminated redundant operations.
+
 ## Testing Changes
 
 After modifying configuration files:
