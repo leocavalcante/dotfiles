@@ -25,6 +25,29 @@ This is a personal dotfiles repository for **leocavalcante** (Leo Cavalcante) co
 └── README.md               # User-facing documentation
 ```
 
+## Neovim Architecture
+
+- `init.lua` - Entry point, bootstraps lazy.nvim, loads settings/keymaps/plugins
+- `lua/settings.lua` - Editor settings and colorscheme loading
+- `lua/keymaps.lua` - Key mappings (leader: Space)
+- `lua/plugins/` - Individual plugin configurations as separate files
+- `lua/colors/` - Custom colorscheme definitions
+
+Key plugins: lsp-zero (with Mason for LSP management), telescope, harpoon, neo-tree, treesitter, copilot.
+
+## Emacs Configuration
+
+- `.emacs.d/init.el` - Uses straight.el package manager
+
+## Theme
+
+GitHub Dark Default theme is used consistently across all tools (Neovim, tmux, kitty, starship).
+
+## Key Bindings
+
+- **Neovim**: `jj` exits insert mode, `Ctrl+h/j/k/l` for window navigation
+- **Tmux**: Prefix is `C-Space`. `prefix+j` horizontal split, `prefix+l` vertical split, `Ctrl+h/j/k/l` pane navigation, `prefix+s` session picker (sessionx)
+
 ## Setup and Installation
 
 **Prerequisites:**
@@ -155,67 +178,23 @@ Optional tools:
 - Symlinks are managed by GNU Stow - use `stow .` to apply changes
 - Local git config can be added to `~/.gitconfig.local` (included automatically)
 
-## Recent Improvements (Jan 14, 2026)
+## Completed Optimizations (Jan 14, 2026)
 
-### .zshrc Refactoring & Performance Optimizations
+The following .zshrc optimizations have already been implemented - DO NOT suggest these again:
 
-All improvements completed with the following enhancements:
+- Removed Anthropic helper functions (`_set_anthropic_vars`, `_unset_anthropic_vars`) - now inline
+- Consolidated duplicate Go version checks into single block
+- Simplified `composer()` and `up()` functions with `emulate -L zsh`
+- Added smart caching for starship initialization (binary mtime-based invalidation)
+- Lazy-loaded zoxide (`z`, `zi` are stubs that init on first use)
+- Replaced `command -v` checks with `(( $+commands[...] ))` hash lookups
+- Lazy-loaded COMPOSER_AUTH (loads in `composer()` function, not at startup)
+- Added history options: `HIST_FIND_NO_DUPS`, `INC_APPEND_HISTORY`, `APPEND_HISTORY`
+- Added portable compinit with `(#qN.mh+24)` glob qualifier for cross-platform support
+- Conditional Bun path addition with existence check
+- Removed emoji decorations from status messages
 
-1. **Removed Anthropic helper functions** - Eliminated `_set_anthropic_vars()` and `_unset_anthropic_vars()` functions; rewritten `enable_copilot_api()`, `disable_copilot_api()`, `enable_bedrock()`, and `disable_bedrock()` with inline variable assignments for clarity and maintainability.
-
-2. **Consolidated Go checks** - Merged duplicate Go version checks (lines 27-30 and 40-42) into a single block that exports both `GOPATH`/`GOBIN` variables AND adds to PATH simultaneously.
-
-3. **Simplified composer() function** - Streamlined with `emulate -L zsh` for robustness; kept auto-loading of `auth.json` on demand.
-
-4. **Simplified up() function** - Removed empty `Darwin` case; now uses clean if statement checking OS type. Added `emulate -L zsh`.
-
-5. **Cached tool initialization** - Added smart caching for `starship` and `zoxide` initialization with auto-invalidation when tool binaries are updated. Cache stored in `~/.cache/zsh/`.
-
-6. **Conditional Bun path** - Changed from unconditional path addition to existence check: `[[ -d "$HOME/.bun/bin" ]] && path+=("$HOME/.bun/bin")`
-
-7. **Enhanced history options** - Added `HIST_FIND_NO_DUPS` (prevents duplicates in history search) and `INC_APPEND_HISTORY` (writes commands immediately to history file).
-
-8. **Added explicit compinit** - Proper completion system initialization with `autoload -Uz compinit` for robustness.
-
-9. **Added emulate -L zsh** - Added to all custom functions (`dot()`, `up()`, `composer()`, and Anthropic functions) for consistent zsh behavior regardless of user options.
-
-10. **Removed emoji decorations** - Cleaned up status messages in functions for cleaner terminal output.
-
-**Result:** Reduced file from 253 to 248 lines, improved startup performance via caching, and increased code clarity and maintainability.
-
-## Recent Improvements (Jan 14, 2026 - Round 2)
-
-### .zshrc Performance & Robustness Enhancements
-
-Additional optimizations implemented:
-
-1. **Added APPEND_HISTORY setopt** - New history option that ensures history entries are appended atomically, improving reliability in multi-terminal sessions and preventing history loss during terminal crashes.
-
-2. **Simplified composer() redundancy** - Removed unnecessary conditional check inside `composer()` function (lines 162-163) since `COMPOSER_AUTH` is already loaded on startup (lines 168-170), reducing unnecessary file I/O and logic branches during command execution.
-
-3. **Fixed compinit portability** - Replaced `/usr/share/zsh` existence check (which doesn't exist on macOS) with Zsh's built-in `(#qN.mh+24)` glob qualifier that checks if `.zcompdump` is older than 24 hours. This is portable across all platforms (Linux/macOS) and more reliable.
-
-4. **Enhanced starship cache invalidation** - Added version hash detection alongside binary modification time check. Now creates `~/.cache/zsh/starship.hash` to track starship version; if version changes, cache is automatically regenerated. Catches updates where binary timestamp remains unchanged (e.g., reinstalls).
-
-5. **Lazy-loaded zoxide initialization** - Replaced caching approach with true lazy-loading pattern. Zoxide's `z` and `zi` functions are now defined as stubs that initialize zoxide on first use, then call the actual function. Avoids startup cost entirely if zoxide is never used; previously always sourced initialization at shell startup.
-
-**Result:** Reduced startup overhead further, improved cross-platform compatibility, enhanced robustness of tool initialization, and eliminated redundant operations.
-
-## Recent Improvements (Jan 14, 2026 - Round 3)
-
-### .zshrc Startup Performance Optimizations
-
-Quick wins for reducing shell startup time without major refactoring:
-
-1. **Replaced `command -v` with `(( $+commands[...] ))`** - Changed 7 startup checks from subprocess calls to hash table lookups. Hash lookups are significantly faster than spawning external processes. Affected checks: `go`, `stow`, `brew`, `zoxide`, `starship`, `goose`, `opencode`.
-
-2. **Removed starship `--version` subprocess** - Eliminated unnecessary `starship --version` call that spawned a subprocess on every startup. Now relies only on binary modification time for cache invalidation, which is sufficient for detecting updates.
-
-3. **Lazy-loaded COMPOSER_AUTH** - Moved `auth.json` loading from startup into the `composer()` function. Only loads when composer is actually invoked, not on every shell startup.
-
-4. **Simplified starship cache logic** - Removed version hash tracking file (`starship.hash`), reducing filesystem operations. Binary modification time check is sufficient for cache invalidation.
-
-**Result:** Estimated 30-80ms faster shell startup through reduced subprocesses and file I/O operations.
+**Result**: Reduced startup time by 30-80ms through reduced subprocesses and optimized initialization patterns.
 
 ## Testing Changes
 
@@ -227,6 +206,7 @@ After modifying configuration files:
 
 ## Security
 
+- **IMPORTANT**: This repository is publicly available at github.com/leocavalcante/dotfiles. Always verify that no sensitive data (API keys, tokens, passwords, credentials, or personal information) is being committed and pushed.
 - Never commit API keys or tokens
 - `~/.gitconfig.local` is for sensitive user-specific settings
 - Composer auth is loaded from `~/.config/composer/auth.json`
