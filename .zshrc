@@ -132,6 +132,10 @@ if command -v goose >/dev/null 2>&1; then
   eval "$(goose term init zsh)"
 fi
 
+if command -v opencode >/dev/null 2>&1; then
+  eval "$(opencode completion zsh)"
+fi
+
 # Antigen (https://antigen.sharats.me/)
 ANTIGEN="$HOME/antigen.zsh"
 if [ ! -f "$ANTIGEN" ]; then
@@ -152,7 +156,3 @@ fi
 
 
 
-
-if command -v opencode >/dev/null 2>&1; then
-  eval "$(opencode completion zsh)"
-fi
