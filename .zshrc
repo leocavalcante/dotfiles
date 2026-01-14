@@ -11,6 +11,15 @@ export SUDO_EDITOR="$EDITOR"
 export OPENCODE_DISABLE_CLAUDE_CODE_PROMPT="1"
 export OPENCODE_ENABLE_EXA="1"
 
+# ─── History ───
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=50000
+SAVEHIST=50000
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_SPACE
+setopt SHARE_HISTORY
+setopt EXTENDED_HISTORY
+
 # PHP
 export COMPOSER_PATH="$HOME/.config/composer"
 
@@ -22,7 +31,7 @@ export GOBIN="$GOPATH/bin"
 path=(
   "$HOME/.local/bin"
   "$HOME/.config/composer/vendor/bin"
-  "$HOME/go/bin"
+  "$GOBIN"
   "$HOME/.bun/bin"
   $path
 )
@@ -134,6 +143,9 @@ up() {
         sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y
       fi
       ;;
+    Darwin)
+      # Handled by brew below
+      ;;
   esac
   if command -v brew >/dev/null 2>&1; then
     brew update && brew upgrade && brew cleanup
@@ -170,11 +182,11 @@ fi
 
 # Lazy-load opencode completion
 if command -v opencode >/dev/null 2>&1; then
-  _opencode_load_completion() {
-    unfunction _opencode_load_completion
+  opencode() {
+    unfunction opencode
     eval "$(command opencode completion zsh)"
+    command opencode "$@"
   }
-  compctl -K _opencode_load_completion opencode
 fi
 
 # ─── Antigen Plugin Manager ───
