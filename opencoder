@@ -723,6 +723,12 @@ parse_args() {
         exit 1
     fi
     
+    # Validate cycle limit is a non-negative integer
+    if [[ ! "$CYCLE_LIMIT" =~ ^[0-9]+$ ]]; then
+        echo "Error: --cycle-limit must be a non-negative integer (got: '$CYCLE_LIMIT')" >&2
+        exit 1
+    fi
+    
     # Validate project directory
     if [[ ! -d "$PROJECT_DIR" ]]; then
         echo "Error: Project directory does not exist: $PROJECT_DIR" >&2
