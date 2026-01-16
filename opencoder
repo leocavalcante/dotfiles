@@ -310,6 +310,15 @@ load_state() {
     
     say "Resuming: Cycle $CYCLE, Phase $PHASE"
     log "State loaded: CYCLE=$CYCLE, PHASE=$PHASE, TASK_INDEX=$TASK_INDEX"
+    
+    # Recalculate task counts if plan exists
+    if [[ -f "$CURRENT_PLAN" ]]; then
+        # Count total tasks (both completed and pending)
+        TOTAL_TASKS=$(grep -c "^- \[.\]" "$CURRENT_PLAN" 2>/dev/null || echo "0")
+        # Count completed tasks to set current task number
+        CURRENT_TASK_NUM=$(grep -c "^- \[x\]" "$CURRENT_PLAN" 2>/dev/null || echo "0")
+        log "Recalculated task counts: $CURRENT_TASK_NUM completed of $TOTAL_TASKS total"
+    fi
 }
 
 # ============================================================================
