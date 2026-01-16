@@ -173,21 +173,33 @@ log() {
     echo "[$ts] $msg" >> "${CYCLE_LOG_DIR}/cycle_$(printf "%03d" "$CYCLE").log" 2>/dev/null || true
 }
 
-# Say something to the user (console output with personality)
+# Say something to the user (console output - for important messages)
 say() {
     local msg="$1"
     
     # Always log to file
     log "$msg"
     
-    # Print to console
+    # Print to console (clear any status line first)
+    echo -ne "\r\033[K"
     echo "$msg"
 }
 
-# Log error with emoji
+# Update status line (single-line, overwritten)
+status() {
+    local msg="$1"
+    
+    # Log to file
+    log "$msg"
+    
+    # Print to console with carriage return (no newline)
+    echo -ne "\r\033[K$msg"
+}
+
+# Log error
 log_error() {
     local msg="$1"
-    say "⚠️  Oops! $msg"
+    say "ERROR: $msg"
     
     # Only write to alerts file if it's initialized
     if [[ -n "$ALERTS_FILE" ]] && [[ -d "$(dirname "$ALERTS_FILE")" ]]; then
@@ -198,7 +210,7 @@ log_error() {
 # Log verbose (only if verbose mode enabled)
 log_verbose() {
     if [[ $VERBOSE -eq 1 ]]; then
-        say "🔍 $1"
+        say "VERBOSE: $1"
         log "VERBOSE: $1"
     fi
 }
@@ -224,7 +236,7 @@ sed_inplace() {
 
 # Initialize directory structure
 init_directories() {
-    say "🚀 Initializing opencoder workspace..."
+    status "Initializing workspace..."
     log "Initializing opencoder directory structure at: $PROJECT_DIR"
     
     OPENCODER_DIR="$PROJECT_DIR/.opencoder"
@@ -243,7 +255,7 @@ init_directories() {
     touch "$MAIN_LOG"
     touch "$ALERTS_FILE"
     
-    say "✅ Workspace ready!"
+    say "Workspace initialized"
     log "Directory structure initialized successfully"
 }
 
@@ -281,7 +293,7 @@ EOF
 # Load state from file
 load_state() {
     if [[ ! -f "$STATE_FILE" ]]; then
-        say "🆕 Starting fresh! No previous state found."
+        say "Starting fresh (no previous state)"
         log "No existing state found, starting fresh"
         CYCLE=1
         PHASE="planning"
@@ -290,13 +302,13 @@ load_state() {
         return 0
     fi
     
-    say "🔄 Found previous state, resuming where we left off..."
+    say "Resuming from saved state..."
     log "Loading state from $STATE_FILE"
     
     # shellcheck source=/dev/null
     source "$STATE_FILE"
     
-    say "📍 Resuming at cycle $CYCLE, phase: $PHASE"
+    say "Resuming: Cycle $CYCLE, Phase $PHASE"
     log "State loaded: CYCLE=$CYCLE, PHASE=$PHASE, TASK_INDEX=$TASK_INDEX"
 }
 
@@ -307,13 +319,13 @@ load_state() {
 # Handle shutdown signals gracefully
 handle_shutdown() {
     say ""
-    say "👋 Shutdown signal received! Saving my progress..."
+    say "Shutdown requested, saving state..."
     
     log "Shutdown signal received, saving state and exiting gracefully..."
     SHUTDOWN_REQUESTED=1
     save_state
     
-    say "💾 State saved. See you next time!"
+    say "State saved"
     
     log "State saved. Exiting."
     exit 0
@@ -321,12 +333,12 @@ handle_shutdown() {
 
 # Handle SIGHUP to reload configuration
 handle_reload() {
-    say "🔄 Configuration reload requested..."
+    say "Reloading configuration..."
     
     log "SIGHUP received, reloading configuration..."
     load_config
     
-    say "✅ Configuration reloaded!"
+    say "Configuration reloaded"
 }
 
 # Setup signal handlers
@@ -364,15 +376,14 @@ validate_plan_content() {
     fi
     
     TOTAL_TASKS=$task_count
-    say "📝 Found $TOTAL_TASKS tasks in the plan"
+    say "Plan contains $TOTAL_TASKS tasks"
     log_verbose "Plan validation passed: $task_count tasks found"
     return 0
 }
 
 # Create a new plan using the planning model
 create_plan() {
-    say ""
-    say "📋 Time to plan! Let me analyze the project..."
+    status "[Cycle $CYCLE] Planning..."
     log "Creating new plan for cycle $CYCLE using model: $PLANNING_MODEL"
     
     PHASE="planning"
@@ -384,15 +395,13 @@ create_plan() {
     
     # Add user hint to the prompt if provided
     if [[ -n "$USER_HINT" ]]; then
-        say "💡 User hint: $USER_HINT"
+        log "User hint: $USER_HINT"
         hint_section="
 
 USER INSTRUCTION/HINT: $USER_HINT
 
 Use this hint to guide your planning. Build/implement what the user requested."
     fi
-    
-    say "🤔 Thinking about what needs to be done..."
     
     prompt="CRITICAL: You are operating in an AUTONOMOUS CONTINUOUS DEVELOPMENT loop.
 
@@ -450,7 +459,7 @@ After creating the plan file, respond with: PLAN_CREATED"
     
     while [[ $attempt -lt $MAX_RETRIES ]]; do
         if [[ $attempt -gt 0 ]]; then
-            say "🔄 Trying again (attempt $((attempt + 1))/$MAX_RETRIES)..."
+            status "[Cycle $CYCLE] Planning (retry $((attempt + 1))/$MAX_RETRIES)..."
         fi
         log "Attempt $((attempt + 1))/$MAX_RETRIES to create plan"
         
@@ -458,7 +467,7 @@ After creating the plan file, respond with: PLAN_CREATED"
             if [[ -f "$CURRENT_PLAN" ]]; then
                 # Validate plan has actionable tasks
                 if validate_plan_content "$CURRENT_PLAN"; then
-                    say "✅ Plan ready! Here's what I'll be working on:"
+                    say "[Cycle $CYCLE] Plan created"
                     log "Plan created successfully at $CURRENT_PLAN"
                     success=1
                     break
@@ -476,14 +485,14 @@ After creating the plan file, respond with: PLAN_CREATED"
         attempt=$((attempt + 1))
         if [[ $attempt -lt $MAX_RETRIES ]]; then
             local sleep_time=$((BACKOFF_BASE * (2 ** attempt)))
-            say "😅 Let me give that another shot in $sleep_time seconds..."
+            status "[Cycle $CYCLE] Retrying in $sleep_time seconds..."
             log "Retrying in $sleep_time seconds..."
             sleep "$sleep_time"
         fi
     done
     
     if [[ $success -eq 0 ]]; then
-        say "❌ Failed to create a valid plan after $MAX_RETRIES attempts"
+        say "[Cycle $CYCLE] ERROR: Failed to create plan after $MAX_RETRIES attempts"
         log_error "Failed to create plan after $MAX_RETRIES attempts"
         return 1
     fi
@@ -531,7 +540,6 @@ mark_task_complete() {
         return 1
     fi
     
-    say "✅ Task complete! Marking it off the list..."
     log "Marking task at line $line_num as complete"
     
     # Replace - [ ] with - [x] at the specific line (portable sed)
@@ -551,7 +559,6 @@ archive_plan() {
     archive_name="plan_$(date +"%Y%m%d_%H%M%S")_cycle${CYCLE}.md"
     local archive_path="$HISTORY_DIR/$archive_name"
     
-    say "📦 Archiving completed plan..."
     log "Archiving completed plan to $archive_path"
     
     mv "$CURRENT_PLAN" "$archive_path"
@@ -574,9 +581,7 @@ execute_task() {
     CURRENT_TASK_NUM=$((CURRENT_TASK_NUM + 1))
     CURRENT_TASK_DESC="$task_desc"
     
-    say ""
-    say "💪 Working on task $CURRENT_TASK_NUM of $TOTAL_TASKS"
-    say "📌 Task: $task_desc"
+    status "[Cycle $CYCLE] Task $CURRENT_TASK_NUM/$TOTAL_TASKS: $task_desc"
     log "Executing task: $task_desc"
     
     PHASE="execution"
@@ -608,11 +613,9 @@ When complete, respond with: TASK_COMPLETE or TASK_FAILED with explanation."
     
     while [[ $attempt -lt $MAX_RETRIES ]]; do
         if [[ $attempt -gt 0 ]]; then
-            say "🔄 Trying again (attempt $((attempt + 1))/$MAX_RETRIES)..."
+            status "[Cycle $CYCLE] Task $CURRENT_TASK_NUM/$TOTAL_TASKS (retry $((attempt + 1))/$MAX_RETRIES)..."
         fi
         log "Attempt $((attempt + 1))/$MAX_RETRIES for task"
-        
-        say "🔨 Let me work on this..."
         
         if [[ -z "$SESSION_ID" ]]; then
             # First task in cycle - capture session ID
@@ -631,7 +634,7 @@ When complete, respond with: TASK_COMPLETE or TASK_FAILED with explanation."
         fi
         
         if [[ $success -eq 0 ]]; then
-            say "🎉 Task done!"
+            say "[Cycle $CYCLE] Task $CURRENT_TASK_NUM/$TOTAL_TASKS complete"
             log "Task executed successfully"
             mark_task_complete "$line_num"
             save_state
@@ -643,13 +646,13 @@ When complete, respond with: TASK_COMPLETE or TASK_FAILED with explanation."
         attempt=$((attempt + 1))
         if [[ $attempt -lt $MAX_RETRIES ]]; then
             local sleep_time=$((BACKOFF_BASE * (2 ** attempt)))
-            say "😅 Let me give that another shot in $sleep_time seconds..."
+            status "[Cycle $CYCLE] Retrying in $sleep_time seconds..."
             log "Retrying in $sleep_time seconds..."
             sleep "$sleep_time"
         fi
     done
     
-    say "❌ Task failed after $MAX_RETRIES attempts. Moving on..."
+    say "[Cycle $CYCLE] ERROR: Task failed after $MAX_RETRIES attempts, skipping"
     log_error "Task failed after $MAX_RETRIES attempts: $task_desc"
     log "Skipping to next task..."
     
@@ -666,8 +669,7 @@ When complete, respond with: TASK_COMPLETE or TASK_FAILED with explanation."
 
 # Evaluate if the current plan is complete
 evaluate_plan() {
-    say ""
-    say "🔍 Time to review my work! Let me see how things look..."
+    status "[Cycle $CYCLE] Evaluating..."
     log "Evaluating plan completion for cycle $CYCLE"
     
     PHASE="evaluation"
@@ -676,8 +678,6 @@ evaluate_plan() {
     # Check if all tasks are marked complete
     local pending_tasks
     pending_tasks=$(grep -c "^- \[ \]" "$CURRENT_PLAN" 2>/dev/null || echo "0")
-    
-    say "🧐 Checking the quality of what I've done..."
     
     local prompt
     prompt="CRITICAL: You are operating in an AUTONOMOUS CONTINUOUS DEVELOPMENT loop.
@@ -710,7 +710,7 @@ Be thorough and honest in your evaluation. When in doubt, choose NEEDS_WORK."
     
     while [[ $attempt -lt $MAX_RETRIES ]]; do
         if [[ $attempt -gt 0 ]]; then
-            say "🔄 Trying evaluation again (attempt $((attempt + 1))/$MAX_RETRIES)..."
+            status "[Cycle $CYCLE] Evaluating (retry $((attempt + 1))/$MAX_RETRIES)..."
         fi
         log "Evaluation attempt $((attempt + 1))/$MAX_RETRIES"
         
@@ -728,7 +728,7 @@ Be thorough and honest in your evaluation. When in doubt, choose NEEDS_WORK."
         attempt=$((attempt + 1))
         if [[ $attempt -lt $MAX_RETRIES ]]; then
             local sleep_time=$((BACKOFF_BASE * (2 ** attempt)))
-            say "😅 Let me try that evaluation again in $sleep_time seconds..."
+            status "[Cycle $CYCLE] Retrying evaluation in $sleep_time seconds..."
             log "Retrying evaluation in $sleep_time seconds..."
             sleep "$sleep_time"
         fi
@@ -738,26 +738,25 @@ Be thorough and honest in your evaluation. When in doubt, choose NEEDS_WORK."
         log_error "Failed to get evaluation result after $MAX_RETRIES attempts"
         # Default to NEEDS_WORK to avoid getting stuck and to ensure continuous operation
         result="NEEDS_WORK"
-        say "⚠️  Couldn't determine status, assuming more work needed..."
+        say "[Cycle $CYCLE] WARNING: Couldn't determine status, assuming more work needed"
         log "Defaulting to NEEDS_WORK to continue the autonomous loop"
     fi
     
     log "Evaluation result: $result (pending tasks: $pending_tasks)"
     
     if [[ "$result" == "COMPLETE" ]] && [[ $pending_tasks -eq 0 ]]; then
-        say "🎉 Everything looks great! This cycle is complete!"
-        say "🚀 Starting fresh with a new plan..."
+        say "[Cycle $CYCLE] Complete, starting new cycle"
         log "Plan is complete, archiving and starting new cycle"
         archive_plan
         return 0
     elif [[ "$result" == "NEEDS_WORK" ]]; then
-        say "🔧 Found some things to improve! Continuing work..."
+        say "[Cycle $CYCLE] Needs more work, continuing"
         log "Plan needs more work, creating supplementary tasks"
         # The evaluation might have added more tasks, continue execution
         return 1
     else
         # Mixed result - some tasks pending
-        say "📝 Still have some tasks to finish..."
+        say "[Cycle $CYCLE] Tasks pending, continuing"
         log "Some tasks still pending, continuing execution"
         return 1
     fi
@@ -770,10 +769,10 @@ Be thorough and honest in your evaluation. When in doubt, choose NEEDS_WORK."
 # Main execution loop
 main_loop() {
     say ""
-    say "🎬 Starting the autonomous development loop!"
-    say "📂 Project: $PROJECT_DIR"
-    say "🤖 Planning with: $PLANNING_MODEL"
-    say "⚡ Executing with: $EXECUTION_MODEL"
+    say "Starting autonomous loop"
+    say "Project: $PROJECT_DIR"
+    say "Planning: $PLANNING_MODEL"
+    say "Execution: $EXECUTION_MODEL"
     
     log "Starting main execution loop"
     log "Planning model: $PLANNING_MODEL"
@@ -781,10 +780,12 @@ main_loop() {
     log "Project directory: $PROJECT_DIR"
     
     if [[ -n "$USER_HINT" ]]; then
+        say "Hint: $USER_HINT"
         log "User hint: $USER_HINT"
     fi
     
-    say "♾️  Running continuously (press Ctrl+C to stop)"
+    say "Running continuously (Ctrl+C to stop)"
+    say ""
     log "Running indefinitely until stopped by signal"
     
     while true; do
@@ -795,9 +796,7 @@ main_loop() {
         fi
         
         say ""
-        say "════════════════════════════════════════"
-        say "🔄 Cycle $CYCLE"
-        say "════════════════════════════════════════"
+        say "[Cycle $CYCLE]"
         log "Starting cycle $CYCLE"
         log "=========================================="
         
@@ -811,8 +810,7 @@ main_loop() {
         fi
         
         # Execute tasks
-        say ""
-        say "⚡ Starting task execution..."
+        status "[Cycle $CYCLE] Executing tasks..."
         log "Executing tasks from plan"
         
         while true; do
@@ -825,7 +823,7 @@ main_loop() {
             next_task=$(get_next_task)
             
             if [[ -z "$next_task" ]]; then
-                say "✨ All tasks in the plan are complete!"
+                say "[Cycle $CYCLE] All tasks complete"
                 log "No more pending tasks in current plan"
                 break
             fi
@@ -857,8 +855,7 @@ main_loop() {
             if [[ "$pending_count" -eq 0 ]]; then
                 # NEEDS_WORK but no tasks - evaluation didn't add any
                 # Force new cycle to avoid infinite loop
-                say "⚠️  Evaluation says more work needed but no tasks found."
-                say "🔄 Starting fresh with a new planning cycle..."
+                say "[Cycle $CYCLE] WARNING: Evaluation needs more work but no tasks found, starting new cycle"
                 log "NEEDS_WORK returned but no pending tasks - forcing new cycle to avoid loop"
                 archive_plan
                 CYCLE=$((CYCLE + 1))
@@ -874,13 +871,13 @@ main_loop() {
             save_state
         fi
         
-        say "🎊 Cycle $CYCLE complete!"
+        say "[Cycle $CYCLE] Complete"
         log "Cycle $CYCLE complete"
         log ""
     done
     
     say ""
-    say "🛑 Development loop stopped"
+    say "Loop stopped"
     log "Main loop exited"
 }
 
@@ -967,20 +964,13 @@ main() {
     START_TIME=$(date +%s)
     
     echo ""
-    echo "╔════════════════════════════════════════╗"
-    echo "║   🤖 Opencoder v$VERSION                ║"
-    echo "║   Autonomous OpenCode Runner          ║"
-    echo "╚════════════════════════════════════════╝"
+    echo "opencoder v$VERSION - Autonomous OpenCode Runner"
     echo ""
     
     init_directories
     load_config
     setup_signals
     load_state
-    
-    say "════════════════════════════════════════"
-    say "🚀 Opencoder is ready to rock and roll!"
-    say "════════════════════════════════════════"
     
     log "=========================================="
     log "Opencoder started"
@@ -989,9 +979,7 @@ main() {
     main_loop
     
     say ""
-    say "════════════════════════════════════════"
-    say "👋 Opencoder signing off. See you soon!"
-    say "════════════════════════════════════════"
+    say "Opencoder stopped"
     
     log "=========================================="
     log "Opencoder stopped"
