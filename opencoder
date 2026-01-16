@@ -51,6 +51,37 @@ SESSION_ID=""
 SHUTDOWN_REQUESTED=0
 
 # ============================================================================
+# PROVIDER PRESETS
+# ============================================================================
+
+# Set models from provider preset
+set_provider_preset() {
+    local provider="$1"
+    
+    case "$provider" in
+        github-copilot)
+            PLANNING_MODEL="github-copilot/claude-opus-4.5"
+            EXECUTION_MODEL="github-copilot/claude-sonnet-4.5"
+            ;;
+        anthropic)
+            PLANNING_MODEL="anthropic/claude-sonnet-4"
+            EXECUTION_MODEL="anthropic/claude-haiku"
+            ;;
+        openai)
+            PLANNING_MODEL="openai/gpt-4"
+            EXECUTION_MODEL="openai/gpt-4o-mini"
+            ;;
+        *)
+            echo "Error: Unknown provider: $provider" >&2
+            echo "Available providers: github-copilot, anthropic, openai" >&2
+            return 1
+            ;;
+    esac
+    
+    return 0
+}
+
+# ============================================================================
 # UTILITY FUNCTIONS
 # ============================================================================
 
@@ -60,10 +91,11 @@ usage() {
 $SCRIPT_NAME v$VERSION - Autonomous OpenCode Runner
 
 Usage:
+  $SCRIPT_NAME --provider PROVIDER [OPTIONS] [HINT]
   $SCRIPT_NAME -P MODEL -E MODEL [OPTIONS] [HINT]
-  $SCRIPT_NAME [OPTIONS] "build a CLI tool for me"
 
-Required Arguments:
+Required Arguments (choose one):
+  --provider PROVIDER            Use a provider preset (github-copilot, anthropic, openai)
   -P, --planning-model MODEL     Model for planning/evaluation (e.g., anthropic/claude-sonnet-4)
   -E, --execution-model MODEL    Model for task execution (e.g., anthropic/claude-haiku)
 
@@ -74,6 +106,11 @@ Optional Arguments:
   -h, --help                     Show this help message
   HINT                           Optional instruction/hint for what to build (e.g., "build a REST API")
 
+Provider Presets:
+  github-copilot                 Planning: claude-opus-4.5, Execution: claude-sonnet-4.5
+  anthropic                      Planning: claude-sonnet-4, Execution: claude-haiku
+  openai                         Planning: gpt-4, Execution: gpt-4o-mini
+
 Environment Variables:
   OPENCODER_PROJECT_DIR          Default project directory
   OPENCODER_MAX_RETRIES          Max retries per operation (default: 3)
@@ -81,10 +118,14 @@ Environment Variables:
   OPENCODER_LOG_RETENTION        Days to keep old logs (default: 30)
 
 Examples:
+  # Using provider preset (recommended)
+  $SCRIPT_NAME --provider github-copilot
+  $SCRIPT_NAME --provider github-copilot "build a todo app"
+  $SCRIPT_NAME --provider anthropic -c 10 "create a REST API"
+  
+  # Using explicit models
   $SCRIPT_NAME -P anthropic/claude-sonnet-4 -E anthropic/claude-haiku
   $SCRIPT_NAME -P anthropic/claude-sonnet-4 -E anthropic/claude-haiku "build a todo app"
-  $SCRIPT_NAME -P anthropic/claude-sonnet-4 -E anthropic/claude-haiku -p /path/to/project -c 10
-  $SCRIPT_NAME -P anthropic/claude-sonnet-4 -E anthropic/claude-haiku "create a web scraper for news sites"
 
 Directory Structure:
   \$PROJECT_DIR/.opencoder/
@@ -675,6 +716,12 @@ parse_args() {
     
     while [[ $# -gt 0 ]]; do
         case "$1" in
+            --provider)
+                if ! set_provider_preset "$2"; then
+                    exit 1
+                fi
+                shift 2
+                ;;
             -P|--planning-model)
                 PLANNING_MODEL="$2"
                 shift 2
@@ -714,12 +761,12 @@ parse_args() {
     
     # Validate required arguments
     if [[ -z "$PLANNING_MODEL" ]]; then
-        echo "Error: --planning-model (-P) is required" >&2
+        echo "Error: Either --provider or both --planning-model and --execution-model are required" >&2
         exit 1
     fi
     
     if [[ -z "$EXECUTION_MODEL" ]]; then
-        echo "Error: --execution-model (-E) is required" >&2
+        echo "Error: Either --provider or both --planning-model and --execution-model are required" >&2
         exit 1
     fi
     
