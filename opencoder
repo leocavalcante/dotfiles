@@ -845,10 +845,13 @@ main_loop() {
             save_state
         else
             # More work needed - check if there are actually pending tasks
-            local pending_count
-            pending_count=$(grep -c "^- \[ \]" "$CURRENT_PLAN" 2>/dev/null || echo "0")
+            local pending_count=0
             
-            if [[ $pending_count -eq 0 ]]; then
+            if [[ -f "$CURRENT_PLAN" ]]; then
+                pending_count=$(grep -c "^- \[ \]" "$CURRENT_PLAN" 2>/dev/null || echo "0")
+            fi
+            
+            if [[ "$pending_count" -eq 0 ]]; then
                 # NEEDS_WORK but no tasks - evaluation didn't add any
                 # Force new cycle to avoid infinite loop
                 say "⚠️  Evaluation says more work needed but no tasks found."
