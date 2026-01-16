@@ -66,6 +66,7 @@ This is a personal dotfiles repository for **leocavalcante** (Leo Cavalcante) co
 ├── .zshrc                             # Zsh shell configuration (main config file, 600+ lines)
 ├── AGENTS.md                          # This file (AI agent instructions)
 ├── CLAUDE.md                          # Symlink to .claude/CLAUDE.md
+├── opencoder                          # Autonomous OpenCode runner script (817 lines)
 ├── README.md                          # User-facing documentation
 ├── LICENSE                            # MIT License (2022-2025)
 └── themes/
@@ -500,6 +501,215 @@ Full Git LFS support for large binary files configured.
 - **Minimal UI** - Menu bar and tool bar disabled
 - **Line numbers** in programming modes
 - **Allowed commands:** `upcase-region` enabled
+
+## Opencoder - Autonomous OpenCode Runner
+
+**File:** `opencoder` (817 lines)
+
+A POSIX-compliant Bash script that runs OpenCode CLI in a fully autonomous way, creating development plans and executing them continuously without manual intervention. This is a key component of the AI-first development workflow.
+
+### Overview
+
+Opencoder implements an **agentic development loop** with three phases:
+1. **Planning** - Uses a high-capability model to analyze the project and create actionable task plans
+2. **Execution** - Uses a faster model to execute individual tasks from the plan
+3. **Evaluation** - Reviews completed work and decides whether to start a new cycle
+
+### Usage
+
+```bash
+# Using provider presets (recommended)
+opencoder --provider github-copilot
+opencoder --provider github-copilot "build a todo app"
+opencoder --provider anthropic -c 10 "create a REST API"
+
+# Using explicit models
+opencoder -P anthropic/claude-sonnet-4 -E anthropic/claude-haiku
+opencoder -P anthropic/claude-sonnet-4 -E anthropic/claude-haiku "build a todo app"
+```
+
+### Command Line Arguments
+
+| Argument | Description |
+|----------|-------------|
+| `--provider PROVIDER` | Use a provider preset (github-copilot, anthropic, openai) |
+| `-P, --planning-model MODEL` | Model for planning/evaluation phases |
+| `-E, --execution-model MODEL` | Model for task execution |
+| `-p, --project DIR` | Project directory (default: `$OPENCODER_PROJECT_DIR` or `$PWD`) |
+| `-c, --cycle-limit N` | Stop after N cycles (default: unlimited) |
+| `-v, --verbose` | Enable verbose logging |
+| `HINT` | Optional instruction for what to build (positional argument) |
+
+### Provider Presets
+
+| Provider | Planning Model | Execution Model |
+|----------|----------------|-----------------|
+| `github-copilot` | `claude-opus-4.5` | `claude-sonnet-4.5` |
+| `anthropic` | `claude-sonnet-4` | `claude-haiku` |
+| `openai` | `gpt-4` | `gpt-4o-mini` |
+
+### Environment Variables
+
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `OPENCODER_PROJECT_DIR` | `$PWD` | Default project directory |
+| `OPENCODER_MAX_RETRIES` | `3` | Max retries per operation |
+| `OPENCODER_BACKOFF_BASE` | `10` | Base seconds for exponential backoff |
+| `OPENCODER_LOG_RETENTION` | `30` | Days to keep old logs |
+
+### Directory Structure
+
+When running, opencoder creates a `.opencoder/` directory in the project:
+
+```
+$PROJECT_DIR/.opencoder/
+├── state                    # Current execution state (cycle, phase, task index)
+├── current_plan.md          # Active task plan (markdown checklist)
+├── alerts.log               # Critical error alerts
+├── config.env               # Optional configuration overrides
+├── history/                 # Archived completed plans
+│   └── plan_YYYYMMDD_HHMMSS_cycleN.md
+└── logs/
+    ├── main.log             # Main rotating log
+    └── cycles/              # Per-cycle detailed logs
+        └── cycle_001.log
+```
+
+### Plan Format
+
+Plans are saved as markdown checklists at `.opencoder/current_plan.md`:
+
+```markdown
+# Plan: [descriptive title]
+Created: 2026-01-16T10:30:00Z
+Cycle: 1
+
+## Context
+[Brief description of project state and goals]
+
+## Tasks
+- [ ] Task 1: Description
+- [ ] Task 2: Description
+- [x] Task 3: Completed task
+...
+
+## Notes
+[Any additional context]
+```
+
+### Execution Flow
+
+```
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│  Planning   │────▶│  Execution  │────▶│ Evaluation  │
+│   Phase     │     │   Phase     │     │   Phase     │
+└─────────────┘     └─────────────┘     └─────────────┘
+       ▲                                       │
+       │                                       │
+       └───────────────────────────────────────┘
+              (if COMPLETE, start new cycle)
+```
+
+1. **Planning Phase**: Creates `current_plan.md` with 5-10 actionable tasks using the planning model
+2. **Execution Phase**: Iterates through unchecked tasks (`- [ ]`), executing each with the execution model
+3. **Evaluation Phase**: Reviews the plan, responds with `COMPLETE` or `NEEDS_WORK`
+4. **Archive**: Completed plans are moved to `history/` with timestamp
+
+### State Management
+
+The script maintains persistent state in `.opencoder/state`:
+
+```
+CYCLE=1
+PHASE=execution
+TASK_INDEX=3
+SESSION_ID=cycle_1
+PLAN_FILE=current_plan.md
+LAST_UPDATE=2026-01-16T10:30:00Z
+```
+
+This enables:
+- **Resumability** - Restart from where it left off after interruption
+- **Session continuity** - Uses `--continue` flag within the same cycle
+- **Progress tracking** - Know exactly which task is being executed
+
+### Signal Handling
+
+| Signal | Behavior |
+|--------|----------|
+| `SIGTERM`, `SIGINT` | Graceful shutdown: saves state, exits cleanly |
+| `SIGHUP` | Reloads configuration from `config.env` |
+
+### Retry Logic
+
+Operations use exponential backoff on failure:
+- **Max retries:** 3 (configurable via `OPENCODER_MAX_RETRIES`)
+- **Backoff formula:** `BACKOFF_BASE * (2 ^ attempt)` seconds
+- **Failed tasks:** Marked complete to avoid infinite loops, logged to alerts
+
+### Key Functions
+
+| Function | Purpose |
+|----------|---------|
+| `create_plan()` | Generates new plan using planning model |
+| `get_next_task()` | Finds first unchecked task in plan |
+| `execute_task()` | Runs single task with execution model |
+| `mark_task_complete()` | Updates `- [ ]` to `- [x]` in plan |
+| `evaluate_plan()` | Assesses completion, decides next action |
+| `archive_plan()` | Moves completed plan to history |
+| `save_state()` / `load_state()` | Persists/restores execution state |
+
+### Cross-Platform Compatibility
+
+- **Portable sed:** Handles macOS BSD sed vs GNU sed differences via `sed_inplace()` function
+- **POSIX compliance:** Uses `set -euo pipefail` for strict error handling
+- **No bashisms:** Works on both Linux and macOS
+
+### Integration with OpenCode
+
+Opencoder wraps the `opencode run` command:
+```bash
+opencode run --model "$MODEL" --title "Opencoder [Phase] Cycle $N" "$PROMPT"
+```
+
+The `--continue` flag is used to maintain session context within cycles.
+
+### Example Session
+
+```bash
+$ opencoder --provider github-copilot "build a REST API for user management"
+
+Opencoder v1.0.0 - Autonomous OpenCode Runner
+
+[2026-01-16 10:30:00] Initializing opencoder directory structure at: /home/user/myproject
+[2026-01-16 10:30:00] Starting main execution loop
+[2026-01-16 10:30:00] Planning model: github-copilot/claude-opus-4.5
+[2026-01-16 10:30:00] Execution model: github-copilot/claude-sonnet-4.5
+[2026-01-16 10:30:00] User hint: build a REST API for user management
+[2026-01-16 10:30:00] ==========================================
+[2026-01-16 10:30:00] Starting cycle 1
+[2026-01-16 10:30:00] ==========================================
+[2026-01-16 10:30:00] Creating new plan for cycle 1 using model: github-copilot/claude-opus-4.5
+[2026-01-16 10:30:15] Plan created successfully
+[2026-01-16 10:30:15] Executing tasks from plan
+[2026-01-16 10:30:15] Executing task: Set up project structure with Go modules
+...
+```
+
+### Best Practices
+
+1. **Start with a hint** - Provide clear instructions for what you want to build
+2. **Use cycle limits** - For testing, use `-c 1` to run a single cycle
+3. **Monitor logs** - Check `.opencoder/logs/` for detailed execution logs
+4. **Review alerts** - Critical errors are logged to `.opencoder/alerts.log`
+5. **Version control** - The `.opencoder/` directory can be gitignored or committed for reproducibility
+
+### Limitations
+
+- Requires `opencode` CLI to be installed and configured
+- No interactive input during execution (fully autonomous)
+- Tasks that fail after max retries are skipped (marked complete to continue)
+- Evaluation defaults to `COMPLETE` if unable to determine status
 
 ## AI Tool Configurations
 
