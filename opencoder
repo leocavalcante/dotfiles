@@ -137,6 +137,21 @@ log_verbose() {
     fi
 }
 
+# Portable sed in-place editing
+# macOS sed requires -i '' while GNU sed requires -i or -i<suffix>
+sed_inplace() {
+    local file="$1"
+    shift
+    
+    if [[ "$(uname)" == "Darwin" ]]; then
+        # macOS (BSD sed)
+        sed -i '' "$@" "$file"
+    else
+        # Linux/GNU sed
+        sed -i "$@" "$file"
+    fi
+}
+
 # ============================================================================
 # INITIALIZATION
 # ============================================================================
@@ -367,9 +382,8 @@ mark_task_complete() {
     
     log "Marking task at line $line_num as complete"
     
-    # Replace - [ ] with - [x] at the specific line
-    sed -i.bak "${line_num}s/^- \[ \]/- [x]/" "$CURRENT_PLAN"
-    rm -f "${CURRENT_PLAN}.bak"
+    # Replace - [ ] with - [x] at the specific line (portable sed)
+    sed_inplace "$CURRENT_PLAN" "${line_num}s/^- \[ \]/- [x]/"
     
     log_verbose "Task marked complete"
 }
