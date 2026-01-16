@@ -298,6 +298,34 @@ setup_signals() {
 # PLAN MANAGEMENT
 # ============================================================================
 
+# Validate that a plan has actionable tasks
+validate_plan_content() {
+    local plan_file="$1"
+    
+    if [[ ! -f "$plan_file" ]]; then
+        log_verbose "Plan file does not exist: $plan_file"
+        return 1
+    fi
+    
+    # Check if plan is empty
+    if [[ ! -s "$plan_file" ]]; then
+        log_error "Plan file is empty"
+        return 1
+    fi
+    
+    # Check if plan contains at least one unchecked task
+    local task_count
+    task_count=$(grep -c "^- \[ \]" "$plan_file" 2>/dev/null || echo "0")
+    
+    if [[ $task_count -eq 0 ]]; then
+        log_error "Plan contains no actionable tasks (- [ ])"
+        return 1
+    fi
+    
+    log_verbose "Plan validation passed: $task_count tasks found"
+    return 0
+}
+
 # Create a new plan using the planning model
 create_plan() {
     log "Creating new plan for cycle $CYCLE using model: $PLANNING_MODEL"
@@ -318,35 +346,56 @@ USER INSTRUCTION/HINT: $USER_HINT
 Use this hint to guide your planning. Build/implement what the user requested."
     fi
     
-    prompt="Analyze this project and create a development plan.
+    prompt="CRITICAL: You are operating in an AUTONOMOUS CONTINUOUS DEVELOPMENT loop.
+
+This loop MUST NEVER STOP. Your role is to continuously improve this project indefinitely.
+
+STRICT REQUIREMENTS:
+- You MUST create a plan with AT LEAST 5 actionable tasks
+- NEVER ask questions or wait for user input
+- NEVER suggest the project is \"done\" or \"complete\"
+- NEVER provide options or ask \"would you like me to...\"
+- If main features are implemented, focus on: code quality, tests, documentation, refactoring, performance, security, error handling, edge cases, optimization, CI/CD, deployment, monitoring
+- There is ALWAYS something to improve in any project
+
+Your task: Analyze this project and create a concrete development plan.
 Save a markdown checklist to .opencoder/current_plan.md with 5-10 actionable tasks.
 ${hint_section}
 
-The plan should follow this format:
+The plan MUST follow this exact format:
 # Plan: [descriptive title]
 Created: $(date -u +"%Y-%m-%dT%H:%M:%SZ")
 Cycle: $CYCLE
 
 ## Context
-[Brief description of project state and goals]
+[Brief description of project state and current focus]
 
 ## Tasks
-- [ ] Task 1: Description
-- [ ] Task 2: Description
-...
+- [ ] Task 1: Specific, actionable description
+- [ ] Task 2: Specific, actionable description
+- [ ] Task 3: Specific, actionable description
+- [ ] Task 4: Specific, actionable description
+- [ ] Task 5: Specific, actionable description
+[Add more tasks as needed, minimum 5]
 
 ## Notes
-[Any additional context]
+[Any additional context or dependencies]
 
-Consider:
-- Code quality improvements
-- Bug fixes and error handling
-- Documentation gaps
-- Test coverage
-- Refactoring opportunities
-- Technical debt
+Areas to consider for continuous improvement:
+- Code quality and best practices
+- Comprehensive error handling
+- Edge cases and input validation
+- Unit and integration tests
+- Documentation (code comments, README, API docs)
+- Performance optimization
+- Security hardening
+- Refactoring technical debt
+- Logging and monitoring
+- CI/CD pipeline improvements
+- Deployment and infrastructure
+- Accessibility and usability
 
-After creating the plan, respond with: PLAN_CREATED"
+After creating the plan file, respond with: PLAN_CREATED"
 
     local attempt=0
     local success=0
@@ -356,9 +405,15 @@ After creating the plan, respond with: PLAN_CREATED"
         
         if opencode run --model "$PLANNING_MODEL" --title "Opencoder Planning Cycle $CYCLE" "$prompt"; then
             if [[ -f "$CURRENT_PLAN" ]]; then
-                log "Plan created successfully at $CURRENT_PLAN"
-                success=1
-                break
+                # Validate plan has actionable tasks
+                if validate_plan_content "$CURRENT_PLAN"; then
+                    log "Plan created successfully at $CURRENT_PLAN"
+                    success=1
+                    break
+                else
+                    log_error "Plan file created but validation failed (no tasks found)"
+                    rm -f "$CURRENT_PLAN"
+                fi
             else
                 log_error "opencode succeeded but plan file not created at $CURRENT_PLAN"
             fi
@@ -550,20 +605,30 @@ evaluate_plan() {
     pending_tasks=$(grep -c "^- \[ \]" "$CURRENT_PLAN" 2>/dev/null || echo "0")
     
     local prompt
-    prompt="Review the completed plan at .opencoder/current_plan.md
+    prompt="CRITICAL: You are operating in an AUTONOMOUS CONTINUOUS DEVELOPMENT loop.
 
-Determine if:
-1. All tasks are genuinely complete and verified
-2. Any tasks need follow-up or additional work
-3. The project is ready for a new planning cycle
+Review the completed plan at .opencoder/current_plan.md
 
-Analyze the actual changes made and their quality.
+Your role is to determine if this cycle is truly complete OR if more work is needed.
+
+IMPORTANT GUIDELINES:
+- Be STRICT in your evaluation - only return COMPLETE if ALL tasks are genuinely done AND verified
+- Check the actual changes made in the codebase, not just the checkmarks
+- If ANY task seems incomplete, rushed, or needs follow-up, return NEEDS_WORK
+- If quality could be improved, return NEEDS_WORK
+- Even if all tasks are done, consider if there are immediate follow-ups needed
+
+Evaluate:
+1. Are all tasks genuinely complete with high quality?
+2. Do any tasks need follow-up, refinement, or additional work?
+3. Are there immediate issues or gaps that arose during this cycle?
+4. Is the code tested, documented, and production-ready?
 
 Respond with ONLY one of these:
-- COMPLETE: All tasks done, ready for new cycle
-- NEEDS_WORK: Some tasks need more work or follow-up
+- COMPLETE: All tasks truly done, high quality, ready for new planning cycle
+- NEEDS_WORK: Tasks incomplete, quality issues, or follow-up needed
 
-Be thorough in your evaluation."
+Be thorough and honest in your evaluation. When in doubt, choose NEEDS_WORK."
 
     local attempt=0
     local result=""
@@ -592,8 +657,9 @@ Be thorough in your evaluation."
     
     if [[ -z "$result" ]]; then
         log_error "Failed to get evaluation result after $MAX_RETRIES attempts"
-        # Default to COMPLETE to avoid getting stuck
-        result="COMPLETE"
+        # Default to NEEDS_WORK to avoid getting stuck and to ensure continuous operation
+        result="NEEDS_WORK"
+        log "Defaulting to NEEDS_WORK to continue the autonomous loop"
     fi
     
     log "Evaluation result: $result (pending tasks: $pending_tasks)"
