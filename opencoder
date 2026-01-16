@@ -589,10 +589,21 @@ execute_task() {
     save_state
     
     local prompt
+    local hint_context=""
+    
+    # Add user hint as context if provided
+    if [[ -n "$USER_HINT" ]]; then
+        hint_context="
+
+ADDITIONAL CONTEXT FROM USER: $USER_HINT
+
+Keep this context in mind while executing the task."
+    fi
+    
     prompt="Execute this task from the development plan:
 
 TASK: $task_desc
-
+${hint_context}
 Instructions:
 - Make necessary code changes
 - Follow project conventions and best practices
