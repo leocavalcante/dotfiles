@@ -26,7 +26,6 @@ EXECUTION_MODEL=""
 
 # Optional configuration
 PROJECT_DIR="${OPENCODER_PROJECT_DIR:-$PWD}"
-CYCLE_LIMIT=0  # 0 = unlimited
 VERBOSE=0
 USER_HINT=""  # Optional hint/instruction for planning
 
@@ -479,7 +478,6 @@ Required Arguments (choose one):
 
 Optional Arguments:
   -p, --project DIR              Project directory (default: \$OPENCODER_PROJECT_DIR or \$PWD)
-  -c, --cycle-limit N            Stop after N cycles (default: unlimited)
   -v, --verbose                  Enable verbose logging
   -h, --help                     Show this help message
   HINT                           Optional instruction/hint for what to build (e.g., "build a REST API")
@@ -500,7 +498,7 @@ Examples:
   # Using provider preset (recommended)
   $SCRIPT_NAME --provider github
   $SCRIPT_NAME --provider github "build a todo app"
-  $SCRIPT_NAME --provider anthropic -c 10 "create a REST API"
+  $SCRIPT_NAME --provider anthropic "create a REST API"
   $SCRIPT_NAME --provider opencode "implement a user authentication system"
   
   # Using explicit models
@@ -1188,13 +1186,8 @@ main_loop() {
         log "User hint: $USER_HINT"
     fi
     
-    if [[ $CYCLE_LIMIT -gt 0 ]]; then
-        say "🎯 Will run for $CYCLE_LIMIT cycle(s)"
-        log "Cycle limit: $CYCLE_LIMIT"
-    else
-        say "♾️  Running continuously until stopped"
-        log "Cycle limit: unlimited"
-    fi
+    say "♾️  Running continuously (press Ctrl+C to stop)"
+    log "Running indefinitely until stopped by signal"
     
     # Initial UI update in TUI mode
     if [[ $TUI_MODE -eq 1 ]]; then
@@ -1206,14 +1199,6 @@ main_loop() {
         # Check shutdown flag
         if [[ $SHUTDOWN_REQUESTED -eq 1 ]]; then
             log "Shutdown requested, exiting main loop"
-            break
-        fi
-        
-        # Check cycle limit (check if we've completed enough cycles)
-        if [[ $CYCLE_LIMIT -gt 0 ]] && [[ $CYCLE -gt $CYCLE_LIMIT ]]; then
-            say ""
-            say "🏁 Reached cycle limit ($CYCLE_LIMIT)! All done for now."
-            log "Cycle limit reached ($CYCLE_LIMIT), exiting"
             break
         fi
         
@@ -1361,10 +1346,6 @@ parse_args() {
                 PROJECT_DIR="$2"
                 shift 2
                 ;;
-            -c|--cycle-limit)
-                CYCLE_LIMIT="$2"
-                shift 2
-                ;;
             -v|--verbose)
                 VERBOSE=1
                 shift
@@ -1394,12 +1375,6 @@ parse_args() {
     
     if [[ -z "$EXECUTION_MODEL" ]]; then
         echo "Error: Either --provider or both --planning-model and --execution-model are required" >&2
-        exit 1
-    fi
-    
-    # Validate cycle limit is a non-negative integer
-    if [[ ! "$CYCLE_LIMIT" =~ ^[0-9]+$ ]]; then
-        echo "Error: --cycle-limit must be a non-negative integer (got: '$CYCLE_LIMIT')" >&2
         exit 1
     fi
     

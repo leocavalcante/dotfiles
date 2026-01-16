@@ -521,7 +521,7 @@ Opencoder implements an **agentic development loop** with three phases:
 # Using provider presets (recommended)
 opencoder --provider github-copilot
 opencoder --provider github-copilot "build a todo app"
-opencoder --provider anthropic -c 10 "create a REST API"
+opencoder --provider anthropic "create a REST API"
 
 # Using explicit models
 opencoder -P anthropic/claude-sonnet-4 -E anthropic/claude-haiku
@@ -536,7 +536,6 @@ opencoder -P anthropic/claude-sonnet-4 -E anthropic/claude-haiku "build a todo a
 | `-P, --planning-model MODEL` | Model for planning/evaluation phases |
 | `-E, --execution-model MODEL` | Model for task execution |
 | `-p, --project DIR` | Project directory (default: `$OPENCODER_PROJECT_DIR` or `$PWD`) |
-| `-c, --cycle-limit N` | Stop after N cycles (default: unlimited) |
 | `-v, --verbose` | Enable verbose logging |
 | `HINT` | Optional instruction for what to build (positional argument) |
 
