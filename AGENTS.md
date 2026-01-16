@@ -504,9 +504,9 @@ Full Git LFS support for large binary files configured.
 
 ## Opencoder - Autonomous OpenCode Runner
 
-**File:** `opencoder` (817 lines)
+**File:** `opencoder` (900+ lines)
 
-A POSIX-compliant Bash script that runs OpenCode CLI in a fully autonomous way, creating development plans and executing them continuously without manual intervention. This is a key component of the AI-first development workflow.
+A POSIX-compliant Bash script that runs OpenCode CLI in a fully autonomous way, creating development plans and executing them continuously without manual intervention. Features a friendly, verbose interface with emojis and human-like messages that make it feel like a real developer working on your project. This is a key component of the AI-first development workflow.
 
 ### Overview
 
@@ -710,6 +710,60 @@ Opencoder v1.0.0 - Autonomous OpenCode Runner
 - No interactive input during execution (fully autonomous)
 - Tasks that fail after max retries are skipped (marked complete to continue)
 - Evaluation defaults to `COMPLETE` if unable to determine status
+
+### Output Personality & User Experience
+
+Opencoder features a **friendly, verbose interface** with emojis and human-like messages:
+
+**Dual Logging System:**
+- **Console Output** (`say()` function): Clean, emoji-rich messages for human readability
+- **File Logging** (`log()` function): Timestamped technical logs in `.opencoder/logs/`
+
+**Emoji Communication:**
+- 🚀 Starting up, launching new cycles
+- 📋 Planning phase with task counts
+- 💪 Working on tasks (shows "task X of Y")
+- ✅🎉 Completion and success celebrations
+- ⚠️❌ Friendly error messages with warnings
+- 🔄😅 Retry attempts with encouragement
+- 🔍🧐 Evaluation and quality checks
+- 👋💾 Graceful shutdown with state saving
+
+**Progress Tracking:**
+- Shows current task number (e.g., "Working on task 3 of 7")
+- Displays full task description before execution
+- Real-time status updates for each phase
+- Clear cycle boundaries with decorative separators
+
+**Example Output:**
+```
+╔════════════════════════════════════════╗
+║   🤖 Opencoder v1.0.0                  ║
+║   Autonomous OpenCode Runner          ║
+╚════════════════════════════════════════╝
+
+🚀 Initializing opencoder workspace...
+✅ Workspace ready!
+🎬 Starting the autonomous development loop!
+📂 Project: /path/to/project
+♾️  Running continuously until stopped
+
+════════════════════════════════════════
+🔄 Cycle 1
+════════════════════════════════════════
+
+📋 Time to plan! Let me analyze the project...
+🤔 Thinking about what needs to be done...
+📝 Found 7 tasks in the plan
+✅ Plan ready!
+
+💪 Working on task 1 of 7
+📌 Task: Implement user authentication
+🔨 Let me work on this...
+🎉 Task done!
+```
+
+This design makes opencoder feel like a **real developer working alongside you** rather than a silent automation tool.
 
 ## AI Tool Configurations
 
