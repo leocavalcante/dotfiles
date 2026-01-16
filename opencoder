@@ -844,8 +844,26 @@ main_loop() {
             SESSION_ID=""
             save_state
         else
-            # More work needed, continue with current plan
-            PHASE="execution"
+            # More work needed - check if there are actually pending tasks
+            local pending_count
+            pending_count=$(grep -c "^- \[ \]" "$CURRENT_PLAN" 2>/dev/null || echo "0")
+            
+            if [[ $pending_count -eq 0 ]]; then
+                # NEEDS_WORK but no tasks - evaluation didn't add any
+                # Force new cycle to avoid infinite loop
+                say "⚠️  Evaluation says more work needed but no tasks found."
+                say "🔄 Starting fresh with a new planning cycle..."
+                log "NEEDS_WORK returned but no pending tasks - forcing new cycle to avoid loop"
+                archive_plan
+                CYCLE=$((CYCLE + 1))
+                PHASE="planning"
+                TASK_INDEX=0
+                CURRENT_TASK_NUM=0
+                SESSION_ID=""
+            else
+                # There are actual tasks to execute
+                PHASE="execution"
+            fi
             save_state
         fi
         
