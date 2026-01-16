@@ -28,6 +28,7 @@ EXECUTION_MODEL=""
 PROJECT_DIR="${OPENCODER_PROJECT_DIR:-$PWD}"
 CYCLE_LIMIT=0  # 0 = unlimited
 VERBOSE=0
+USER_HINT=""  # Optional hint/instruction for planning
 
 # Internal configuration
 MAX_RETRIES="${OPENCODER_MAX_RETRIES:-3}"
@@ -59,7 +60,8 @@ usage() {
 $SCRIPT_NAME v$VERSION - Autonomous OpenCode Runner
 
 Usage:
-  $SCRIPT_NAME -P MODEL -E MODEL [OPTIONS]
+  $SCRIPT_NAME -P MODEL -E MODEL [OPTIONS] [HINT]
+  $SCRIPT_NAME [OPTIONS] "build a CLI tool for me"
 
 Required Arguments:
   -P, --planning-model MODEL     Model for planning/evaluation (e.g., anthropic/claude-sonnet-4)
@@ -70,6 +72,7 @@ Optional Arguments:
   -c, --cycle-limit N            Stop after N cycles (default: unlimited)
   -v, --verbose                  Enable verbose logging
   -h, --help                     Show this help message
+  HINT                           Optional instruction/hint for what to build (e.g., "build a REST API")
 
 Environment Variables:
   OPENCODER_PROJECT_DIR          Default project directory
@@ -79,7 +82,9 @@ Environment Variables:
 
 Examples:
   $SCRIPT_NAME -P anthropic/claude-sonnet-4 -E anthropic/claude-haiku
+  $SCRIPT_NAME -P anthropic/claude-sonnet-4 -E anthropic/claude-haiku "build a todo app"
   $SCRIPT_NAME -P anthropic/claude-sonnet-4 -E anthropic/claude-haiku -p /path/to/project -c 10
+  $SCRIPT_NAME -P anthropic/claude-sonnet-4 -E anthropic/claude-haiku "create a web scraper for news sites"
 
 Directory Structure:
   \$PROJECT_DIR/.opencoder/
@@ -246,8 +251,20 @@ create_plan() {
     save_state
     
     local prompt
+    local hint_section=""
+    
+    # Add user hint to the prompt if provided
+    if [[ -n "$USER_HINT" ]]; then
+        hint_section="
+
+USER INSTRUCTION/HINT: $USER_HINT
+
+Use this hint to guide your planning. Build/implement what the user requested."
+    fi
+    
     prompt="Analyze this project and create a development plan.
 Save a markdown checklist to .opencoder/current_plan.md with 5-10 actionable tasks.
+${hint_section}
 
 The plan should follow this format:
 # Plan: [descriptive title]
@@ -552,6 +569,10 @@ main_loop() {
     log "Execution model: $EXECUTION_MODEL"
     log "Project directory: $PROJECT_DIR"
     
+    if [[ -n "$USER_HINT" ]]; then
+        log "User hint: $USER_HINT"
+    fi
+    
     if [[ $CYCLE_LIMIT -gt 0 ]]; then
         log "Cycle limit: $CYCLE_LIMIT"
     else
@@ -664,10 +685,15 @@ parse_args() {
                 usage
                 exit 0
                 ;;
-            *)
+            -*)
                 echo "Error: Unknown option: $1" >&2
                 echo "Use -h or --help for usage information" >&2
                 exit 1
+                ;;
+            *)
+                # Treat as hint/instruction if it doesn't start with -
+                USER_HINT="$1"
+                shift
                 ;;
         esac
     done
