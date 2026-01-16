@@ -51,6 +51,51 @@ SESSION_ID=""
 SHUTDOWN_REQUESTED=0
 TOTAL_TASKS=0
 CURRENT_TASK_NUM=0
+CURRENT_TASK_DESC=""
+
+# ============================================================================
+# TUI CONFIGURATION
+# ============================================================================
+
+# TUI state
+TUI_MODE=0  # 0 = line-by-line, 1 = full TUI
+START_TIME=0
+
+# Color palette (GitHub Dark Default theme)
+C_RESET="\033[0m"
+C_BOLD="\033[1m"
+
+# ANSI 256-color approximations for GitHub Dark palette
+C_BG="\033[48;5;234m"        # #0d1117 (gray 234)
+C_FG="\033[38;5;254m"        # #e6edf3 (white 254)
+C_MUTED="\033[38;5;246m"     # #8b949e (gray 246)
+C_BLUE="\033[38;5;75m"       # #58a6ff (blue)
+C_GREEN="\033[38;5;77m"      # #3fb950 (green)
+C_PURPLE="\033[38;5;141m"    # #bc8cff (purple)
+C_ORANGE="\033[38;5;215m"    # #ffa657 (orange)
+C_RED="\033[38;5;210m"       # #ff7b72 (red)
+C_CYAN="\033[38;5;87m"       # #39c5cf (cyan)
+C_YELLOW="\033[38;5;221m"    # #d29922 (yellow)
+
+# Box drawing characters
+BOX_TL="╔"  # Top left
+BOX_TR="╗"  # Top right
+BOX_BL="╚"  # Bottom left
+BOX_BR="╝"  # Bottom right
+BOX_H="═"   # Horizontal
+BOX_V="║"   # Vertical
+BOX_VL="╠"  # Vertical + right
+BOX_VR="╣"  # Vertical + left
+BOX_HT="╦"  # Horizontal + down
+BOX_HB="╩"  # Horizontal + up
+
+# TUI layout (set dynamically based on terminal size)
+HEADER_LINES=4
+STATUS_LINES=4
+FOOTER_LINES=2
+OUTPUT_START_LINE=0
+OUTPUT_END_LINE=0
+TIMER_PID=0
 
 # ============================================================================
 # PROVIDER PRESETS
@@ -89,6 +134,333 @@ set_provider_preset() {
 
 # ============================================================================
 # UTILITY FUNCTIONS
+# ============================================================================
+
+# Detect if running in a TTY (interactive terminal)
+is_tty() {
+    [[ -t 1 ]] && [[ -t 2 ]]
+}
+
+# Detect if terminal supports colors
+supports_colors() {
+    [[ -n "$TERM" ]] && [[ "$TERM" != "dumb" ]]
+}
+
+# ============================================================================
+# TUI CORE FUNCTIONS
+# ============================================================================
+
+# Calculate TUI layout based on terminal size
+ui_calculate_layout() {
+    OUTPUT_START_LINE=$((HEADER_LINES + STATUS_LINES + 1))
+    OUTPUT_END_LINE=$((LINES - FOOTER_LINES - 1))
+}
+
+# Initialize TUI mode
+ui_init() {
+    # Only enable TUI if running in an interactive terminal
+    if ! is_tty; then
+        TUI_MODE=0
+        return 0
+    fi
+    
+    TUI_MODE=1
+    START_TIME=$(date +%s)
+    
+    # Get terminal size
+    get_term_size
+    ui_calculate_layout
+    
+    # Enter alternate screen buffer
+    printf '\033[?1049h'
+    
+    # Hide cursor
+    printf '\033[?25l'
+    
+    # Clear screen
+    printf '\033[2J\033[H'
+    
+    # Disable line wrapping
+    printf '\033[?7l'
+    
+    # Draw initial UI
+    ui_draw_frame
+    
+    # Start background timer for footer updates
+    ui_start_timer
+}
+
+# Clean up TUI and restore terminal
+ui_cleanup() {
+    if [[ $TUI_MODE -eq 0 ]]; then
+        return 0
+    fi
+    
+    # Stop background timer
+    ui_stop_timer
+    
+    # Show cursor
+    printf '\033[?25h'
+    
+    # Enable line wrapping
+    printf '\033[?7h'
+    
+    # Reset scroll region
+    printf '\033[;r'
+    
+    # Leave alternate screen buffer
+    printf '\033[?1049l'
+    
+    TUI_MODE=0
+}
+
+# Redraw entire UI (called on window resize)
+ui_redraw() {
+    if [[ $TUI_MODE -eq 0 ]]; then
+        return 0
+    fi
+    
+    ui_calculate_layout
+    printf '\033[2J\033[H'
+    ui_draw_frame
+}
+
+# Draw a horizontal line
+ui_draw_hline() {
+    local left="$1"
+    local right="$2"
+    local width=$((COLUMNS - 2))
+    
+    printf "%s%s" "$left" "$BOX_H"
+    printf '%.0s'"$BOX_H" $(seq 2 $width)
+    printf "%s\n" "$right"
+}
+
+# Center text within a given width
+ui_center_text() {
+    local text="$1"
+    local width="$2"
+    local text_len=${#text}
+    local padding=$(( (width - text_len) / 2 ))
+    
+    printf '%*s%s' $padding '' "$text"
+}
+
+# Truncate text to fit width, adding ellipsis if needed
+ui_truncate() {
+    local text="$1"
+    local max_width="$2"
+    
+    if [[ ${#text} -le $max_width ]]; then
+        echo "$text"
+    else
+        echo "${text:0:$((max_width-3))}..."
+    fi
+}
+
+# Format elapsed time as mm:ss
+ui_format_time() {
+    local seconds=$1
+    local minutes=$((seconds / 60))
+    local secs=$((seconds % 60))
+    printf "%02d:%02d" $minutes $secs
+}
+
+# Draw the complete UI frame
+ui_draw_frame() {
+    ui_draw_header
+    ui_draw_status
+    ui_draw_output_box
+    ui_draw_footer
+}
+
+# Draw header section (lines 1-4)
+ui_draw_header() {
+    local title="🤖 Opencoder v$VERSION"
+    local cycle_info="Cycle: $CYCLE"
+    local phase_info="Phase: $PHASE"
+    
+    # Move to top
+    printf '\033[H'
+    
+    # Top border
+    ui_draw_hline "$BOX_TL" "$BOX_TR"
+    
+    # Title line
+    printf "${BOX_V}${C_BOLD}${C_BLUE} %-30s${C_RESET}" "$title"
+    printf "${C_MUTED}%*s${C_RESET}" $((COLUMNS - 35)) "$cycle_info    $phase_info "
+    printf "${BOX_V}\n"
+    
+    # Separator
+    ui_draw_hline "$BOX_VL" "$BOX_VR"
+}
+
+# Draw status section (lines 4-7)
+ui_draw_status() {
+    local project_display="📂 $(ui_truncate "$PROJECT_DIR" $((COLUMNS - 10)))"
+    local planning_display="🤖 Planning:  $(ui_truncate "$PLANNING_MODEL" $((COLUMNS - 20)))"
+    local exec_display="⚡ Executing: $(ui_truncate "$EXECUTION_MODEL" $((COLUMNS - 20)))"
+    
+    # Project line
+    printf "${BOX_V} ${C_FG}%-*s${C_RESET}${BOX_V}\n" $((COLUMNS - 4)) "$project_display"
+    
+    # Models lines
+    printf "${BOX_V} ${C_PURPLE}%-*s${C_RESET}${BOX_V}\n" $((COLUMNS - 4)) "$planning_display"
+    printf "${BOX_V} ${C_GREEN}%-*s${C_RESET}${BOX_V}\n" $((COLUMNS - 4)) "$exec_display"
+    
+    # Separator
+    ui_draw_hline "$BOX_VL" "$BOX_VR"
+}
+
+# Draw output box header
+ui_draw_output_box() {
+    local title="opencode output"
+    
+    # Progress line (will be updated dynamically)
+    ui_update_progress
+    
+    # Output section title
+    local centered=$(ui_center_text "$title" $((COLUMNS - 4)))
+    printf "${BOX_V} ${C_MUTED}%-*s${C_RESET}${BOX_V}\n" $((COLUMNS - 4)) "$centered"
+    
+    # Set scroll region for output area
+    printf '\033[%d;%dr' "$((OUTPUT_START_LINE + 1))" "$OUTPUT_END_LINE"
+    
+    # Move cursor to scroll area
+    printf '\033[%dH' "$((OUTPUT_START_LINE + 1))"
+}
+
+# Draw footer section (last 2 lines)
+ui_draw_footer() {
+    local elapsed=$(($(date +%s) - START_TIME))
+    local elapsed_str=$(ui_format_time $elapsed)
+    local log_path=".opencoder/logs/cycle_$(printf "%03d" "$CYCLE").log"
+    
+    # Move to footer position
+    printf '\033[%dH' $((LINES - FOOTER_LINES))
+    
+    # Reset scroll region for footer
+    printf '\033[;r'
+    
+    # Separator
+    ui_draw_hline "$BOX_VL" "$BOX_VR"
+    
+    # Footer content
+    printf "${BOX_V} ${C_CYAN}⏱️  Elapsed: %s${C_RESET}" "$elapsed_str"
+    printf "    ${C_MUTED}📝 Logs: %s${C_RESET}" "$log_path"
+    printf "%*s${BOX_V}\n" $((COLUMNS - 55 - ${#elapsed_str} - ${#log_path})) ""
+    
+    # Bottom border
+    ui_draw_hline "$BOX_BL" "$BOX_BR"
+    
+    # Restore scroll region
+    printf '\033[%d;%dr' "$((OUTPUT_START_LINE + 1))" "$OUTPUT_END_LINE"
+}
+
+# Update progress bar and current task (called frequently during execution)
+ui_update_progress() {
+    if [[ $TUI_MODE -eq 0 ]]; then
+        return 0
+    fi
+    
+    local bar_width=40
+    local filled=0
+    local empty=$bar_width
+    
+    if [[ $TOTAL_TASKS -gt 0 ]]; then
+        filled=$((CURRENT_TASK_NUM * bar_width / TOTAL_TASKS))
+        empty=$((bar_width - filled))
+    fi
+    
+    # Save cursor position
+    printf '\033[s'
+    
+    # Reset scroll region to update fixed area
+    printf '\033[;r'
+    
+    # Move to progress line (right after status separator)
+    printf '\033[%d;1H' $((HEADER_LINES + STATUS_LINES + 1))
+    
+    # Draw progress bar
+    printf "${BOX_V} ${C_FG}Progress: ${C_GREEN}["
+    printf '█%.0s' $(seq 1 $filled) 2>/dev/null || true
+    printf "${C_MUTED}"
+    printf '░%.0s' $(seq 1 $empty) 2>/dev/null || true
+    printf "${C_RESET}${C_FG}] Task %d/%d" "$CURRENT_TASK_NUM" "$TOTAL_TASKS"
+    printf "%*s${BOX_V}\n" $((COLUMNS - 65)) ""
+    
+    # Current task line
+    local task_display="📌 Current: No active task"
+    if [[ -n "${CURRENT_TASK_DESC:-}" ]]; then
+        task_display="📌 Current: $(ui_truncate "$CURRENT_TASK_DESC" $((COLUMNS - 15)))"
+    fi
+    printf "${BOX_V} ${C_YELLOW}%-*s${C_RESET}${BOX_V}\n" $((COLUMNS - 4)) "$task_display"
+    
+    # Restore scroll region
+    printf '\033[%d;%dr' "$((OUTPUT_START_LINE + 1))" "$OUTPUT_END_LINE"
+    
+    # Restore cursor position
+    printf '\033[u'
+}
+
+# Update footer (primarily for elapsed time)
+ui_update_footer() {
+    if [[ $TUI_MODE -eq 0 ]]; then
+        return 0
+    fi
+    
+    local elapsed=$(($(date +%s) - START_TIME))
+    local elapsed_str=$(ui_format_time $elapsed)
+    local log_path=".opencoder/logs/cycle_$(printf "%03d" "$CYCLE").log"
+    
+    # Save cursor position
+    printf '\033[s'
+    
+    # Reset scroll region
+    printf '\033[;r'
+    
+    # Move to footer line
+    printf '\033[%d;1H' $((LINES - 1))
+    
+    # Footer content
+    printf "${BOX_V} ${C_CYAN}⏱️  Elapsed: %s${C_RESET}" "$elapsed_str"
+    printf "    ${C_MUTED}📝 Logs: %s${C_RESET}" "$log_path"
+    printf "%*s${BOX_V}" $((COLUMNS - 55 - ${#elapsed_str} - ${#log_path})) ""
+    
+    # Restore scroll region
+    printf '\033[%d;%dr' "$((OUTPUT_START_LINE + 1))" "$OUTPUT_END_LINE"
+    
+    # Restore cursor position
+    printf '\033[u'
+}
+
+# Start background timer for footer updates
+ui_start_timer() {
+    if [[ $TUI_MODE -eq 0 ]]; then
+        return 0
+    fi
+    
+    # Background process that updates footer every second
+    (
+        while true; do
+            sleep 1
+            ui_update_footer
+        done
+    ) &
+    
+    TIMER_PID=$!
+}
+
+# Stop background timer
+ui_stop_timer() {
+    if [[ $TIMER_PID -gt 0 ]]; then
+        kill $TIMER_PID 2>/dev/null || true
+        TIMER_PID=0
+    fi
+}
+
+# ============================================================================
+# ORIGINAL UTILITY FUNCTIONS
 # ============================================================================
 
 # Print usage information
@@ -171,8 +543,18 @@ log() {
 # Say something to the user (console output with personality)
 say() {
     local msg="$1"
-    echo "$msg"
+    
+    # Always log to file
     log "$msg"
+    
+    # If TUI mode is active, output goes to scroll region
+    # The scroll region will handle the display
+    # Otherwise, print normally
+    if [[ $TUI_MODE -eq 0 ]]; then
+        echo "$msg"
+    fi
+    # In TUI mode, output is already in the scroll region
+    # No need to print here
 }
 
 # Log error with emoji
@@ -297,28 +679,61 @@ load_state() {
 
 # Handle shutdown signals gracefully
 handle_shutdown() {
-    say ""
-    say "👋 Shutdown signal received! Saving my progress..."
+    if [[ $TUI_MODE -eq 1 ]]; then
+        # In TUI mode, show message in scroll area
+        printf '\n'
+        echo "👋 Shutdown signal received! Saving progress..."
+    else
+        say ""
+        say "👋 Shutdown signal received! Saving my progress..."
+    fi
+    
     log "Shutdown signal received, saving state and exiting gracefully..."
     SHUTDOWN_REQUESTED=1
     save_state
-    say "💾 State saved. See you next time!"
+    
+    if [[ $TUI_MODE -eq 1 ]]; then
+        echo "💾 State saved. See you next time!"
+        sleep 1  # Give user time to see the message
+        ui_cleanup
+    else
+        say "💾 State saved. See you next time!"
+    fi
+    
     log "State saved. Exiting."
     exit 0
 }
 
 # Handle SIGHUP to reload configuration
 handle_reload() {
-    say "🔄 Configuration reload requested..."
+    if [[ $TUI_MODE -eq 1 ]]; then
+        printf '\n'
+        echo "🔄 Configuration reload requested..."
+    else
+        say "🔄 Configuration reload requested..."
+    fi
+    
     log "SIGHUP received, reloading configuration..."
     load_config
-    say "✅ Configuration reloaded!"
+    
+    if [[ $TUI_MODE -eq 1 ]]; then
+        echo "✅ Configuration reloaded!"
+    else
+        say "✅ Configuration reloaded!"
+    fi
+}
+
+# Handle window resize
+handle_resize() {
+    get_term_size
+    ui_redraw
 }
 
 # Setup signal handlers
 setup_signals() {
     trap handle_shutdown SIGTERM SIGINT
     trap handle_reload SIGHUP
+    trap handle_resize WINCH
 }
 
 # ============================================================================
@@ -558,6 +973,10 @@ execute_task() {
     task_desc=$(echo "$task_line" | cut -d: -f2-)
     
     CURRENT_TASK_NUM=$((CURRENT_TASK_NUM + 1))
+    CURRENT_TASK_DESC="$task_desc"
+    
+    # Update UI progress
+    ui_update_progress
     
     say ""
     say "💪 Working on task $CURRENT_TASK_NUM of $TOTAL_TASKS"
@@ -777,6 +1196,12 @@ main_loop() {
         log "Cycle limit: unlimited"
     fi
     
+    # Initial UI update in TUI mode
+    if [[ $TUI_MODE -eq 1 ]]; then
+        ui_draw_header
+        ui_update_progress
+    fi
+    
     while true; do
         # Check shutdown flag
         if [[ $SHUTDOWN_REQUESTED -eq 1 ]]; then
@@ -800,6 +1225,11 @@ main_loop() {
         log "Starting cycle $CYCLE"
         log "=========================================="
         
+        # Update header in TUI mode
+        if [[ $TUI_MODE -eq 1 ]]; then
+            ui_draw_header
+        fi
+        
         # Create plan if none exists
         if [[ ! -f "$CURRENT_PLAN" ]] || [[ "$PHASE" == "planning" ]]; then
             if ! create_plan; then
@@ -807,12 +1237,19 @@ main_loop() {
                 sleep "$((BACKOFF_BASE * 2))"
                 continue
             fi
+            
+            # Update UI after planning
+            if [[ $TUI_MODE -eq 1 ]]; then
+                ui_draw_header
+                ui_update_progress
+            fi
         fi
         
         # Execute tasks
         say ""
         say "⚡ Starting task execution..."
         log "Executing tasks from plan"
+        
         while true; do
             # Check shutdown flag
             if [[ $SHUTDOWN_REQUESTED -eq 1 ]]; then
@@ -841,8 +1278,15 @@ main_loop() {
             PHASE="planning"
             TASK_INDEX=0
             CURRENT_TASK_NUM=0
+            CURRENT_TASK_DESC=""
             SESSION_ID=""
             save_state
+            
+            # Update UI
+            if [[ $TUI_MODE -eq 1 ]]; then
+                ui_draw_header
+                ui_update_progress
+            fi
         else
             # More work needed - check if there are actually pending tasks
             local pending_count=0
@@ -862,12 +1306,18 @@ main_loop() {
                 PHASE="planning"
                 TASK_INDEX=0
                 CURRENT_TASK_NUM=0
+                CURRENT_TASK_DESC=""
                 SESSION_ID=""
             else
                 # There are actual tasks to execute
                 PHASE="execution"
             fi
             save_state
+            
+            # Update UI
+            if [[ $TUI_MODE -eq 1 ]]; then
+                ui_draw_header
+            fi
         fi
         
         say "🎊 Cycle $CYCLE complete!"
@@ -968,33 +1418,54 @@ parse_args() {
 # ============================================================================
 
 main() {
-    echo ""
-    echo "╔════════════════════════════════════════╗"
-    echo "║   🤖 Opencoder v$VERSION                ║"
-    echo "║   Autonomous OpenCode Runner          ║"
-    echo "╚════════════════════════════════════════╝"
-    echo ""
-    
     parse_args "$@"
+    
+    # Initialize TUI if running in interactive terminal
+    ui_init
+    
+    if [[ $TUI_MODE -eq 0 ]]; then
+        # Non-TUI mode: show traditional header
+        echo ""
+        echo "╔════════════════════════════════════════╗"
+        echo "║   🤖 Opencoder v$VERSION                ║"
+        echo "║   Autonomous OpenCode Runner          ║"
+        echo "╚════════════════════════════════════════╝"
+        echo ""
+    fi
+    # TUI mode already shows the header via ui_draw_frame
     
     init_directories
     load_config
     setup_signals
     load_state
     
-    say "════════════════════════════════════════"
-    say "🚀 Opencoder is ready to rock and roll!"
-    say "════════════════════════════════════════"
+    if [[ $TUI_MODE -eq 0 ]]; then
+        say "════════════════════════════════════════"
+        say "🚀 Opencoder is ready to rock and roll!"
+        say "════════════════════════════════════════"
+    fi
+    
     log "=========================================="
     log "Opencoder started"
     log "=========================================="
     
     main_loop
     
-    say ""
-    say "════════════════════════════════════════"
-    say "👋 Opencoder signing off. See you soon!"
-    say "════════════════════════════════════════"
+    if [[ $TUI_MODE -eq 0 ]]; then
+        say ""
+        say "════════════════════════════════════════"
+        say "👋 Opencoder signing off. See you soon!"
+        say "════════════════════════════════════════"
+    else
+        # In TUI mode, show message in scroll area
+        printf '\n'
+        echo "════════════════════════════════════════"
+        echo "👋 Opencoder signing off. See you soon!"
+        echo "════════════════════════════════════════"
+        sleep 1
+        ui_cleanup
+    fi
+    
     log "=========================================="
     log "Opencoder stopped"
     log "=========================================="
