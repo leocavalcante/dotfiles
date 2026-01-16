@@ -59,7 +59,7 @@ set_provider_preset() {
     local provider="$1"
     
     case "$provider" in
-        github-copilot)
+        github)
             PLANNING_MODEL="github-copilot/claude-opus-4.5"
             EXECUTION_MODEL="github-copilot/claude-sonnet-4.5"
             ;;
@@ -71,9 +71,13 @@ set_provider_preset() {
             PLANNING_MODEL="openai/gpt-4"
             EXECUTION_MODEL="openai/gpt-4o-mini"
             ;;
+        opencode)
+            PLANNING_MODEL="opencode/glm-4.7-free"
+            EXECUTION_MODEL="opencode/minimax-m2.1-free"
+            ;;
         *)
             echo "Error: Unknown provider: $provider" >&2
-            echo "Available providers: github-copilot, anthropic, openai" >&2
+            echo "Available providers: github, anthropic, openai, opencode" >&2
             return 1
             ;;
     esac
@@ -95,7 +99,7 @@ Usage:
   $SCRIPT_NAME -P MODEL -E MODEL [OPTIONS] [HINT]
 
 Required Arguments (choose one):
-  --provider PROVIDER            Use a provider preset (github-copilot, anthropic, openai)
+  --provider PROVIDER            Use a provider preset (github, anthropic, openai, opencode)
   -P, --planning-model MODEL     Model for planning/evaluation (e.g., anthropic/claude-sonnet-4)
   -E, --execution-model MODEL    Model for task execution (e.g., anthropic/claude-haiku)
 
@@ -107,9 +111,10 @@ Optional Arguments:
   HINT                           Optional instruction/hint for what to build (e.g., "build a REST API")
 
 Provider Presets:
-  github-copilot                 Planning: claude-opus-4.5, Execution: claude-sonnet-4.5
+  github                         Planning: claude-opus-4.5, Execution: claude-sonnet-4.5
   anthropic                      Planning: claude-sonnet-4, Execution: claude-haiku
   openai                         Planning: gpt-4, Execution: gpt-4o-mini
+  opencode                       Planning: glm-4.7-free, Execution: minimax-m2.1-free
 
 Environment Variables:
   OPENCODER_PROJECT_DIR          Default project directory
@@ -119,9 +124,10 @@ Environment Variables:
 
 Examples:
   # Using provider preset (recommended)
-  $SCRIPT_NAME --provider github-copilot
-  $SCRIPT_NAME --provider github-copilot "build a todo app"
+  $SCRIPT_NAME --provider github
+  $SCRIPT_NAME --provider github "build a todo app"
   $SCRIPT_NAME --provider anthropic -c 10 "create a REST API"
+  $SCRIPT_NAME --provider opencode "implement a user authentication system"
   
   # Using explicit models
   $SCRIPT_NAME -P anthropic/claude-sonnet-4 -E anthropic/claude-haiku
@@ -445,16 +451,16 @@ After creating the plan file, respond with: PLAN_CREATED"
 get_next_task() {
     if [[ ! -f "$CURRENT_PLAN" ]]; then
         echo ""
-        return 1
+        return 0
     fi
     
     # Find the first unchecked task (- [ ])
     local task
-    task=$(grep -n "^- \[ \]" "$CURRENT_PLAN" | head -n 1)
+    task=$(grep -n "^- \[ \]" "$CURRENT_PLAN" | head -n 1 || true)
     
     if [[ -z "$task" ]]; then
         echo ""
-        return 1
+        return 0
     fi
     
     # Extract line number and task description
