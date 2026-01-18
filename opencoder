@@ -1,0 +1,1010 @@
+#!/usr/bin/env bash
+#
+# opencoder - Autonomous OpenCode Runner
+#
+# A POSIX-compliant Bash script that runs opencode CLI in a fully autonomous way,
+# creating plans and executing them continuously without stopping.
+#
+# Usage:
+#   opencoder --planning-model MODEL --execution-model MODEL [OPTIONS]
+#
+# Author: Leo Cavalcante
+# License: MIT
+
+set -euo pipefail
+
+# ============================================================================
+# CONFIGURATION & DEFAULTS
+# ============================================================================
+
+VERSION="1.0.0"
+SCRIPT_NAME="$(basename "$0")"
+
+# CLI Arguments (required)
+PLANNING_MODEL=""
+EXECUTION_MODEL=""
+
+# Optional configuration
+PROJECT_DIR="${OPENCODER_PROJECT_DIR:-$PWD}"
+VERBOSE=0
+USER_HINT=""  # Optional hint/instruction for planning
+
+# Internal configuration
+MAX_RETRIES="${OPENCODER_MAX_RETRIES:-3}"
+BACKOFF_BASE="${OPENCODER_BACKOFF_BASE:-10}"
+LOG_RETENTION="${OPENCODER_LOG_RETENTION:-30}"
+
+# Runtime state
+OPENCODER_DIR=""
+STATE_FILE=""
+CURRENT_PLAN=""
+MAIN_LOG=""
+CYCLE_LOG_DIR=""
+ALERTS_FILE=""
+HISTORY_DIR=""
+
+CYCLE=0
+PHASE="init"
+TASK_INDEX=0
+SESSION_ID=""
+SHUTDOWN_REQUESTED=0
+TOTAL_TASKS=0
+CURRENT_TASK_NUM=0
+CURRENT_TASK_DESC=""
+
+# ============================================================================
+# DISPLAY CONFIGURATION
+# ============================================================================
+
+START_TIME=0
+
+# ============================================================================
+# PROVIDER PRESETS
+# ============================================================================
+
+# Set models from provider preset
+set_provider_preset() {
+    local provider="$1"
+    
+    case "$provider" in
+        github)
+            PLANNING_MODEL="github-copilot/claude-opus-4.5"
+            EXECUTION_MODEL="github-copilot/claude-sonnet-4.5"
+            ;;
+        anthropic)
+            PLANNING_MODEL="anthropic/claude-sonnet-4"
+            EXECUTION_MODEL="anthropic/claude-haiku"
+            ;;
+        openai)
+            PLANNING_MODEL="openai/gpt-4"
+            EXECUTION_MODEL="openai/gpt-4o-mini"
+            ;;
+        opencode)
+            PLANNING_MODEL="opencode/glm-4.7-free"
+            EXECUTION_MODEL="opencode/minimax-m2.1-free"
+            ;;
+        *)
+            echo "Error: Unknown provider: $provider" >&2
+            echo "Available providers: github, anthropic, openai, opencode" >&2
+            return 1
+            ;;
+    esac
+    
+    return 0
+}
+
+# ============================================================================
+# UTILITY FUNCTIONS
+# ============================================================================
+
+# Print usage information
+usage() {
+    cat <<EOF
+$SCRIPT_NAME v$VERSION - Autonomous OpenCode Runner
+
+Usage:
+  $SCRIPT_NAME --provider PROVIDER [OPTIONS] [HINT]
+  $SCRIPT_NAME -P MODEL -E MODEL [OPTIONS] [HINT]
+
+Required Arguments (choose one):
+  --provider PROVIDER            Use a provider preset (github, anthropic, openai, opencode)
+  -P, --planning-model MODEL     Model for planning/evaluation (e.g., anthropic/claude-sonnet-4)
+  -E, --execution-model MODEL    Model for task execution (e.g., anthropic/claude-haiku)
+
+Optional Arguments:
+  -p, --project DIR              Project directory (default: \$OPENCODER_PROJECT_DIR or \$PWD)
+  -v, --verbose                  Enable verbose logging
+  -h, --help                     Show this help message
+  HINT                           Optional instruction/hint for what to build (e.g., "build a REST API")
+
+Provider Presets:
+  github                         Planning: claude-opus-4.5, Execution: claude-sonnet-4.5
+  anthropic                      Planning: claude-sonnet-4, Execution: claude-haiku
+  openai                         Planning: gpt-4, Execution: gpt-4o-mini
+  opencode                       Planning: glm-4.7-free, Execution: minimax-m2.1-free
+
+Environment Variables:
+  OPENCODER_PROJECT_DIR          Default project directory
+  OPENCODER_MAX_RETRIES          Max retries per operation (default: 3)
+  OPENCODER_BACKOFF_BASE         Base seconds for exponential backoff (default: 10)
+  OPENCODER_LOG_RETENTION        Days to keep old logs (default: 30)
+
+Examples:
+  # Using provider preset (recommended)
+  $SCRIPT_NAME --provider github
+  $SCRIPT_NAME --provider github "build a todo app"
+  $SCRIPT_NAME --provider anthropic "create a REST API"
+  $SCRIPT_NAME --provider opencode "implement a user authentication system"
+  
+  # Using explicit models
+  $SCRIPT_NAME -P anthropic/claude-sonnet-4 -E anthropic/claude-haiku
+  $SCRIPT_NAME -P anthropic/claude-sonnet-4 -E anthropic/claude-haiku "build a todo app"
+
+Directory Structure:
+  \$PROJECT_DIR/.opencoder/
+    ├── state                    # Current execution state
+    ├── current_plan.md          # Active task plan
+    ├── alerts.log               # Critical error alerts
+    ├── history/                 # Archived completed plans
+    ├── logs/
+    │   ├── main.log             # Main rotating log
+    │   └── cycles/              # Per-cycle detailed logs
+
+EOF
+}
+
+# Timestamp for logging
+timestamp() {
+    date +"%Y-%m-%d %H:%M:%S"
+}
+
+# Log to file only (silent)
+log() {
+    local msg="$1"
+    local ts
+    ts="$(timestamp)"
+    
+    # If directories not yet initialized, skip
+    if [[ -z "$MAIN_LOG" ]] || [[ ! -d "$CYCLE_LOG_DIR" ]]; then
+        return 0
+    fi
+    
+    echo "[$ts] $msg" >> "$MAIN_LOG" 2>/dev/null || true
+    echo "[$ts] $msg" >> "${CYCLE_LOG_DIR}/cycle_$(printf "%03d" "$CYCLE").log" 2>/dev/null || true
+}
+
+# Say something to the user (console output - for important messages)
+say() {
+    local msg="$1"
+    
+    # Always log to file
+    log "$msg"
+    
+    # Print to console (clear any status line first)
+    echo -ne "\r\033[K"
+    echo "$msg"
+}
+
+# Update status line (single-line, overwritten)
+status() {
+    local msg="$1"
+    
+    # Log to file
+    log "$msg"
+    
+    # Print to console with carriage return (no newline)
+    echo -ne "\r\033[K$msg"
+}
+
+# Log error
+log_error() {
+    local msg="$1"
+    say "ERROR: $msg"
+    
+    # Only write to alerts file if it's initialized
+    if [[ -n "$ALERTS_FILE" ]] && [[ -d "$(dirname "$ALERTS_FILE")" ]]; then
+        echo "$(timestamp) - $msg" >>"$ALERTS_FILE"
+    fi
+}
+
+# Log verbose (only if verbose mode enabled)
+log_verbose() {
+    if [[ $VERBOSE -eq 1 ]]; then
+        say "VERBOSE: $1"
+        log "VERBOSE: $1"
+    fi
+}
+
+# Portable sed in-place editing
+# macOS sed requires -i '' while GNU sed requires -i or -i<suffix>
+sed_inplace() {
+    local file="$1"
+    shift
+    
+    if [[ "$(uname)" == "Darwin" ]]; then
+        # macOS (BSD sed)
+        sed -i '' "$@" "$file"
+    else
+        # Linux/GNU sed
+        sed -i "$@" "$file"
+    fi
+}
+
+# ============================================================================
+# INITIALIZATION
+# ============================================================================
+
+# Initialize directory structure
+init_directories() {
+    status "Initializing workspace..."
+    log "Initializing opencoder directory structure at: $PROJECT_DIR"
+    
+    OPENCODER_DIR="$PROJECT_DIR/.opencoder"
+    STATE_FILE="$OPENCODER_DIR/state"
+    CURRENT_PLAN="$OPENCODER_DIR/current_plan.md"
+    MAIN_LOG="$OPENCODER_DIR/logs/main.log"
+    CYCLE_LOG_DIR="$OPENCODER_DIR/logs/cycles"
+    ALERTS_FILE="$OPENCODER_DIR/alerts.log"
+    HISTORY_DIR="$OPENCODER_DIR/history"
+    
+    mkdir -p "$OPENCODER_DIR"
+    mkdir -p "$CYCLE_LOG_DIR"
+    mkdir -p "$HISTORY_DIR"
+    mkdir -p "$(dirname "$MAIN_LOG")"
+    
+    touch "$MAIN_LOG"
+    touch "$ALERTS_FILE"
+    
+    say "Workspace initialized"
+    log "Directory structure initialized successfully"
+}
+
+# Load configuration from optional config file
+load_config() {
+    local config_file="$OPENCODER_DIR/config.env"
+    if [[ -f "$config_file" ]]; then
+        log_verbose "Loading configuration from $config_file"
+        log "Loading configuration from $config_file"
+        # shellcheck source=/dev/null
+        source "$config_file"
+    fi
+}
+
+# ============================================================================
+# STATE MANAGEMENT
+# ============================================================================
+
+# Save current state to file
+save_state() {
+    log_verbose "Saving state to $STATE_FILE"
+    
+    cat >"$STATE_FILE" <<EOF
+CYCLE=$CYCLE
+PHASE=$PHASE
+TASK_INDEX=$TASK_INDEX
+SESSION_ID=$SESSION_ID
+PLAN_FILE=$(basename "$CURRENT_PLAN")
+LAST_UPDATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+EOF
+    
+    log_verbose "State saved successfully"
+}
+
+# Load state from file
+load_state() {
+    if [[ ! -f "$STATE_FILE" ]]; then
+        say "Starting fresh (no previous state)"
+        log "No existing state found, starting fresh"
+        CYCLE=1
+        PHASE="planning"
+        TASK_INDEX=0
+        SESSION_ID=""
+        return 0
+    fi
+    
+    say "Resuming from saved state..."
+    log "Loading state from $STATE_FILE"
+    
+    # shellcheck source=/dev/null
+    source "$STATE_FILE"
+    
+    say "Resuming: Cycle $CYCLE, Phase $PHASE"
+    log "State loaded: CYCLE=$CYCLE, PHASE=$PHASE, TASK_INDEX=$TASK_INDEX"
+    
+    # Recalculate task counts if plan exists
+    if [[ -f "$CURRENT_PLAN" ]]; then
+        # Count total tasks (both completed and pending)
+        TOTAL_TASKS=$(grep -c "^- \[.\]" "$CURRENT_PLAN" 2>/dev/null || echo "0")
+        # Count completed tasks to set current task number
+        CURRENT_TASK_NUM=$(grep -c "^- \[x\]" "$CURRENT_PLAN" 2>/dev/null || echo "0")
+        log "Recalculated task counts: $CURRENT_TASK_NUM completed of $TOTAL_TASKS total"
+    fi
+}
+
+# ============================================================================
+# SIGNAL HANDLERS
+# ============================================================================
+
+# Handle shutdown signals gracefully
+handle_shutdown() {
+    say ""
+    say "Shutdown requested, saving state..."
+    
+    log "Shutdown signal received, saving state and exiting gracefully..."
+    SHUTDOWN_REQUESTED=1
+    save_state
+    
+    say "State saved"
+    
+    log "State saved. Exiting."
+    exit 0
+}
+
+# Handle SIGHUP to reload configuration
+handle_reload() {
+    say "Reloading configuration..."
+    
+    log "SIGHUP received, reloading configuration..."
+    load_config
+    
+    say "Configuration reloaded"
+}
+
+# Setup signal handlers
+setup_signals() {
+    trap handle_shutdown SIGTERM SIGINT
+    trap handle_reload SIGHUP
+}
+
+# ============================================================================
+# PLAN MANAGEMENT
+# ============================================================================
+
+# Validate that a plan has actionable tasks
+validate_plan_content() {
+    local plan_file="$1"
+    
+    if [[ ! -f "$plan_file" ]]; then
+        log_verbose "Plan file does not exist: $plan_file"
+        return 1
+    fi
+    
+    # Check if plan is empty
+    if [[ ! -s "$plan_file" ]]; then
+        log_error "Plan file is empty"
+        return 1
+    fi
+    
+    # Check if plan contains at least one unchecked task
+    local task_count
+    task_count=$(grep -c "^- \[ \]" "$plan_file" 2>/dev/null || echo "0")
+    
+    if [[ $task_count -eq 0 ]]; then
+        log_error "Plan contains no actionable tasks"
+        return 1
+    fi
+    
+    TOTAL_TASKS=$task_count
+    say "Plan contains $TOTAL_TASKS tasks"
+    log_verbose "Plan validation passed: $task_count tasks found"
+    return 0
+}
+
+# Create a new plan using the planning model
+create_plan() {
+    status "[Cycle $CYCLE] Planning..."
+    log "Creating new plan for cycle $CYCLE using model: $PLANNING_MODEL"
+    
+    PHASE="planning"
+    SESSION_ID=""  # Fresh session for new cycle
+    save_state
+    
+    local prompt
+    local hint_section=""
+    
+    # Add user hint to the prompt if provided
+    if [[ -n "$USER_HINT" ]]; then
+        log "User hint: $USER_HINT"
+        hint_section="
+
+USER INSTRUCTION/HINT: $USER_HINT
+
+Use this hint to guide your planning. Build/implement what the user requested."
+    fi
+    
+    prompt="CRITICAL: You are operating in an AUTONOMOUS CONTINUOUS DEVELOPMENT loop.
+
+This loop MUST NEVER STOP. Your role is to continuously improve this project indefinitely.
+
+STRICT REQUIREMENTS:
+- You MUST create a plan with AT LEAST 5 actionable tasks
+- NEVER ask questions or wait for user input
+- NEVER suggest the project is \"done\" or \"complete\"
+- NEVER provide options or ask \"would you like me to...\"
+- If main features are implemented, focus on: code quality, tests, documentation, refactoring, performance, security, error handling, edge cases, optimization, CI/CD, deployment, monitoring
+- There is ALWAYS something to improve in any project
+
+Your task: Analyze this project and create a concrete development plan.
+Save a markdown checklist to .opencoder/current_plan.md with 5-10 actionable tasks.
+${hint_section}
+
+The plan MUST follow this exact format:
+# Plan: [descriptive title]
+Created: $(date -u +"%Y-%m-%dT%H:%M:%SZ")
+Cycle: $CYCLE
+
+## Context
+[Brief description of project state and current focus]
+
+## Tasks
+- [ ] Task 1: Specific, actionable description
+- [ ] Task 2: Specific, actionable description
+- [ ] Task 3: Specific, actionable description
+- [ ] Task 4: Specific, actionable description
+- [ ] Task 5: Specific, actionable description
+[Add more tasks as needed, minimum 5]
+
+## Notes
+[Any additional context or dependencies]
+
+Areas to consider for continuous improvement:
+- Code quality and best practices
+- Comprehensive error handling
+- Edge cases and input validation
+- Unit and integration tests
+- Documentation (code comments, README, API docs)
+- Performance optimization
+- Security hardening
+- Refactoring technical debt
+- Logging and monitoring
+- CI/CD pipeline improvements
+- Deployment and infrastructure
+- Accessibility and usability
+
+After creating the plan file, respond with: PLAN_CREATED"
+
+    local attempt=0
+    local success=0
+    
+    while [[ $attempt -lt $MAX_RETRIES ]]; do
+        if [[ $attempt -gt 0 ]]; then
+            status "[Cycle $CYCLE] Planning (retry $((attempt + 1))/$MAX_RETRIES)..."
+        fi
+        log "Attempt $((attempt + 1))/$MAX_RETRIES to create plan"
+        
+        if opencode run --model "$PLANNING_MODEL" --title "Opencoder Planning Cycle $CYCLE" "$prompt"; then
+            if [[ -f "$CURRENT_PLAN" ]]; then
+                # Validate plan has actionable tasks
+                if validate_plan_content "$CURRENT_PLAN"; then
+                    say "[Cycle $CYCLE] Plan created"
+                    log "Plan created successfully at $CURRENT_PLAN"
+                    success=1
+                    break
+                else
+                    log_error "Plan file created but validation failed (no tasks found)"
+                    rm -f "$CURRENT_PLAN"
+                fi
+            else
+                log_error "opencode succeeded but plan file not created at $CURRENT_PLAN"
+            fi
+        else
+            log_error "Failed to create plan (attempt $((attempt + 1)))"
+        fi
+        
+        attempt=$((attempt + 1))
+        if [[ $attempt -lt $MAX_RETRIES ]]; then
+            local sleep_time=$((BACKOFF_BASE * (2 ** attempt)))
+            status "[Cycle $CYCLE] Retrying in $sleep_time seconds..."
+            log "Retrying in $sleep_time seconds..."
+            sleep "$sleep_time"
+        fi
+    done
+    
+    if [[ $success -eq 0 ]]; then
+        say "[Cycle $CYCLE] ERROR: Failed to create plan after $MAX_RETRIES attempts"
+        log_error "Failed to create plan after $MAX_RETRIES attempts"
+        return 1
+    fi
+    
+    PHASE="execution"
+    TASK_INDEX=0
+    CURRENT_TASK_NUM=0
+    save_state
+    
+    return 0
+}
+
+# Get the next uncompleted task from the plan
+get_next_task() {
+    if [[ ! -f "$CURRENT_PLAN" ]]; then
+        echo ""
+        return 0
+    fi
+    
+    # Find the first unchecked task (- [ ])
+    local task
+    task=$(grep -n "^- \[ \]" "$CURRENT_PLAN" | head -n 1 || true)
+    
+    if [[ -z "$task" ]]; then
+        echo ""
+        return 0
+    fi
+    
+    # Extract line number and task description
+    local line_num
+    line_num=$(echo "$task" | cut -d: -f1)
+    local task_desc
+    task_desc=$(echo "$task" | cut -d: -f2- | sed 's/^- \[ \] //')
+    
+    echo "$line_num:$task_desc"
+    return 0
+}
+
+# Mark a task as complete in the plan
+mark_task_complete() {
+    local line_num="$1"
+    
+    if [[ ! -f "$CURRENT_PLAN" ]]; then
+        log_error "Plan file not found: $CURRENT_PLAN"
+        return 1
+    fi
+    
+    log "Marking task at line $line_num as complete"
+    
+    # Replace - [ ] with - [x] at the specific line (portable sed)
+    sed_inplace "$CURRENT_PLAN" "${line_num}s/^- \[ \]/- [x]/"
+    
+    log_verbose "Task marked complete"
+}
+
+# Archive completed plan to history
+archive_plan() {
+    if [[ ! -f "$CURRENT_PLAN" ]]; then
+        log "No plan to archive"
+        return 0
+    fi
+    
+    local archive_name
+    archive_name="plan_$(date +"%Y%m%d_%H%M%S")_cycle${CYCLE}.md"
+    local archive_path="$HISTORY_DIR/$archive_name"
+    
+    log "Archiving completed plan to $archive_path"
+    
+    mv "$CURRENT_PLAN" "$archive_path"
+    
+    log "Plan archived successfully"
+}
+
+# ============================================================================
+# TASK EXECUTION
+# ============================================================================
+
+# Execute a single task
+execute_task() {
+    local task_line="$1"
+    local line_num
+    line_num=$(echo "$task_line" | cut -d: -f1)
+    local task_desc
+    task_desc=$(echo "$task_line" | cut -d: -f2-)
+    
+    CURRENT_TASK_NUM=$((CURRENT_TASK_NUM + 1))
+    CURRENT_TASK_DESC="$task_desc"
+    
+    status "[Cycle $CYCLE] Task $CURRENT_TASK_NUM/$TOTAL_TASKS: $task_desc"
+    log "Executing task: $task_desc"
+    
+    PHASE="execution"
+    TASK_INDEX=$((TASK_INDEX + 1))
+    save_state
+    
+    local prompt
+    local hint_context=""
+    
+    # Add user hint as context if provided
+    if [[ -n "$USER_HINT" ]]; then
+        hint_context="
+
+ADDITIONAL CONTEXT FROM USER: $USER_HINT
+
+Keep this context in mind while executing the task."
+    fi
+    
+    prompt="Execute this task from the development plan:
+
+TASK: $task_desc
+${hint_context}
+Instructions:
+- Make necessary code changes
+- Follow project conventions and best practices
+- Make atomic commits if appropriate (let your judgment guide you)
+- Run tests if applicable
+- Report completion status clearly
+
+When complete, respond with: TASK_COMPLETE or TASK_FAILED with explanation."
+
+    local attempt=0
+    local success=0
+    local continue_flag=""
+    
+    # Use -c flag to continue session within the same cycle
+    if [[ -n "$SESSION_ID" ]]; then
+        continue_flag="--continue"
+    fi
+    
+    while [[ $attempt -lt $MAX_RETRIES ]]; do
+        if [[ $attempt -gt 0 ]]; then
+            status "[Cycle $CYCLE] Task $CURRENT_TASK_NUM/$TOTAL_TASKS (retry $((attempt + 1))/$MAX_RETRIES)..."
+        fi
+        log "Attempt $((attempt + 1))/$MAX_RETRIES for task"
+        
+        if [[ -z "$SESSION_ID" ]]; then
+            # First task in cycle - capture session ID
+            local output
+            output=$(opencode run --model "$EXECUTION_MODEL" --title "Opencoder Execution Cycle $CYCLE" "$prompt" 2>&1)
+            echo "$output"
+            
+            # Try to extract session ID from output (this may vary based on opencode output format)
+            # For now, we'll use a simple approach - continue flag will work without explicit ID
+            SESSION_ID="cycle_${CYCLE}"
+            success=$?
+        else
+            # Continue existing session
+            opencode run $continue_flag --model "$EXECUTION_MODEL" "$prompt"
+            success=$?
+        fi
+        
+        if [[ $success -eq 0 ]]; then
+            say "[Cycle $CYCLE] Task $CURRENT_TASK_NUM/$TOTAL_TASKS complete"
+            log "Task executed successfully"
+            mark_task_complete "$line_num"
+            save_state
+            return 0
+        else
+            log_error "Task execution failed (attempt $((attempt + 1)))"
+        fi
+        
+        attempt=$((attempt + 1))
+        if [[ $attempt -lt $MAX_RETRIES ]]; then
+            local sleep_time=$((BACKOFF_BASE * (2 ** attempt)))
+            status "[Cycle $CYCLE] Retrying in $sleep_time seconds..."
+            log "Retrying in $sleep_time seconds..."
+            sleep "$sleep_time"
+        fi
+    done
+    
+    say "[Cycle $CYCLE] ERROR: Task failed after $MAX_RETRIES attempts, skipping"
+    log_error "Task failed after $MAX_RETRIES attempts: $task_desc"
+    log "Skipping to next task..."
+    
+    # Mark as failed but continue
+    mark_task_complete "$line_num"  # Mark complete to not get stuck
+    save_state
+    
+    return 1
+}
+
+# ============================================================================
+# PLAN EVALUATION
+# ============================================================================
+
+# Evaluate if the current plan is complete
+evaluate_plan() {
+    status "[Cycle $CYCLE] Evaluating..."
+    log "Evaluating plan completion for cycle $CYCLE"
+    
+    PHASE="evaluation"
+    save_state
+    
+    # Check if all tasks are marked complete
+    local pending_tasks
+    pending_tasks=$(grep -c "^- \[ \]" "$CURRENT_PLAN" 2>/dev/null || echo "0")
+    
+    local prompt
+    prompt="CRITICAL: You are operating in an AUTONOMOUS CONTINUOUS DEVELOPMENT loop.
+
+Review the completed plan at .opencoder/current_plan.md
+
+Your role is to determine if this cycle is truly complete OR if more work is needed.
+
+IMPORTANT GUIDELINES:
+- Be STRICT in your evaluation - only return COMPLETE if ALL tasks are genuinely done AND verified
+- Check the actual changes made in the codebase, not just the checkmarks
+- If ANY task seems incomplete, rushed, or needs follow-up, return NEEDS_WORK
+- If quality could be improved, return NEEDS_WORK
+- Even if all tasks are done, consider if there are immediate follow-ups needed
+
+Evaluate:
+1. Are all tasks genuinely complete with high quality?
+2. Do any tasks need follow-up, refinement, or additional work?
+3. Are there immediate issues or gaps that arose during this cycle?
+4. Is the code tested, documented, and production-ready?
+
+Respond with ONLY one of these:
+- COMPLETE: All tasks truly done, high quality, ready for new planning cycle
+- NEEDS_WORK: Tasks incomplete, quality issues, or follow-up needed
+
+Be thorough and honest in your evaluation. When in doubt, choose NEEDS_WORK."
+
+    local attempt=0
+    local result=""
+    
+    while [[ $attempt -lt $MAX_RETRIES ]]; do
+        if [[ $attempt -gt 0 ]]; then
+            status "[Cycle $CYCLE] Evaluating (retry $((attempt + 1))/$MAX_RETRIES)..."
+        fi
+        log "Evaluation attempt $((attempt + 1))/$MAX_RETRIES"
+        
+        local output
+        output=$(opencode run --model "$PLANNING_MODEL" --title "Opencoder Evaluation Cycle $CYCLE" "$prompt" 2>&1)
+        
+        if echo "$output" | grep -q "COMPLETE"; then
+            result="COMPLETE"
+            break
+        elif echo "$output" | grep -q "NEEDS_WORK"; then
+            result="NEEDS_WORK"
+            break
+        fi
+        
+        attempt=$((attempt + 1))
+        if [[ $attempt -lt $MAX_RETRIES ]]; then
+            local sleep_time=$((BACKOFF_BASE * (2 ** attempt)))
+            status "[Cycle $CYCLE] Retrying evaluation in $sleep_time seconds..."
+            log "Retrying evaluation in $sleep_time seconds..."
+            sleep "$sleep_time"
+        fi
+    done
+    
+    if [[ -z "$result" ]]; then
+        log_error "Failed to get evaluation result after $MAX_RETRIES attempts"
+        # Default to NEEDS_WORK to avoid getting stuck and to ensure continuous operation
+        result="NEEDS_WORK"
+        say "[Cycle $CYCLE] WARNING: Couldn't determine status, assuming more work needed"
+        log "Defaulting to NEEDS_WORK to continue the autonomous loop"
+    fi
+    
+    log "Evaluation result: $result (pending tasks: $pending_tasks)"
+    
+    if [[ "$result" == "COMPLETE" ]] && [[ $pending_tasks -eq 0 ]]; then
+        say "[Cycle $CYCLE] Complete, starting new cycle"
+        log "Plan is complete, archiving and starting new cycle"
+        archive_plan
+        return 0
+    elif [[ "$result" == "NEEDS_WORK" ]]; then
+        say "[Cycle $CYCLE] Needs more work, continuing"
+        log "Plan needs more work, creating supplementary tasks"
+        # The evaluation might have added more tasks, continue execution
+        return 1
+    else
+        # Mixed result - some tasks pending
+        say "[Cycle $CYCLE] Tasks pending, continuing"
+        log "Some tasks still pending, continuing execution"
+        return 1
+    fi
+}
+
+# ============================================================================
+# MAIN LOOP
+# ============================================================================
+
+# Main execution loop
+main_loop() {
+    say ""
+    say "Starting autonomous loop"
+    say "Project: $PROJECT_DIR"
+    say "Planning: $PLANNING_MODEL"
+    say "Execution: $EXECUTION_MODEL"
+    
+    log "Starting main execution loop"
+    log "Planning model: $PLANNING_MODEL"
+    log "Execution model: $EXECUTION_MODEL"
+    log "Project directory: $PROJECT_DIR"
+    
+    if [[ -n "$USER_HINT" ]]; then
+        say "Hint: $USER_HINT"
+        log "User hint: $USER_HINT"
+    fi
+    
+    say "Running continuously (Ctrl+C to stop)"
+    say ""
+    log "Running indefinitely until stopped by signal"
+    
+    while true; do
+        # Check shutdown flag
+        if [[ $SHUTDOWN_REQUESTED -eq 1 ]]; then
+            log "Shutdown requested, exiting main loop"
+            break
+        fi
+        
+        say ""
+        say "[Cycle $CYCLE]"
+        log "Starting cycle $CYCLE"
+        log "=========================================="
+        
+        # Create plan if none exists
+        if [[ ! -f "$CURRENT_PLAN" ]] || [[ "$PHASE" == "planning" ]]; then
+            if ! create_plan; then
+                log_error "Failed to create plan, waiting before retry..."
+                sleep "$((BACKOFF_BASE * 2))"
+                continue
+            fi
+        fi
+        
+        # Execute tasks
+        status "[Cycle $CYCLE] Executing tasks..."
+        log "Executing tasks from plan"
+        
+        while true; do
+            # Check shutdown flag
+            if [[ $SHUTDOWN_REQUESTED -eq 1 ]]; then
+                break
+            fi
+            
+            local next_task
+            next_task=$(get_next_task)
+            
+            if [[ -z "$next_task" ]]; then
+                say "[Cycle $CYCLE] All tasks complete"
+                log "No more pending tasks in current plan"
+                break
+            fi
+            
+            execute_task "$next_task"
+            
+            # Small pause between tasks to avoid overwhelming the system
+            sleep 2
+        done
+        
+        # Evaluate plan completion
+        if evaluate_plan; then
+            # Plan is complete, increment cycle and create new plan
+            CYCLE=$((CYCLE + 1))
+            PHASE="planning"
+            TASK_INDEX=0
+            CURRENT_TASK_NUM=0
+            CURRENT_TASK_DESC=""
+            SESSION_ID=""
+            save_state
+        else
+            # More work needed - check if there are actually pending tasks
+            local pending_count=0
+            
+            if [[ -f "$CURRENT_PLAN" ]]; then
+                pending_count=$(grep -c "^- \[ \]" "$CURRENT_PLAN" 2>/dev/null || echo "0")
+            fi
+            
+            if [[ "$pending_count" -eq 0 ]]; then
+                # NEEDS_WORK but no tasks - evaluation didn't add any
+                # Force new cycle to avoid infinite loop
+                say "[Cycle $CYCLE] WARNING: Evaluation needs more work but no tasks found, starting new cycle"
+                log "NEEDS_WORK returned but no pending tasks - forcing new cycle to avoid loop"
+                archive_plan
+                CYCLE=$((CYCLE + 1))
+                PHASE="planning"
+                TASK_INDEX=0
+                CURRENT_TASK_NUM=0
+                CURRENT_TASK_DESC=""
+                SESSION_ID=""
+            else
+                # There are actual tasks to execute
+                PHASE="execution"
+            fi
+            save_state
+        fi
+        
+        say "[Cycle $CYCLE] Complete"
+        log "Cycle $CYCLE complete"
+        log ""
+    done
+    
+    say ""
+    say "Loop stopped"
+    log "Main loop exited"
+}
+
+# ============================================================================
+# ARGUMENT PARSING
+# ============================================================================
+
+# Parse command line arguments
+parse_args() {
+    if [[ $# -eq 0 ]]; then
+        usage
+        exit 1
+    fi
+    
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --provider)
+                if ! set_provider_preset "$2"; then
+                    exit 1
+                fi
+                shift 2
+                ;;
+            -P|--planning-model)
+                PLANNING_MODEL="$2"
+                shift 2
+                ;;
+            -E|--execution-model)
+                EXECUTION_MODEL="$2"
+                shift 2
+                ;;
+            -p|--project)
+                PROJECT_DIR="$2"
+                shift 2
+                ;;
+            -v|--verbose)
+                VERBOSE=1
+                shift
+                ;;
+            -h|--help)
+                usage
+                exit 0
+                ;;
+            -*)
+                echo "Error: Unknown option: $1" >&2
+                echo "Use -h or --help for usage information" >&2
+                exit 1
+                ;;
+            *)
+                # Treat as hint/instruction if it doesn't start with -
+                USER_HINT="$1"
+                shift
+                ;;
+        esac
+    done
+    
+    # Validate required arguments
+    if [[ -z "$PLANNING_MODEL" ]]; then
+        echo "Error: Either --provider or both --planning-model and --execution-model are required" >&2
+        exit 1
+    fi
+    
+    if [[ -z "$EXECUTION_MODEL" ]]; then
+        echo "Error: Either --provider or both --planning-model and --execution-model are required" >&2
+        exit 1
+    fi
+    
+    # Validate project directory
+    if [[ ! -d "$PROJECT_DIR" ]]; then
+        echo "Error: Project directory does not exist: $PROJECT_DIR" >&2
+        exit 1
+    fi
+    
+    # Convert to absolute path
+    PROJECT_DIR="$(cd "$PROJECT_DIR" && pwd)"
+}
+
+# ============================================================================
+# MAIN ENTRY POINT
+# ============================================================================
+
+main() {
+    parse_args "$@"
+    
+    START_TIME=$(date +%s)
+    
+    echo ""
+    echo "opencoder v$VERSION - Autonomous OpenCode Runner"
+    echo ""
+    
+    init_directories
+    load_config
+    setup_signals
+    load_state
+    
+    log "=========================================="
+    log "Opencoder started"
+    log "=========================================="
+    
+    main_loop
+    
+    say ""
+    say "Opencoder stopped"
+    
+    log "=========================================="
+    log "Opencoder stopped"
+    log "=========================================="
+}
+
+# Run main function
+main "$@"
