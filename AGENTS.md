@@ -66,7 +66,7 @@ This is a personal dotfiles repository for **leocavalcante** (Leo Cavalcante) co
 ├── .zshrc                             # Zsh shell configuration (main config file, 600+ lines)
 ├── AGENTS.md                          # This file (AI agent instructions)
 ├── CLAUDE.md                          # Symlink to .claude/CLAUDE.md
-├── opencoder                          # Autonomous OpenCode runner script (817 lines)
+├── opencoder                          # Autonomous OpenCode runner (symlink or local copy, see github.com/opencodeco/opencoder)
 ├── README.md                          # User-facing documentation
 ├── LICENSE                            # MIT License (2022-2025)
 └── themes/
@@ -504,7 +504,7 @@ Full Git LFS support for large binary files configured.
 
 ## Opencoder - Autonomous OpenCode Runner
 
-**File:** `opencoder` (900+ lines)
+**Repository:** [opencodeco/opencoder](https://github.com/opencodeco/opencoder)
 
 A POSIX-compliant Bash script that runs OpenCode CLI in a fully autonomous way, creating development plans and executing them continuously without manual intervention. Features a friendly, verbose interface with emojis and human-like messages that make it feel like a real developer working on your project. This is a key component of the AI-first development workflow.
 
