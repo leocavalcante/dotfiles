@@ -33,6 +33,7 @@ USER_HINT=""  # Optional hint/instruction for planning
 MAX_RETRIES="${OPENCODER_MAX_RETRIES:-3}"
 BACKOFF_BASE="${OPENCODER_BACKOFF_BASE:-10}"
 LOG_RETENTION="${OPENCODER_LOG_RETENTION:-30}"
+TASK_DELAY="${OPENCODER_TASK_DELAY:-2}"
 
 # Runtime state
 OPENCODER_DIR=""
@@ -128,6 +129,7 @@ Environment Variables:
   OPENCODER_MAX_RETRIES          Max retries per operation (default: 3)
   OPENCODER_BACKOFF_BASE         Base seconds for exponential backoff (default: 10)
   OPENCODER_LOG_RETENTION        Days to keep old logs (default: 30)
+  OPENCODER_TASK_DELAY           Seconds to wait between tasks (default: 2)
 
 Examples:
   # Using provider preset (recommended)
@@ -169,8 +171,12 @@ log() {
         return 0
     fi
     
-    echo "[$ts] $msg" >> "$MAIN_LOG" 2>/dev/null || true
-    echo "[$ts] $msg" >> "${CYCLE_LOG_DIR}/cycle_$(printf "%03d" "$CYCLE").log" 2>/dev/null || true
+    if ! echo "[$ts] $msg" >> "$MAIN_LOG" 2>/dev/null; then
+        echo "WARNING: Failed to write to main log: $MAIN_LOG" >&2
+    fi
+    if ! echo "[$ts] $msg" >> "${CYCLE_LOG_DIR}/cycle_$(printf "%03d" "$CYCLE").log" 2>/dev/null; then
+        echo "WARNING: Failed to write to cycle log" >&2
+    fi
 }
 
 # Say something to the user (console output - for important messages)
@@ -851,7 +857,7 @@ main_loop() {
             execute_task "$next_task"
             
             # Small pause between tasks to avoid overwhelming the system
-            sleep 2
+            sleep "$TASK_DELAY"
         done
         
         # Evaluate plan completion
