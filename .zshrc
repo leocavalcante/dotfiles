@@ -31,9 +31,7 @@ path=(
 [[ -n "$TERMUX_VERSION" ]] && path=("$HOME/.opencode/bin" $path)
 
 # ─── Aliases ───
-alias gpt="chatgpt"
 alias l="eza --all --icons --git"
-alias ls="eza --all --icons --git"
 alias ll="eza --long --all --icons --git"
 alias push="git push"
 alias v="vibe"
@@ -42,10 +40,18 @@ alias h="cd ~ && clear"
 alias stk="starship toggle kubernetes"
 alias python="python3"
 alias pip="pip3"
-alias cld="claude --dangerously-skip-permissions"  # ⚠️ Skips permission prompts - use with caution
+alias cld="claude --dangerously-skip-permissions"  # Skips permission prompts - use with caution
 alias cldp="claude -p"
 alias oc="opencode"
 alias occ="opencode --continue"
+# GitHub CLI aliases
+alias ghpr="gh pr list"
+alias ghprc="gh pr create"
+alias ghprv="gh pr view"
+alias ghi="gh issue list"
+alias ghiv="gh issue view"
+alias ghw="gh workflow list"
+alias ghr="gh run list"
 
 # ─── Functions ───
 
@@ -102,30 +108,35 @@ disable_bedrock() {
 
 # Update dotfiles from repository
 dot() {
+  emulate -L zsh
   local dotfiles_dir="$HOME/.dotfiles"
-  echo "🌟 Starting dotfiles update process! 🌟"
+  echo "Starting dotfiles update process"
   
   cd "$dotfiles_dir" || {
-    echo "⚠️ Could not find the .dotfiles directory!"
+    echo "Could not find the .dotfiles directory!" >&2
     return 1
   }
   
-  echo "🔄 Pulling latest changes from git repository..."
-  git pull --quiet && echo "✅ Repository updated."
+  echo "Pulling latest changes from git repository..."
+  git pull --quiet && echo "Repository updated."
   
-  if command -v stow >/dev/null 2>&1; then
-    echo "📦 Restowing dotfiles using GNU Stow..."
-    stow . && echo "✅ Dotfiles stowed successfully."
+  if (( $+commands[stow] )); then
+    echo "Restowing dotfiles using GNU Stow..."
+    stow . && echo "Dotfiles stowed successfully."
   else
-    echo "❌ GNU Stow not installed! Please install it to continue."
+    echo "GNU Stow not installed! Please install it to continue." >&2
   fi
   
-  cd "$HOME" || echo "⚠️ Could not return to the home directory!"
-  echo "🏁 Dotfiles update process completed."
+  cd "$HOME" || {
+    echo "Could not return to the home directory!" >&2
+    return 1
+  }
+  echo "Dotfiles update process completed."
 }
 
 # System update utility
 up() {
+  emulate -L zsh
   case "$(uname)" in
     Linux)
       if [[ -n "$TERMUX_VERSION" ]]; then
@@ -135,7 +146,7 @@ up() {
       fi
       ;;
   esac
-  if command -v brew >/dev/null 2>&1; then
+  if (( $+commands[brew] )); then
     brew update && brew upgrade && brew cleanup
   fi
 }
@@ -149,18 +160,28 @@ composer() {
 }
 
 # ─── Tool Initialization (Eager) ───
-if command -v zoxide >/dev/null 2>&1; then
-  eval "$(zoxide init zsh)"
-fi
-
-if command -v starship >/dev/null 2>&1; then
+if (( $+commands[starship] )); then
   eval "$(starship init zsh)"
 fi
 
 # ─── Lazy-loaded Tools ───
 
+# Lazy-load zoxide (z and zi commands)
+if (( $+commands[zoxide] )); then
+  z() {
+    unfunction z zi 2>/dev/null
+    eval "$(zoxide init zsh)"
+    z "$@"
+  }
+  zi() {
+    unfunction z zi 2>/dev/null
+    eval "$(zoxide init zsh)"
+    zi "$@"
+  }
+fi
+
 # Lazy-load goose terminal initialization
-if command -v goose >/dev/null 2>&1; then
+if (( $+commands[goose] )); then
   goose() {
     unfunction goose
     eval "$(command goose term init zsh)"
@@ -169,7 +190,7 @@ if command -v goose >/dev/null 2>&1; then
 fi
 
 # Lazy-load opencode completion
-if command -v opencode >/dev/null 2>&1; then
+if (( $+commands[opencode] )); then
   _opencode_load_completion() {
     unfunction _opencode_load_completion
     eval "$(command opencode completion zsh)"
@@ -177,10 +198,31 @@ if command -v opencode >/dev/null 2>&1; then
   compctl -K _opencode_load_completion opencode
 fi
 
+# Lazy-load direnv
+if (( $+commands[direnv] )); then
+  _direnv_hook() {
+    unfunction _direnv_hook
+    eval "$(direnv hook zsh)"
+    _direnv_hook
+  }
+  typeset -ag precmd_functions
+  precmd_functions+=(_direnv_hook)
+fi
+
 # ─── Antigen Plugin Manager ───
 ANTIGEN="$HOME/antigen.zsh"
+ANTIGEN_VERSION="v2.2.3"
+ANTIGEN_SHA256="3d0261e1f00decf59b04555ef5696cb7008b924b92d8d82fd70914121c1eb7ae"
 if [[ ! -f "$ANTIGEN" ]]; then
-  curl -sSL https://raw.githubusercontent.com/zsh-users/antigen/master/bin/antigen.zsh -o "$ANTIGEN"
+  local tmp_antigen="/tmp/antigen_$$.zsh"
+  curl -sSL "https://raw.githubusercontent.com/zsh-users/antigen/${ANTIGEN_VERSION}/bin/antigen.zsh" -o "$tmp_antigen"
+  local actual_sha256="$(sha256sum "$tmp_antigen" 2>/dev/null || shasum -a 256 "$tmp_antigen" | cut -d' ' -f1)"
+  if [[ "$actual_sha256" == "$ANTIGEN_SHA256"* ]]; then
+    mv "$tmp_antigen" "$ANTIGEN"
+  else
+    echo "Antigen checksum mismatch! Expected: $ANTIGEN_SHA256, Got: $actual_sha256" >&2
+    rm -f "$tmp_antigen"
+  fi
 fi
 if [[ -f "$ANTIGEN" ]]; then
   source "$ANTIGEN"
