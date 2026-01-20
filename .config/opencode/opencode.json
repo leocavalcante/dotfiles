@@ -14,5 +14,8 @@
         }
       }
     }
-  }
+  },
+  "plugin": [
+    "oh-my-opencode"
+  ]
 }
