@@ -9,14 +9,8 @@
         "baseURL": "http://localhost:11434/v1"
       },
       "models": {
-        "qwen3:14b": {
-          "name": "Qwen 3 14B"
-        },
-        "qwen3:30b": {
-          "name": "Qwen 3 30B"
-        },
-        "deepseek-r1:1.5b": {
-          "name": "DeepSeek R1 1.5B"
+        "qwen3:8b": {
+          "name": "Qwen 3 8B"
         }
       }
     }
