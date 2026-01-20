@@ -1,0 +1,42 @@
+#!/bin/sh
+# tmux-battery - Cross-platform battery percentage script
+# Caches result for 60 seconds to reduce system calls
+
+CACHE_FILE="/tmp/tmux-battery-cache"
+CACHE_TTL=60
+
+# Check if cache is valid
+if [ -f "$CACHE_FILE" ]; then
+    cache_age=$(($(date +%s) - $(stat -f %m "$CACHE_FILE" 2>/dev/null || stat -c %Y "$CACHE_FILE" 2>/dev/null || echo 0)))
+    if [ "$cache_age" -lt "$CACHE_TTL" ]; then
+        cat "$CACHE_FILE"
+        exit 0
+    fi
+fi
+
+# Get battery percentage
+get_battery() {
+    # Linux (sysfs)
+    if [ -d /sys/class/power_supply ] && [ -n "$(ls /sys/class/power_supply/BAT*/capacity 2>/dev/null)" ]; then
+        cat /sys/class/power_supply/BAT*/capacity 2>/dev/null | head -1
+        return
+    fi
+    
+    # macOS
+    if command -v pmset >/dev/null 2>&1; then
+        pmset -g batt 2>/dev/null | grep -Eo '[0-9]+%' | head -1 | sed 's/%//'
+        return
+    fi
+    
+    # WSL/Windows
+    if command -v powershell.exe >/dev/null 2>&1; then
+        powershell.exe -Command "Get-WmiObject Win32_Battery | Select-Object -ExpandProperty EstimatedChargeRemaining" 2>/dev/null | tr -d '\r'
+        return
+    fi
+    
+    echo "?"
+}
+
+result=$(get_battery)
+echo "$result" > "$CACHE_FILE"
+echo "$result"
