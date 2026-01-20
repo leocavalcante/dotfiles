@@ -11,6 +11,15 @@
       "models": {
         "qwen3:8b": {
           "name": "Qwen 3 8B"
+        },
+        "llama3.1:8b": {
+          "name": "Llama 3.1 8B"
+        },
+        "deepseek-r1:8b": {
+          "name": "DeepSeek R1 8B"
+        },
+        "rnj-1:8b": {
+          "name": "RNJ 1 8B"
         }
       }
     }
