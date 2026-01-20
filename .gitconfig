@@ -43,7 +43,7 @@
     path = ~/.gitconfig.local
 
 [pack]
-	threads = 1
+	threads = 0
 
 [filter "lfs"]
 	smudge = git-lfs smudge -- %f
