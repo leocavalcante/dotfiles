@@ -34,14 +34,9 @@ path=(
 alias l="eza --all --icons --git"
 alias ll="eza --long --all --icons --git"
 alias push="git push"
-alias v="vibe"
-alias c="clear"
-alias h="cd ~ && clear"
 alias stk="starship toggle kubernetes"
 alias python="python3"
 alias pip="pip3"
-alias cld="claude --dangerously-skip-permissions"  # Skips permission prompts - use with caution
-alias cldp="claude -p"
 alias oc="opencode"
 alias occ="opencode --continue"
 # GitHub CLI aliases
