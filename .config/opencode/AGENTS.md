@@ -133,3 +133,4 @@ When the user asks to "save to memory", "remember this", or "store in memory", u
 - `~/.config/opencode/AGENTS.md` - OpenCode instructions (you are reading this)
 
 This keeps preferences available for OpenCode sessions.
+
