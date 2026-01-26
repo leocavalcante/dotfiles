@@ -144,6 +144,9 @@ up() {
   if (( $+commands[brew] )); then
     brew update && brew upgrade && brew cleanup
   fi
+  if (( $+commands[opencode] )); then
+    opencode upgrade
+  fi
 }
 
 # Composer with auto-loaded auth
