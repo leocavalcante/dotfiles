@@ -39,7 +39,7 @@ alias python="python3"
 alias pip="pip3"
 alias oc="opencode"
 alias occ="opencode --continue"
-alias md="uvx frogmonth"
+alias md="uvx frogmouth"
 
 # ─── Functions ───
 
