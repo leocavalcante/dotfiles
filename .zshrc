@@ -40,14 +40,6 @@ alias pip="pip3"
 alias oc="opencode"
 alias occ="opencode --continue"
 alias md="uvx frogmonth"
-# GitHub CLI aliases
-alias ghpr="gh pr list"
-alias ghprc="gh pr create"
-alias ghprv="gh pr view"
-alias ghi="gh issue list"
-alias ghiv="gh issue view"
-alias ghw="gh workflow list"
-alias ghr="gh run list"
 
 # ─── Functions ───
 
