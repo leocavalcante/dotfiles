@@ -43,6 +43,12 @@
     - `docs(readme): update installation instructions`
     - `refactor!: change API response format`
 
+# Branch Naming
+
+- Format: `<type>/<short-description>`
+- Use lowercase with hyphens for description
+- Examples: `feat/oauth-login`, `fix/null-pointer`, `docs/update-readme`
+
 # Pull Request Guidelines
 
 - **Conventional Commits for PR Titles**: Use the same Conventional Commits format for PR titles as used for commit messages
@@ -105,7 +111,6 @@ Example: `connectToServer` function in src/services/process.ts:712
 
 ## Tone and Style
 
-- Only use emojis if the user explicitly requests it
 - Responses should be short and concise
 - Output text to communicate with the user; use tools to complete tasks
 - Prioritize technical accuracy and truthfulness over validation
@@ -117,7 +122,8 @@ Example: `connectToServer` function in src/services/process.ts:712
 - ALWAYS prefer editing existing files in the codebase
 - NEVER write new files unless explicitly required
 - NEVER proactively create documentation files (*.md) or README files unless explicitly requested
-- Only use emojis if the user explicitly requests it
+- NEVER commit secrets, API keys, tokens, passwords, or credentials
+- Use environment variables for sensitive configuration
 
 ## Tool Usage
 
