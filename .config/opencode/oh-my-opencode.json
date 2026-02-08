@@ -1,0 +1,111 @@
+{
+  "$schema": "https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/master/assets/oh-my-opencode.schema.json",
+  "_comment": "Oh My OpenCode Configuration - https://ohmyopencode.com/configuration/",
+  "agents": {
+    "build": {
+      "model": "opencode/kimi-k2.5"
+    },
+    "plan": {
+      "model": "opencode/kimi-k2.5"
+    },
+    "sisyphus": {
+      "model": "opencode/kimi-k2.5"
+    },
+    "sisyphus-junior": {
+      "model": "opencode/kimi-k2.5"
+    },
+    "OpenCode-Builder": {
+      "model": "opencode/kimi-k2.5"
+    },
+    "prometheus": {
+      "model": "opencode/kimi-k2.5"
+    },
+    "metis": {
+      "model": "opencode/kimi-k2.5"
+    },
+    "momus": {
+      "model": "opencode/kimi-k2.5"
+    },
+    "oracle": {
+      "model": "opencode/kimi-k2.5"
+    },
+    "librarian": {
+      "model": "opencode/kimi-k2.5"
+    },
+    "explore": {
+      "model": "opencode/kimi-k2.5"
+    },
+    "multimodal-looker": {
+      "model": "opencode/kimi-k2.5"
+    },
+    "general": {
+      "model": "opencode/kimi-k2.5"
+    },
+    "deep": {
+      "model": "opencode/kimi-k2.5"
+    },
+    "ultrabrain": {
+      "model": "opencode/kimi-k2.5"
+    },
+    "artistry": {
+      "model": "opencode/kimi-k2.5"
+    },
+    "visual-engineering": {
+      "model": "opencode/kimi-k2.5"
+    },
+    "quick": {
+      "model": "opencode/kimi-k2.5"
+    },
+    "writing": {
+      "model": "opencode/kimi-k2.5"
+    },
+    "opencoder-planner": {
+      "model": "opencode/kimi-k2.5"
+    },
+    "opencoder": {
+      "model": "opencode/kimi-k2.5"
+    },
+    "opencoder-builder": {
+      "model": "opencode/kimi-k2.5"
+    }
+  },
+  "disabled_hooks": [
+    "comment-checker",
+    "agent-usage-reminder",
+    "startup-toast"
+  ],
+  "disabled_mcps": [],
+  "lsp": {
+    "typescript-language-server": {
+      "command": [
+        "typescript-language-server",
+        "--stdio"
+      ],
+      "extensions": [
+        ".ts",
+        ".tsx"
+      ],
+      "priority": 10
+    },
+    "eslint-lsp": {
+      "command": [
+        "vscode-eslint-language-server",
+        "--stdio"
+      ],
+      "extensions": [
+        ".js",
+        ".jsx",
+        ".ts",
+        ".tsx"
+      ],
+      "priority": 5
+    }
+  },
+  "experimental": {
+    "preemptive_compaction_threshold": 0.85,
+    "auto_resume": true,
+    "truncate_all_tool_outputs": false,
+    "aggressive_truncation": false,
+    "dcp_for_compaction": false
+  }
+}
