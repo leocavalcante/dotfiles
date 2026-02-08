@@ -1,35 +1,10 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "theme": "github-dark",
-  "model": "opencode/glm-4.7-free",
+  "model": "opencode/minimax-m2.1",
   "formatter": false,
   "keybinds": {
     "model_cycle_favorite": "alt+m"
-  },
-  "provider": {
-    "ollama": {
-      "npm": "@ai-sdk/openai-compatible",
-      "name": "Ollama (local)",
-      "options": {
-        "baseURL": "http://localhost:11434/v1"
-      },
-      "models": {
-        "qwen3:8b": {
-          "name": "Qwen 3 8B"
-        },
-        "llama3.1:8b": {
-          "name": "Llama 3.1 8B"
-        },
-        "deepseek-r1:8b": {
-          "name": "DeepSeek R1 8B"
-        },
-        "rnj-1:8b": {
-          "name": "RNJ 1 8B"
-        }
-      }
-    }
-  },
-  "plugin": [
-    "oh-my-opencode"
-  ]
+  }
 }
+
