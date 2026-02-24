@@ -40,7 +40,7 @@ alias pip="pip3"
 alias oc="opencode"
 alias occ="opencode --continue"
 alias md="uvx frogmouth"
-alias co="copilot --yolo"
+alias co="copilot --yolo -i"
 
 # ─── Functions ───
 
