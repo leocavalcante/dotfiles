@@ -141,6 +141,9 @@ up() {
   if (( $+commands[opencode] )); then
     opencode upgrade
   fi
+  if (( $+commands[npm] )); then
+    npm i -g @github/copilot
+  fi
 }
 
 # Composer with auto-loaded auth
