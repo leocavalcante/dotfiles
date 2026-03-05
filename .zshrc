@@ -40,9 +40,17 @@ alias pip="pip3"
 alias oc="opencode"
 alias occ="opencode --continue"
 alias md="uvx frogmouth"
-alias co="copilot --yolo -i"
 
 # ─── Functions ───
+
+co() {
+  emulate -L zsh
+  if (( $# )); then
+    copilot --yolo -i "$*"
+  else
+    copilot --yolo
+  fi
+}
 
 # Enable Anthropic Copilot API (local routing)
 enable_copilot_api() {
