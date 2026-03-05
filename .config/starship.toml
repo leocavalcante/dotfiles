@@ -68,3 +68,6 @@ detect_files = ["package.json", ".node-version", ".nvmrc"]
 detect_folders = ["node_modules"]
 detect_extensions = []
 
+[gcloud]
+disabled = true
+
