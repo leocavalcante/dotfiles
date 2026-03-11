@@ -43,14 +43,8 @@ alias occ="opencode --continue"
 alias md="uvx frogmouth"
 
 # ─── Functions ───
-
 co() {
-  emulate -L zsh
-  if (( $# )); then
-    copilot --yolo -i "$*"
-  else
-    copilot --yolo
-  fi
+  copilot --yolo -p "$@"
 }
 
 ico() {
