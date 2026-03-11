@@ -51,57 +51,6 @@ ico() {
   copilot --yolo
 }
 
-# Enable Anthropic Copilot API (local routing)
-enable_copilot_api() {
-  local anthropic_url="http://localhost:4141"
-  export ANTHROPIC_BASE_URL="$anthropic_url"
-  export ANTHROPIC_API_URL="$anthropic_url"
-  export ANTHROPIC_API_BASE="$anthropic_url"
-  export ANTHROPIC_API_KEY="copilot-api"
-  export ANTHROPIC_DEFAULT_HAIKU_MODEL="claude-haiku-4.5"
-  export ANTHROPIC_DEFAULT_SONNET_MODEL="claude-sonnet-4.5"
-  export ANTHROPIC_DEFAULT_OPUS_MODEL="claude-opus-4.5"
-  export ANTHROPIC_MODEL="${ANTHROPIC_DEFAULT_SONNET_MODEL}"
-  export ANTHROPIC_SMALL_FAST_MODEL="${ANTHROPIC_DEFAULT_HAIKU_MODEL}"
-  export DISABLE_NON_ESSENTIAL_MODEL_CALLS="1"
-  export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC="1"
-  echo "✨ Copilot API enabled"
-}
-
-# Disable Anthropic Copilot API
-disable_copilot_api() {
-  unset ANTHROPIC_BASE_URL
-  unset ANTHROPIC_API_URL
-  unset ANTHROPIC_API_BASE
-  unset ANTHROPIC_API_KEY
-  unset ANTHROPIC_DEFAULT_HAIKU_MODEL
-  unset ANTHROPIC_DEFAULT_SONNET_MODEL
-  unset ANTHROPIC_DEFAULT_OPUS_MODEL
-  unset ANTHROPIC_MODEL
-  unset ANTHROPIC_SMALL_FAST_MODEL
-  unset DISABLE_NON_ESSENTIAL_MODEL_CALLS
-  unset CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC
-  echo "⚫ Copilot API disabled"
-}
-
-# Enable AWS Bedrock
-enable_bedrock() {
-  export CLAUDE_CODE_USE_BEDROCK="1"
-  export AWS_REGION="us-east-1"
-  export ANTHROPIC_MODEL="global.anthropic.claude-sonnet-4-5-20250929-v1:0"
-  export ANTHROPIC_SMALL_FAST_MODEL="us.anthropic.claude-haiku-4-5-20251001-v1:0"
-  echo "☁️  Bedrock enabled"
-}
-
-# Disable AWS Bedrock
-disable_bedrock() {
-  unset CLAUDE_CODE_USE_BEDROCK
-  unset AWS_REGION
-  unset ANTHROPIC_MODEL
-  unset ANTHROPIC_SMALL_FAST_MODEL
-  echo "⚫ Bedrock disabled"
-}
-
 # Update dotfiles from repository
 dot() {
   emulate -L zsh
