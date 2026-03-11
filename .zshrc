@@ -34,6 +34,7 @@ path=(
 alias l="eza --all --icons --git"
 alias ll="eza --long --all --icons --git"
 alias push="git push"
+alias gd="git diff-all"
 alias stk="starship toggle kubernetes"
 alias python="python3"
 alias pip="pip3"
