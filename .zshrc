@@ -51,6 +51,10 @@ ico() {
   copilot --yolo
 }
 
+icoco() {
+  copilot --yolo --continue
+}
+
 # Update dotfiles from repository
 dot() {
   emulate -L zsh
