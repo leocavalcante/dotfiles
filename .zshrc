@@ -53,6 +53,10 @@ co() {
   fi
 }
 
+ico() {
+  copilot --yolo
+}
+
 # Enable Anthropic Copilot API (local routing)
 enable_copilot_api() {
   local anthropic_url="http://localhost:4141"
