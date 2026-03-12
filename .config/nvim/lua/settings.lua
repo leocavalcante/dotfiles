@@ -25,6 +25,16 @@ vim.opt.undofile = true
 require("colors.github-dark").setup()
 
 vim.api.nvim_create_autocmd("FileType", {
+  pattern = "yaml",
+  callback = function()
+    vim.opt_local.foldmethod = "expr"
+    vim.opt_local.foldexpr = "nvim_treesitter#foldexpr()"
+    vim.opt_local.foldenable = true
+    vim.opt_local.foldlevel = 99
+  end,
+})
+
+vim.api.nvim_create_autocmd("FileType", {
   pattern = "go",
   callback = function()
     vim.opt.tabstop = 4   -- Set tabstop to 4 spaces for Go files
