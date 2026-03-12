@@ -180,6 +180,8 @@ if [[ ! -f "$ANTIGEN" ]]; then
   fi
 fi
 if [[ -f "$ANTIGEN" ]]; then
+  # Skip OMZ's unconditional compinit; we run it ourselves with caching below
+  skip_global_compinit=1
   source "$ANTIGEN"
   antigen use oh-my-zsh
   antigen bundle git
@@ -190,5 +192,14 @@ if [[ -f "$ANTIGEN" ]]; then
   antigen bundle zsh-users/zsh-history-substring-search
   antigen bundle zdharma-continuum/fast-syntax-highlighting
   antigen apply
+  # Run compinit only if the dump is older than 24 hours
+  autoload -Uz compinit
+  local _zcompdump="${ZDOTDIR:-$HOME}/.zcompdump"
+  if [[ -n $_zcompdump(#qN.mh+24) ]]; then
+    compinit -d "$_zcompdump"
+    touch "$_zcompdump"
+  else
+    compinit -C -d "$_zcompdump"
+  fi
 fi
 
