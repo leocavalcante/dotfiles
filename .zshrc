@@ -44,7 +44,7 @@ alias md="uvx frogmouth"
 
 # ─── Functions ───
 co() {
-  copilot --yolo -p "$@"
+  copilot --yolo --silent -p "$@"
 }
 
 ico() {
