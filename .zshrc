@@ -47,6 +47,14 @@ co() {
   copilot --yolo --silent -p "$@"
 }
 
+coco() {
+  copilot --yolo --silent -p "$@" --continue
+}
+
+coha() {
+  copilot --yolo --silent -p "$@" --model claude-haiku-4.5
+}
+
 ico() {
   copilot --yolo
 }
