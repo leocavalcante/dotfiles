@@ -42,11 +42,11 @@ alias lg="lazygit"
 
 # ─── Functions ───
 co() {
-  copilot --yolo --silent -p "$@"
+  copilot --yolo --silent -p "$@" --model claude-sonnet-4.6
 }
 
 coco() {
-  copilot --yolo --silent -p "$@" --continue
+  copilot --yolo --silent -p "$@" --model claude-sonnet-4.6 --continue
 }
 
 coha() {
@@ -58,11 +58,11 @@ copus() {
 }
 
 ico() {
-  copilot --yolo
+  copilot --yolo --model claude-sonnet-4.6
 }
 
 icoco() {
-  copilot --yolo --continue
+  copilot --yolo --model claude-sonnet-4.6 --continue
 }
 
 # Update dotfiles from repository
