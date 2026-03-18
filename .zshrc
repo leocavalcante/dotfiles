@@ -54,6 +54,10 @@ coha() {
   copilot --yolo --silent -p "$@" --model claude-haiku-4.5
 }
 
+copus() {
+  copilot --yolo --silent -p "$@" --model claude-opus-4.6
+}
+
 ico() {
   copilot --yolo
 }
