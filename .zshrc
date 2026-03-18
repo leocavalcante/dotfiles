@@ -38,8 +38,7 @@ alias gd="git diff-all"
 alias stk="starship toggle kubernetes"
 alias python="python3"
 alias pip="pip3"
-alias oc="opencode"
-alias occ="opencode --continue"
+alias lg="lazygit"
 
 # ─── Functions ───
 co() {
