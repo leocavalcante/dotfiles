@@ -22,6 +22,7 @@
   "vim-dadbod-completion": { "branch": "master", "commit": "a8dac0b3cf6132c80dc9b18bef36d4cf7a9e1fe6" },
   "vim-dadbod-ui": { "branch": "master", "commit": "07e92e22114cc5b1ba4938d99897d85b58e20475" },
   "vim-tmux-navigator": { "branch": "master", "commit": "e41c431a0c7b7388ae7ba341f01a0d217eb3a432" },
+  "vim-visual-multi": { "branch": "master", "commit": "a6975e7c1ee157615bbc80fc25e4392f71c344d4" },
   "vim-wakatime": { "branch": "master", "commit": "d7973b157a632d1edeff01818f18d67e584eeaff" },
   "zen-mode.nvim": { "branch": "main", "commit": "8564ce6d29ec7554eb9df578efa882d33b3c23a7" }
 }
