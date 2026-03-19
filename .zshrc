@@ -42,19 +42,19 @@ alias lg="lazygit"
 
 # ─── Functions ───
 co() {
-  copilot --yolo --silent -p "$@" --model claude-sonnet-4.6
+  copilot --yolo --silent --disable-builtin-mcps --stream on --no-auto-update -p "$@" --model claude-sonnet-4.6
 }
 
 coco() {
-  copilot --yolo --silent -p "$@" --model claude-sonnet-4.6 --continue
+  copilot --yolo --silent --disable-builtin-mcps --stream on --no-auto-update -p "$@" --model claude-sonnet-4.6 --continue
 }
 
 coha() {
-  copilot --yolo --silent -p "$@" --model claude-haiku-4.5
+  copilot --yolo --silent --disable-builtin-mcps --stream on --no-auto-update -p "$@" --model claude-haiku-4.5
 }
 
 copus() {
-  copilot --yolo --silent -p "$@" --model claude-opus-4.6
+  copilot --yolo --silent --disable-builtin-mcps --stream on --no-auto-update -p "$@" --model claude-opus-4.6
 }
 
 ico() {
