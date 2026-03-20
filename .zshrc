@@ -108,9 +108,6 @@ up() {
   if (( $+commands[brew] )); then
     brew update && brew upgrade && brew cleanup
   fi
-  if (( $+commands[opencode] )); then
-    opencode upgrade
-  fi
   if (( $+commands[npm] )); then
     npm i -g @github/copilot
   fi
