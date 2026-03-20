@@ -41,10 +41,16 @@ white   = "#f0f6fc"
 alphabet = "jfkdls;ahgurieowpq"
 
 [[hints.enabled]]
-command = { program = "open" }
+command = "open"  # macOS default. Use "xdg-open" on Linux.
 hyperlinks = true
 post_processing = true
-persist = false
-mouse.enabled = true
-binding = { key = "U", mods = "Control|Shift" }
-regex = "(https?|ftp)://[^\\u0000-\\u001F\\u007F-\\u009F<>\"\\\\s{-}\\^⟨⟩`]+"
+regex = "(ipfs:|ipns:|magnet:|mailto:|gemini://|gopher://|https://|http://|news:|file:|git://|ssh:|ftp://)[^\u0000-\u001F\u007F-\u009F<>\"\\s{-}\\^⟨⟩`]+"
+
+[hints.enabled.binding]
+key = "U"
+mods = "Control|Shift"
+
+[hints.enabled.mouse]
+enabled = true
+mods = "Control"
+
