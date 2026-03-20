@@ -42,27 +42,27 @@ alias lg="lazygit"
 
 # ─── Functions ───
 co() {
-  copilot --yolo --silent --disable-builtin-mcps --stream on --no-auto-update -p "$@" --model claude-sonnet-4.6
+  copilot --yolo --disable-builtin-mcps --silent --stream on --no-auto-update -p "$@" --model claude-sonnet-4.6
 }
 
 coco() {
-  copilot --yolo --silent --disable-builtin-mcps --stream on --no-auto-update -p "$@" --model claude-sonnet-4.6 --continue
+  copilot --yolo --disable-builtin-mcps --silent --stream on --no-auto-update -p "$@" --model claude-sonnet-4.6 --continue
 }
 
 coha() {
-  copilot --yolo --silent --disable-builtin-mcps --stream on --no-auto-update -p "$@" --model claude-haiku-4.5
+  copilot --yolo --disable-builtin-mcps --silent --stream on --no-auto-update -p "$@" --model claude-haiku-4.5
 }
 
 copus() {
-  copilot --yolo --silent --disable-builtin-mcps --stream on --no-auto-update -p "$@" --model claude-opus-4.6
+  copilot --yolo --disable-builtin-mcps --silent --stream on --no-auto-update -p "$@" --model claude-opus-4.6
 }
 
 ico() {
-  copilot --yolo --model claude-sonnet-4.6
+  copilot --yolo --disable-builtin-mcps --model claude-sonnet-4.6
 }
 
 icoco() {
-  copilot --yolo --model claude-sonnet-4.6 --continue
+  copilot --yolo --disable-builtin-mcps --model claude-sonnet-4.6 --continue
 }
 
 # Update dotfiles from repository
