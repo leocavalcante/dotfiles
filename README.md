@@ -8,20 +8,20 @@ Personal development environment with AI-powered workflows and unified GitHub Da
 - **Unified GitHub Dark Theme** - Custom colorscheme consistently applied across Neovim, tmux, kitty, Alacritty, Starship, and terminal apps
 - **Performance-Optimized Zsh** - Aggressive lazy-loading, caching, and startup optimizations (30-80ms reduction)
 - **DevOps-Focused tmux** - Status bar displays Kubernetes context, AWS profile, git branch, and battery info
-- **Modern Neovim Setup** - 24 plugins with LSP support for Go, PHP, Lua, and Markdown; Git integration; Copilot; Database client
+- **Modern Neovim Setup** - 24 plugins with LSP support for Go, PHP, Lua, TypeScript, Python, Rust, YAML, JSON, and Markdown; Git integration; Copilot; Database client
 - **Cross-Platform** - Works on macOS (Homebrew), Linux (apt), and Termux
 
 ## What's Included
 
 | Component | Purpose |
 |-----------|---------|
-| **Zsh** (`.zshrc`) | Shell with 10 custom functions, Antigen plugin manager, 6 curated plugins |
+| **Zsh** (`.zshrc`) | Shell with 10 custom functions, Antigen plugin manager, 7 curated plugins |
 | **Neovim** (`.config/nvim/`) | Modern editor with LSP, fuzzy finder, file explorer, AI copilot |
-| **tmux** (`.tmux.conf`) | Terminal multiplexer with DevOps status bar and vim integration |
+| **tmux** (`.tmux.conf`) | Terminal multiplexer with DevOps status bar, session persistence, and vim integration |
 | **Git** (`.gitconfig`) | Delta pager, LFS support, GitHub Dark theme |
-| **Terminal Apps** | Alacritty, Kitty, and Starship prompt configs |
-| **Emacs** (`.emacs.d/`) | Minimal setup with LSP, Copilot, database client |
-| **AI Configs** | Claude Code (`.claude/`), OpenCode, Gemini with instructions and skills |
+| **Terminal Apps** | Alacritty (`.alacritty.toml`), Kitty (`.config/kitty/`), Starship (`.config/starship.toml`) |
+| **Emacs** (`.emacs.d/`) | Minimal setup with LSP, Copilot, and completions |
+| **AI Configs** | Claude Code (`.claude/`), OpenCode (`.config/opencode/`), Gemini (`.gemini/`) |
 | **Themes** | GitHub Dark Default exports for iTerm2 and Windows Terminal |
 
 ## Quick Start
@@ -81,15 +81,14 @@ Theme exports available for iTerm2 (`themes/iterm2.itermcolors`) and Windows Ter
 
 - **Stow Management** - Symlinks managed via GNU Stow (`.stow-local-ignore` excludes docs and local configs)
 - **Plugin Managers** - Antigen (Zsh), lazy.nvim (Neovim), TPM (tmux), straight.el (Emacs)
-- **LSP** - lsp-zero (Neovim), Mason for auto-install
+- **LSP** - Mason for auto-install (9 servers: gopls, ts_ls, pylsp, rust_analyzer, phpactor, lua_ls, marksman, yamlls, jsonls)
 - **Dotfiles Public** - Repository at [github.com/leocavalcante/dotfiles](https://github.com/leocavalcante/dotfiles)
 
 ## Documentation
 
-- **`AGENTS.md`** - Comprehensive guide for AI agents and detailed configuration reference
-- **`CLAUDE.md`** - Pointer to AGENTS.md (single source of truth for AI instructions)
+- **`.config/opencode/AGENTS.md`** - Comprehensive guide for AI agents and detailed configuration reference
 - **`.claude/CLAUDE.md`** - User profile, git workflow, and commit preferences
 
 ## License
 
-MIT License (2022-2025) - Leo Cavalcante
+MIT License (2022-2026) - Leo Cavalcante
