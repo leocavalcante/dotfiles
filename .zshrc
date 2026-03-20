@@ -8,8 +8,6 @@ export EDITOR="nvim"
 export GIT_EDITOR="$EDITOR"
 export KUBE_EDITOR="$EDITOR"
 export SUDO_EDITOR="$EDITOR"
-export OPENCODE_DISABLE_CLAUDE_CODE_PROMPT="1"
-export OPENCODE_ENABLE_EXA="1"
 
 # PHP
 export COMPOSER_PATH="$HOME/.config/composer"
