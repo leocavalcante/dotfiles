@@ -56,7 +56,7 @@ function M.setup()
 
   local highlights = {
     -- Editor
-    Normal = { fg = c.fg, bg = c.bg },
+    Normal = { fg = c.fg },
     NormalFloat = { fg = c.fg, bg = c.bg_highlight },
     FloatBorder = { fg = c.border, bg = c.bg_highlight },
     ColorColumn = { bg = c.bg_highlight },
@@ -64,11 +64,11 @@ function M.setup()
     CursorLine = { bg = c.bg_highlight },
     CursorLineNr = { fg = c.fg, bold = true },
     LineNr = { fg = c.fg_subtle },
-    SignColumn = { fg = c.fg_subtle, bg = c.bg },
+    SignColumn = { fg = c.fg_subtle },
     VertSplit = { fg = c.border },
     WinSeparator = { fg = c.border },
     Folded = { fg = c.fg_muted, bg = c.bg_highlight },
-    FoldColumn = { fg = c.fg_subtle, bg = c.bg },
+    FoldColumn = { fg = c.fg_subtle },
     NonText = { fg = c.fg_subtle },
     SpecialKey = { fg = c.fg_subtle },
     EndOfBuffer = { fg = c.bg },
@@ -242,8 +242,8 @@ function M.setup()
     TelescopeMatching = { fg = c.yellow, bold = true },
 
     -- Neo-tree
-    NeoTreeNormal = { fg = c.fg, bg = c.bg },
-    NeoTreeNormalNC = { fg = c.fg, bg = c.bg },
+    NeoTreeNormal = { fg = c.fg },
+    NeoTreeNormalNC = { fg = c.fg },
     NeoTreeDirectoryName = { fg = c.fg },
     NeoTreeDirectoryIcon = { fg = c.blue },
     NeoTreeRootName = { fg = c.blue, bold = true },
