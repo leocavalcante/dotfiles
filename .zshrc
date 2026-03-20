@@ -8,6 +8,7 @@ export EDITOR="nvim"
 export GIT_EDITOR="$EDITOR"
 export KUBE_EDITOR="$EDITOR"
 export SUDO_EDITOR="$EDITOR"
+export PAGER="delta --navigate"
 
 # PHP
 export COMPOSER_PATH="$HOME/.config/composer"
