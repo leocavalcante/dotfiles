@@ -64,6 +64,10 @@ icoco() {
   copilot --yolo --disable-builtin-mcps --model claude-sonnet-4.6 --continue
 }
 
+icopus() {
+  copilot --yolo --disable-builtin-mcps --model claude-opus-4.6
+}
+
 # Update dotfiles from repository
 dot() {
   emulate -L zsh
