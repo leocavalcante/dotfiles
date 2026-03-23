@@ -37,6 +37,11 @@ magenta = "#d2a8ff"
 cyan    = "#56d4dd"
 white   = "#f0f6fc"
 
+[[keyboard.bindings]]
+key = "Return"
+mods = "Shift"
+chars = "\x1b\r"
+
 [hints]
 alphabet = "jfkdls;ahgurieowpq"
 
