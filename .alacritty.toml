@@ -57,5 +57,5 @@ mods = "Control|Shift"
 
 [hints.enabled.mouse]
 enabled = true
-mods = "Control"
+mods = "Shift"
 
