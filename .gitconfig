@@ -7,7 +7,7 @@
 
 [delta]
     navigate = true
-    side-by-side = false
+    side-by-side = true
     line-numbers = true
     # GitHub Dark theme
     syntax-theme = base16
