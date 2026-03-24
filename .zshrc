@@ -9,6 +9,7 @@ export GIT_EDITOR="$EDITOR"
 export KUBE_EDITOR="$EDITOR"
 export SUDO_EDITOR="$EDITOR"
 export PAGER="delta --navigate"
+export XDG_CONFIG_HOME="$HOME/.config/"
 
 # PHP
 export COMPOSER_PATH="$HOME/.config/composer"
