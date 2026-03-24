@@ -1,0 +1,104 @@
+# GitHub Dark Default skin for k9s
+# Colors sourced from https://github.com/primer/github-vscode-theme
+k9s:
+  body:
+    fgColor: '#e6edf3'
+    bgColor: '#0d1117'
+    logoColor: '#58a6ff'
+
+  # ClusterInfoView styles
+  info:
+    fgColor: '#8b949e'
+    sectionColor: '#58a6ff'
+
+  # Prompt styles
+  prompt:
+    fgColor: '#e6edf3'
+    bgColor: '#161b22'
+    suggestColor: '#58a6ff'
+
+  # Dialog styles
+  dialog:
+    fgColor: '#e6edf3'
+    bgColor: '#161b22'
+    buttonFgColor: '#e6edf3'
+    buttonBgColor: '#30363d'
+    buttonFocusFgColor: '#0d1117'
+    buttonFocusBgColor: '#58a6ff'
+    labelFgColor: '#ffa657'
+    fieldFgColor: '#e6edf3'
+
+  # Frame styles
+  frame:
+    border:
+      fgColor: '#30363d'
+      focusColor: '#58a6ff'
+
+    menu:
+      fgColor: '#e6edf3'
+      keyColor: '#58a6ff'
+      numKeyColor: '#39c5cf'
+
+    crumbs:
+      fgColor: '#e6edf3'
+      bgColor: '#161b22'
+      activeColor: '#58a6ff'
+
+    status:
+      newColor: '#3fb950'
+      modifyColor: '#58a6ff'
+      addColor: '#56d364'
+      errorColor: '#ff7b72'
+      highlightcolor: '#79c0ff'
+      killColor: '#6e7681'
+      completedColor: '#8b949e'
+
+    title:
+      fgColor: '#e6edf3'
+      bgColor: '#161b22'
+      highlightColor: '#58a6ff'
+      counterColor: '#39c5cf'
+      filterColor: '#ffa657'
+
+  # Views styles
+  views:
+    charts:
+      bgColor: '#0d1117'
+      defaultDialColors:
+        - '#58a6ff'
+        - '#30363d'
+      defaultChartColors:
+        - '#58a6ff'
+        - '#3fb950'
+
+    table:
+      fgColor: '#e6edf3'
+      bgColor: '#0d1117'
+      cursorFgColor: '#e6edf3'
+      cursorBgColor: '#264f78'
+      markColor: '#ffa657'
+      header:
+        fgColor: '#8b949e'
+        bgColor: '#161b22'
+        sorterColor: '#ffa657'
+
+    xray:
+      fgColor: '#e6edf3'
+      bgColor: '#0d1117'
+      cursorColor: '#264f78'
+      graphicColor: '#58a6ff'
+      showIcons: false
+
+    yaml:
+      keyColor: '#79c0ff'
+      colonColor: '#6e7681'
+      valueColor: '#e6edf3'
+
+    logs:
+      fgColor: '#e6edf3'
+      bgColor: '#0d1117'
+      indicator:
+        fgColor: '#e6edf3'
+        bgColor: '#161b22'
+        toggleOnColor: '#3fb950'
+        toggleOffColor: '#6e7681'
