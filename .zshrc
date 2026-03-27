@@ -10,6 +10,7 @@ export KUBE_EDITOR="$EDITOR"
 export SUDO_EDITOR="$EDITOR"
 export PAGER="delta --navigate"
 export XDG_CONFIG_HOME="$HOME/.config/"
+export GPG_TTY=$(tty)
 
 # PHP
 export COMPOSER_PATH="$HOME/.config/composer"
@@ -39,6 +40,9 @@ alias stk="starship toggle kubernetes"
 alias python="python3"
 alias pip="pip3"
 alias lg="lazygit"
+alias k="kubectl"
+alias ktx="kubectx"
+alias kns="kubens"
 
 # ─── Functions ───
 co() {
