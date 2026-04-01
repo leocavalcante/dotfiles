@@ -2,10 +2,8 @@ return {
     'nvim-lualine/lualine.nvim',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
     config = function()
-        -- GitHub Dark Default theme for lualine
-        -- Colors extracted from iTerm2 GitHub-Dark-Default.itermcolors
-        local colors = require('colors.github-dark').colors
-        local github_dark = {
+        local colors = require('colors.gruvbox-dark').colors
+        local gruvbox_dark = {
             normal = {
                 a = { fg = colors.bg, bg = colors.blue, gui = 'bold' },
                 b = { fg = colors.fg, bg = colors.bg_highlight },
@@ -45,7 +43,7 @@ return {
 
         require('lualine').setup({
             options = {
-                theme = github_dark,
+                theme = gruvbox_dark,
                 component_separators = { left = '', right = '' },
                 section_separators = { left = '', right = '' },
             }
