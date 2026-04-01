@@ -3,26 +3,26 @@
 command_timeout = 3000
 
 # GitHub Dark Default palette
-palette = "github_dark"
+palette = "solarized_dark"
 
-[palettes.github_dark]
-bg = "#0d1117"
-fg = "#e6edf3"
-fg_muted = "#8b949e"
-fg_subtle = "#6e7681"
-red = "#ff7b72"
-bright_red = "#ffa198"
-orange = "#ffa657"
-yellow = "#d29922"
-bright_yellow = "#e3b341"
-green = "#3fb950"
-bright_green = "#56d364"
-cyan = "#39c5cf"
-bright_cyan = "#56d4dd"
-blue = "#58a6ff"
-bright_blue = "#79c0ff"
-purple = "#bc8cff"
-magenta = "#d2a8ff"
+[palettes.solarized_dark]
+bg = "#002b36"
+fg = "#839496"
+fg_muted = "#586e75"
+fg_subtle = "#586e75"
+red = "#dc322f"
+bright_red = "#cb4b16"
+orange = "#cb4b16"
+yellow = "#b58900"
+bright_yellow = "#657b83"
+green = "#859900"
+bright_green = "#586e75"
+cyan = "#2aa198"
+bright_cyan = "#93a1a1"
+blue = "#268bd2"
+bright_blue = "#839496"
+purple = "#6c71c4"
+magenta = "#d33682"
 
 [username]
 disabled = true
