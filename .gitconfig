@@ -9,22 +9,22 @@
     navigate = true
     side-by-side = true
     line-numbers = true
-    # Solarized Dark theme
-    syntax-theme = Solarized (dark)
-    minus-style = "syntax #073642"
-    minus-emph-style = "syntax #3d2028"
-    plus-style = "syntax #073642"
-    plus-emph-style = "syntax #1a4a2a"
-    line-numbers-minus-style = "#dc322f"
-    line-numbers-plus-style = "#859900"
-    line-numbers-zero-style = "#586e75"
-    line-numbers-left-style = "#073642"
-    line-numbers-right-style = "#073642"
-    hunk-header-style = "syntax #073642"
-    hunk-header-decoration-style = "box #073642"
-    file-style = "#268bd2 bold"
+    # Gruvbox Dark theme
+    syntax-theme = gruvbox-dark
+    minus-style = "syntax #3c1f1f"
+    minus-emph-style = "syntax #6c2e2e"
+    plus-style = "syntax #2e3b1f"
+    plus-emph-style = "syntax #4e6b2f"
+    line-numbers-minus-style = "#fb4934"
+    line-numbers-plus-style = "#b8bb26"
+    line-numbers-zero-style = "#928374"
+    line-numbers-left-style = "#504945"
+    line-numbers-right-style = "#504945"
+    hunk-header-style = "syntax #3c3836"
+    hunk-header-decoration-style = "box #504945"
+    file-style = "#83a598 bold"
     file-decoration-style = "none"
-    commit-style = "#b58900"
+    commit-style = "#fabd2f"
     commit-decoration-style = "none"
 
 [merge]

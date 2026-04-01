@@ -1,6 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "theme": "github-dark",
+  "theme": "gruvbox-dark",
   "autoupdate": true,
   "formatter": false,
   "keybinds": {
