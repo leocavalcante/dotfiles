@@ -21,8 +21,8 @@ vim.opt.tabstop = 4
 vim.opt.termguicolors = true
 vim.opt.undofile = true
 
--- Load GitHub Dark colorscheme
-require("colors.github-dark").setup()
+-- Load Gruvbox Dark colorscheme
+require("colors.gruvbox-dark").setup()
 
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "yaml",
