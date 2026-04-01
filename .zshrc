@@ -43,6 +43,7 @@ alias lg="lazygit"
 alias k="kubectl"
 alias ktx="kubectx"
 alias kns="kubens"
+alias cl="clear"
 
 # ─── Functions ───
 co() {
