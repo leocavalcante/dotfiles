@@ -1,0 +1,31 @@
+# Solarized Light theme for LazyGit
+# Merge into lazygit config.yml under the 'gui' key
+# Colors from https://ethanschoonover.com/solarized/
+gui:
+  theme:
+    activeBorderColor:
+      - '#268bd2'
+      - bold
+    inactiveBorderColor:
+      - '#eee8d5'
+    searchingActiveBorderColor:
+      - '#b58900'
+      - bold
+    optionsTextColor:
+      - '#268bd2'
+    selectedLineBgColor:
+      - '#eee8d5'
+    inactiveViewSelectedLineBgColor:
+      - '#eee8d5'
+    cherryPickedCommitFgColor:
+      - '#268bd2'
+    cherryPickedCommitBgColor:
+      - '#eee8d5'
+    markedBaseCommitFgColor:
+      - '#2aa198'
+    markedBaseCommitBgColor:
+      - '#eee8d5'
+    unstagedChangesColor:
+      - '#dc322f'
+    defaultFgColor:
+      - '#657b83'

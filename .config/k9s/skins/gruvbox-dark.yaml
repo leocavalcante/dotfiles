@@ -1,0 +1,85 @@
+# Gruvbox Dark skin for k9s
+k9s:
+  body:
+    fgColor: '#ebdbb2'
+    bgColor: default
+    logoColor: '#83a598'
+  info:
+    fgColor: '#a89984'
+    sectionColor: '#83a598'
+  prompt:
+    fgColor: '#ebdbb2'
+    bgColor: default
+    suggestColor: '#83a598'
+  dialog:
+    fgColor: '#ebdbb2'
+    bgColor: default
+    buttonFgColor: '#ebdbb2'
+    buttonBgColor: '#504945'
+    buttonFocusFgColor: '#282828'
+    buttonFocusBgColor: '#83a598'
+    labelFgColor: '#fe8019'
+    fieldFgColor: '#ebdbb2'
+  frame:
+    border:
+      fgColor: '#504945'
+      focusColor: '#83a598'
+    menu:
+      fgColor: '#ebdbb2'
+      keyColor: '#83a598'
+      numKeyColor: '#8ec07c'
+    crumbs:
+      fgColor: '#ebdbb2'
+      bgColor: default
+      activeColor: '#83a598'
+    status:
+      newColor: '#b8bb26'
+      modifyColor: '#83a598'
+      addColor: '#b8bb26'
+      errorColor: '#fb4934'
+      highlightcolor: '#83a598'
+      killColor: '#928374'
+      completedColor: '#a89984'
+    title:
+      fgColor: '#ebdbb2'
+      bgColor: default
+      highlightColor: '#83a598'
+      counterColor: '#8ec07c'
+      filterColor: '#fe8019'
+  views:
+    charts:
+      bgColor: default
+      defaultDialColors:
+        - '#83a598'
+        - '#504945'
+      defaultChartColors:
+        - '#83a598'
+        - '#b8bb26'
+    table:
+      fgColor: '#ebdbb2'
+      bgColor: default
+      cursorFgColor: '#ebdbb2'
+      cursorBgColor: '#504945'
+      markColor: '#fe8019'
+      header:
+        fgColor: '#a89984'
+        bgColor: default
+        sorterColor: '#fe8019'
+    xray:
+      fgColor: '#ebdbb2'
+      bgColor: default
+      cursorColor: '#504945'
+      graphicColor: '#83a598'
+      showIcons: false
+    yaml:
+      keyColor: '#83a598'
+      colonColor: '#928374'
+      valueColor: '#ebdbb2'
+    logs:
+      fgColor: '#ebdbb2'
+      bgColor: default
+      indicator:
+        fgColor: '#ebdbb2'
+        bgColor: default
+        toggleOnColor: '#b8bb26'
+        toggleOffColor: '#928374'

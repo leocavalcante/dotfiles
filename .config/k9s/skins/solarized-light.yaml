@@ -1,0 +1,104 @@
+# Solarized Light skin for k9s with transparent background
+# Colors sourced from https://ethanschoonover.com/solarized/
+k9s:
+  body:
+    fgColor: '#657b83'
+    bgColor: default
+    logoColor: '#268bd2'
+
+  # ClusterInfoView styles
+  info:
+    fgColor: '#93a1a1'
+    sectionColor: '#268bd2'
+
+  # Prompt styles
+  prompt:
+    fgColor: '#657b83'
+    bgColor: default
+    suggestColor: '#268bd2'
+
+  # Dialog styles
+  dialog:
+    fgColor: '#657b83'
+    bgColor: default
+    buttonFgColor: '#657b83'
+    buttonBgColor: '#eee8d5'
+    buttonFocusFgColor: '#fdf6e3'
+    buttonFocusBgColor: '#268bd2'
+    labelFgColor: '#b58900'
+    fieldFgColor: '#657b83'
+
+  # Frame styles
+  frame:
+    border:
+      fgColor: '#eee8d5'
+      focusColor: '#268bd2'
+
+    menu:
+      fgColor: '#657b83'
+      keyColor: '#268bd2'
+      numKeyColor: '#2aa198'
+
+    crumbs:
+      fgColor: '#657b83'
+      bgColor: default
+      activeColor: '#268bd2'
+
+    status:
+      newColor: '#859900'
+      modifyColor: '#268bd2'
+      addColor: '#859900'
+      errorColor: '#dc322f'
+      highlightcolor: '#268bd2'
+      killColor: '#93a1a1'
+      completedColor: '#93a1a1'
+
+    title:
+      fgColor: '#657b83'
+      bgColor: default
+      highlightColor: '#268bd2'
+      counterColor: '#2aa198'
+      filterColor: '#b58900'
+
+  # Views styles
+  views:
+    charts:
+      bgColor: default
+      defaultDialColors:
+        - '#268bd2'
+        - '#eee8d5'
+      defaultChartColors:
+        - '#268bd2'
+        - '#859900'
+
+    table:
+      fgColor: '#657b83'
+      bgColor: default
+      cursorFgColor: '#586e75'
+      cursorBgColor: '#eee8d5'
+      markColor: '#b58900'
+      header:
+        fgColor: '#93a1a1'
+        bgColor: default
+        sorterColor: '#b58900'
+
+    xray:
+      fgColor: '#657b83'
+      bgColor: default
+      cursorColor: '#eee8d5'
+      graphicColor: '#268bd2'
+      showIcons: false
+
+    yaml:
+      keyColor: '#268bd2'
+      colonColor: '#93a1a1'
+      valueColor: '#657b83'
+
+    logs:
+      fgColor: '#657b83'
+      bgColor: default
+      indicator:
+        fgColor: '#657b83'
+        bgColor: default
+        toggleOnColor: '#859900'
+        toggleOffColor: '#93a1a1'
