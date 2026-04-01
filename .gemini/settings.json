@@ -1,7 +1,19 @@
 {
-  "selectedAuthType": "oauth-personal",
-  "theme": "GitHub",
-  "contextFileName": "AGENTS.md",
-  "autoAccept": true,
-  "hasSeenIdeIntegrationNudge": true
+  "tools": {
+    "autoAccept": true
+  },
+  "context": {
+    "fileName": "AGENTS.md"
+  },
+  "ide": {
+    "hasSeenNudge": true
+  },
+  "security": {
+    "auth": {
+      "selectedType": "oauth-personal"
+    }
+  },
+  "ui": {
+    "theme": "GitHub"
+  }
 }
