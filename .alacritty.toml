@@ -14,28 +14,36 @@ blur = true
 startup_mode = "Maximized"
 
 [colors.primary]
-background = "#0d1117"
-foreground = "#e6edf3"
+background = "#002b36"
+foreground = "#839496"
+
+[colors.cursor]
+text = "#002b36"
+cursor = "#93a1a1"
+
+[colors.selection]
+text = "#93a1a1"
+background = "#073642"
 
 [colors.normal]
-black   = "#484f58"
-red     = "#ff7b72"
-green   = "#3fb950"
-yellow  = "#d29922"
-blue    = "#58a6ff"
-magenta = "#bc8cff"
-cyan    = "#39c5cf"
-white   = "#b1bac4"
+black   = "#073642"
+red     = "#dc322f"
+green   = "#859900"
+yellow  = "#b58900"
+blue    = "#268bd2"
+magenta = "#d33682"
+cyan    = "#2aa198"
+white   = "#eee8d5"
 
 [colors.bright]
-black   = "#6e7681"
-red     = "#ffa198"
-green   = "#56d364"
-yellow  = "#e3b341"
-blue    = "#79c0ff"
-magenta = "#d2a8ff"
-cyan    = "#56d4dd"
-white   = "#f0f6fc"
+black   = "#002b36"
+red     = "#cb4b16"
+green   = "#586e75"
+yellow  = "#657b83"
+blue    = "#839496"
+magenta = "#6c71c4"
+cyan    = "#93a1a1"
+white   = "#fdf6e3"
 
 [[keyboard.bindings]]
 key = "Return"

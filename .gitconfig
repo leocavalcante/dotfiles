@@ -9,22 +9,22 @@
     navigate = true
     side-by-side = true
     line-numbers = true
-    # GitHub Dark theme
-    syntax-theme = base16
-    minus-style = "syntax #3d2028"
-    minus-emph-style = "syntax #6e2f35"
-    plus-style = "syntax #244032"
-    plus-emph-style = "syntax #347148"
-    line-numbers-minus-style = "#ff7b72"
-    line-numbers-plus-style = "#3fb950"
-    line-numbers-zero-style = "#6e7681"
-    line-numbers-left-style = "#30363d"
-    line-numbers-right-style = "#30363d"
-    hunk-header-style = "syntax #161b22"
-    hunk-header-decoration-style = "box #30363d"
-    file-style = "#58a6ff bold"
+    # Solarized Dark theme
+    syntax-theme = Solarized (dark)
+    minus-style = "syntax #073642"
+    minus-emph-style = "syntax #3d2028"
+    plus-style = "syntax #073642"
+    plus-emph-style = "syntax #1a4a2a"
+    line-numbers-minus-style = "#dc322f"
+    line-numbers-plus-style = "#859900"
+    line-numbers-zero-style = "#586e75"
+    line-numbers-left-style = "#073642"
+    line-numbers-right-style = "#073642"
+    hunk-header-style = "syntax #073642"
+    hunk-header-decoration-style = "box #073642"
+    file-style = "#268bd2 bold"
     file-decoration-style = "none"
-    commit-style = "#d29922"
+    commit-style = "#b58900"
     commit-decoration-style = "none"
 
 [merge]
