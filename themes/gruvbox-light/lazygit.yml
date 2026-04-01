@@ -1,0 +1,24 @@
+# Gruvbox Light theme for LazyGit
+gui:
+  theme:
+    activeBorderColor:
+      - '#076678'
+      - bold
+    inactiveBorderColor:
+      - '#d5c4a1'
+    optionsTextColor:
+      - '#076678'
+    selectedLineBgColor:
+      - '#ebdbb2'
+    selectedRangeBgColor:
+      - '#d5c4a1'
+    cherryPickedCommitBgColor:
+      - '#bdae93'
+    cherryPickedCommitFgColor:
+      - '#076678'
+    unstagedChangesColor:
+      - '#9d0006'
+    defaultFgColor:
+      - '#3c3836'
+    searchingActiveBorderColor:
+      - '#b57614'

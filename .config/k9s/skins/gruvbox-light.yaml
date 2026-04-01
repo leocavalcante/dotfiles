@@ -1,0 +1,85 @@
+# Gruvbox Light skin for k9s
+k9s:
+  body:
+    fgColor: '#3c3836'
+    bgColor: default
+    logoColor: '#076678'
+  info:
+    fgColor: '#7c6f64'
+    sectionColor: '#076678'
+  prompt:
+    fgColor: '#3c3836'
+    bgColor: default
+    suggestColor: '#076678'
+  dialog:
+    fgColor: '#3c3836'
+    bgColor: default
+    buttonFgColor: '#3c3836'
+    buttonBgColor: '#d5c4a1'
+    buttonFocusFgColor: '#fbf1c7'
+    buttonFocusBgColor: '#076678'
+    labelFgColor: '#af3a03'
+    fieldFgColor: '#3c3836'
+  frame:
+    border:
+      fgColor: '#d5c4a1'
+      focusColor: '#076678'
+    menu:
+      fgColor: '#3c3836'
+      keyColor: '#076678'
+      numKeyColor: '#427b58'
+    crumbs:
+      fgColor: '#3c3836'
+      bgColor: default
+      activeColor: '#076678'
+    status:
+      newColor: '#79740e'
+      modifyColor: '#076678'
+      addColor: '#79740e'
+      errorColor: '#9d0006'
+      highlightcolor: '#076678'
+      killColor: '#928374'
+      completedColor: '#7c6f64'
+    title:
+      fgColor: '#3c3836'
+      bgColor: default
+      highlightColor: '#076678'
+      counterColor: '#427b58'
+      filterColor: '#af3a03'
+  views:
+    charts:
+      bgColor: default
+      defaultDialColors:
+        - '#076678'
+        - '#d5c4a1'
+      defaultChartColors:
+        - '#076678'
+        - '#79740e'
+    table:
+      fgColor: '#3c3836'
+      bgColor: default
+      cursorFgColor: '#3c3836'
+      cursorBgColor: '#d5c4a1'
+      markColor: '#af3a03'
+      header:
+        fgColor: '#7c6f64'
+        bgColor: default
+        sorterColor: '#af3a03'
+    xray:
+      fgColor: '#3c3836'
+      bgColor: default
+      cursorColor: '#d5c4a1'
+      graphicColor: '#076678'
+      showIcons: false
+    yaml:
+      keyColor: '#076678'
+      colonColor: '#928374'
+      valueColor: '#3c3836'
+    logs:
+      fgColor: '#3c3836'
+      bgColor: default
+      indicator:
+        fgColor: '#3c3836'
+        bgColor: default
+        toggleOnColor: '#79740e'
+        toggleOffColor: '#928374'

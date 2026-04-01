@@ -1,0 +1,21 @@
+# Solarized Dark Starship palette
+# Add to starship.toml and set: palette = "solarized_dark"
+
+[palettes.solarized_dark]
+bg = "#002b36"
+fg = "#839496"
+fg_muted = "#586e75"
+fg_subtle = "#586e75"
+red = "#dc322f"
+bright_red = "#cb4b16"
+orange = "#cb4b16"
+yellow = "#b58900"
+bright_yellow = "#657b83"
+green = "#859900"
+bright_green = "#586e75"
+cyan = "#2aa198"
+bright_cyan = "#93a1a1"
+blue = "#268bd2"
+bright_blue = "#839496"
+purple = "#6c71c4"
+magenta = "#d33682"

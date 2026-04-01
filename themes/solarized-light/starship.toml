@@ -1,0 +1,21 @@
+# Solarized Light Starship palette
+# Add to starship.toml and set: palette = "solarized_light"
+
+[palettes.solarized_light]
+bg = "#fdf6e3"
+fg = "#657b83"
+fg_muted = "#93a1a1"
+fg_subtle = "#93a1a1"
+red = "#dc322f"
+bright_red = "#cb4b16"
+orange = "#cb4b16"
+yellow = "#b58900"
+bright_yellow = "#657b83"
+green = "#859900"
+bright_green = "#586e75"
+cyan = "#2aa198"
+bright_cyan = "#93a1a1"
+blue = "#268bd2"
+bright_blue = "#839496"
+purple = "#6c71c4"
+magenta = "#d33682"

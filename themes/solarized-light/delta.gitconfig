@@ -1,0 +1,21 @@
+# Solarized Light theme for Git/Delta
+# Include from .gitconfig: [include] path = ~/.config/delta/solarized-light.gitconfig
+# Colors from https://ethanschoonover.com/solarized/
+
+[delta "solarized-light"]
+    syntax-theme = Solarized (light)
+    minus-style = "syntax #eee8d5"
+    minus-emph-style = "syntax #e8c8c8"
+    plus-style = "syntax #eee8d5"
+    plus-emph-style = "syntax #c8dcc8"
+    line-numbers-minus-style = "#dc322f"
+    line-numbers-plus-style = "#859900"
+    line-numbers-zero-style = "#93a1a1"
+    line-numbers-left-style = "#eee8d5"
+    line-numbers-right-style = "#eee8d5"
+    hunk-header-style = "syntax #eee8d5"
+    hunk-header-decoration-style = "box #eee8d5"
+    file-style = "#268bd2 bold"
+    file-decoration-style = "none"
+    commit-style = "#b58900"
+    commit-decoration-style = "none"

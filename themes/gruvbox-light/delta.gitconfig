@@ -1,0 +1,20 @@
+# Gruvbox Light theme for delta (git pager)
+# Include in .gitconfig with: [include] path = themes/gruvbox-light/delta.gitconfig
+
+[delta]
+    syntax-theme = gruvbox-light
+    minus-style = "syntax #f2d0cc"
+    minus-emph-style = "syntax #e8a8a0"
+    plus-style = "syntax #d4deb0"
+    plus-emph-style = "syntax #b8c890"
+    line-numbers-minus-style = "#9d0006"
+    line-numbers-plus-style = "#79740e"
+    line-numbers-zero-style = "#928374"
+    line-numbers-left-style = "#d5c4a1"
+    line-numbers-right-style = "#d5c4a1"
+    hunk-header-style = "syntax #ebdbb2"
+    hunk-header-decoration-style = "box #d5c4a1"
+    file-style = "#076678 bold"
+    file-decoration-style = "none"
+    commit-style = "#b57614"
+    commit-decoration-style = "none"
