@@ -59,6 +59,10 @@ coha() {
   copilot --yolo --disable-builtin-mcps --silent --stream on --no-auto-update -p "$@" --model claude-haiku-4.5
 }
 
+cohaco() {
+  copilot --yolo --disable-builtin-mcps --silent --stream on --no-auto-update -p "$@" --model claude-haiku-4.5 --continue
+}
+
 copus() {
   copilot --yolo --disable-builtin-mcps --silent --stream on --no-auto-update -p "$@" --model claude-opus-4.6
 }
