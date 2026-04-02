@@ -44,6 +44,7 @@ alias k="kubectl"
 alias ktx="kubectx"
 alias kns="kubens"
 alias cl="clear"
+alias agenda="gcalcli agenda"
 
 # ─── Functions ───
 co() {
