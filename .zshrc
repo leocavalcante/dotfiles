@@ -8,7 +8,6 @@ export EDITOR="nvim"
 export GIT_EDITOR="$EDITOR"
 export KUBE_EDITOR="$EDITOR"
 export SUDO_EDITOR="$EDITOR"
-export PAGER="delta --navigate"
 export XDG_CONFIG_HOME="$HOME/.config/"
 export GPG_TTY=$(tty)
 
