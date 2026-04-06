@@ -45,7 +45,7 @@ alias ktx="kubectx"
 alias kns="kubens"
 alias cl="clear"
 alias agenda="gcalcli agenda"
-alias tds="nb todos"
+alias todo="nb todos"
 
 # ─── Functions ───
 co() {
