@@ -69,6 +69,10 @@ copus() {
   copilot --yolo --disable-builtin-mcps --silent --stream on --no-auto-update -p "$@" --model claude-opus-4.6
 }
 
+copusco() {
+  copilot --yolo --disable-builtin-mcps --silent --stream on --no-auto-update -p "$@" --model claude-opus-4.6 --continue
+}
+
 ico() {
   copilot --yolo --disable-builtin-mcps --model claude-sonnet-4.6
 }
