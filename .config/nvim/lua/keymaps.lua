@@ -4,6 +4,7 @@ vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower win
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 vim.keymap.set('i', 'jj', '<Esc>', { desc = 'Exit insert mode' });
 vim.keymap.set('n', '<leader><C-l>', ':vsplit<CR>', { desc = 'Vertical split' })
+vim.keymap.set('n', '<leader>bd', ':bp|bd #<CR>', { silent = true, desc = 'Delete current buffer and go to previous' })
 
 vim.keymap.set('v', '<leader>64d', function()
   vim.cmd('normal! "xy')
@@ -18,3 +19,4 @@ vim.keymap.set('v', '<leader>64e', function()
   vim.fn.setreg('x', encoded)
   vim.cmd('normal! gv"xp')
 end, { desc = 'Encode base64 selection' })
+
