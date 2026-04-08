@@ -2,7 +2,7 @@ return {
   "akinsho/toggleterm.nvim",
   version = "*",
   keys = {
-    { "<leader>co", function()
+    { "<leader>ico", function()
       local Terminal = require("toggleterm.terminal").Terminal
 
       -- Reuse the same terminal instance across toggles
