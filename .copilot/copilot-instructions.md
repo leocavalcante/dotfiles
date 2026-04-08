@@ -5,4 +5,7 @@
 # PREFER
 - `uv` instead of `python`, `pip` or `poetry`
 - `bun` instead of `node`, `npm`, `yarn` or `pnpm`
+- `kubectx` for k8s context management
+- `kubens` for k8s namespace management
+- `tkn` for Tekton cluster management
 
