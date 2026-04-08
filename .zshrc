@@ -3,6 +3,7 @@ typeset -U PATH path
 
 # ─── Environment Variables ───
 export LANG="en_US.UTF-8"
+export COLORTERM="truecolor"
 export COMPOSE_BAKE="true"
 export EDITOR="nvim"
 export GIT_EDITOR="$EDITOR"
