@@ -1,5 +1,6 @@
 return {
     "nvim-treesitter/nvim-treesitter",
+    branch = "master",
     build = ":TSUpdate",
     opts = {
         ensure_installed = {
@@ -13,6 +14,8 @@ return {
             "yaml",
             "json",
             "bash",
+            "markdown",
+            "markdown_inline",
         },
         sync_install = false,
         highlight = { enable = true },
