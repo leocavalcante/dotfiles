@@ -13,10 +13,14 @@ return {
           float_opts = {
             border = "curved",
           },
-          close_on_exit = false,
+          close_on_exit = true,
           hidden = true,
           on_open = function(term)
             vim.api.nvim_buf_set_keymap(term.bufnr, "t", "jj", [[<C-\><C-n>]], { noremap = true, silent = true })
+          end,
+          on_exit = function(term)
+            term:close()
+            _COPILOT_TERM = nil
           end,
         })
       end
