@@ -22,7 +22,7 @@ return {
       end
 
       _COPILOT_TERM:toggle()
-    end, desc = "Copilot YOLO" },
+    end, desc = "Copilot" },
   },
   opts = {},
 }
