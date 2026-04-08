@@ -56,7 +56,7 @@ function M.setup()
 
   local highlights = {
     -- Editor
-    Normal = { fg = c.fg },
+    Normal = { fg = c.fg, bg = c.bg },
     NormalFloat = { fg = c.fg, bg = c.bg_highlight },
     FloatBorder = { fg = c.border, bg = c.bg_highlight },
     ColorColumn = { bg = c.bg_highlight },

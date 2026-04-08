@@ -2,6 +2,9 @@
 normal = { family = "JetBrainsMono Nerd Font Mono", style = "Regular" }
 size = 12
 
+[env]
+TERM = "xterm-256color"
+
 [terminal.shell]
 program = "/bin/zsh"
 args = ["-lc", "tmux"]
