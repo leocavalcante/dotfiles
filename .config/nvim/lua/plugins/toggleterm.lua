@@ -8,7 +8,7 @@ return {
       -- Reuse the same terminal instance across toggles
       if not _COPILOT_TERM then
         _COPILOT_TERM = Terminal:new({
-          cmd = "copilot --yolo",
+          cmd = "copilot --allow-all --banner --disable-builtin-mcps --experimental --no-auto-update",
           direction = "float",
           float_opts = {
             border = "curved",
