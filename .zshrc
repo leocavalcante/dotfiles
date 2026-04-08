@@ -44,6 +44,8 @@ alias ktx="kubectx"
 alias kns="kubens"
 alias cl="clear"
 alias agenda="gcalcli agenda"
+alias todo="nb todos add"
+alias todos="nb todos list"
 
 # ─── Functions ───
 co() {
@@ -132,8 +134,10 @@ composer() {
 }
 
 # ─── Tool Initialization (Eager) ───
+# Starship is initialized after zsh-vi-mode via zvm_after_init_commands
+# to avoid recursive zle-keymap-select conflicts.
 if (( $+commands[starship] )); then
-  eval "$(starship init zsh)"
+  zvm_after_init_commands+=('eval "$(starship init zsh)"')
 fi
 
 # ─── Lazy-loaded Tools ───
@@ -180,6 +184,9 @@ if (( $+commands[direnv] )); then
   typeset -ag precmd_functions
   precmd_functions+=(_direnv_hook)
 fi
+
+# ─── zsh-vi-mode Configuration ───
+ZVM_VI_INSERT_ESCAPE_BINDKEY='^['
 
 # ─── Antigen Plugin Manager ───
 ANTIGEN="$HOME/antigen.zsh"
