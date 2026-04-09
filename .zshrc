@@ -52,6 +52,10 @@ alias tdu="nb todos undo"
 alias tdc="nb todos delete"
 
 # ─── Functions ───
+e() {
+  $EDITOR $(zoxide query "$@")
+}
+
 co() {
   copilot --yolo --disable-builtin-mcps --silent --stream on --no-auto-update -p "$@" --model claude-sonnet-4.6
 }
