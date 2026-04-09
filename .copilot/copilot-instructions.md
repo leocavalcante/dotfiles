@@ -8,4 +8,6 @@
 - `kubectx` for k8s context management
 - `kubens` for k8s namespace management
 - `tkn` for Tekton cluster management
+- Atomic commits with Conventional Commits specification messages
+- Conventional Commits specification for pull request titles
 
