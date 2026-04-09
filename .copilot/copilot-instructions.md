@@ -1,13 +1,16 @@
-# NEVER do this, unless explicitly asked for
-- git commits
-- git pushes
+## NEVER
+- Execute the `git add` command, unless explicitly asked
+- Execute the `git commit` command, unless explicitly asked
+- Execute the `git push` command, unless explicitly asked
 
-# PREFER
-- `uv` instead of `python`, `pip` or `poetry`
-- `bun` instead of `node`, `npm`, `yarn` or `pnpm`
-- `kubectx` for k8s context management
-- `kubens` for k8s namespace management
-- `tkn` for Tekton cluster management
-- Atomic commits with Conventional Commits specification messages
-- Conventional Commits specification for pull request titles
+## PREFER
+- Atomic commits following the Conventional Commits specification
+- Pull Request titles following the Conventional Commits specification
+
+## TOOLS
+- Use `uv` instead of `python`, `pip` or `poetry`
+- Use `bun` instead of `node`, `npm`, `yarn`, `pnpm`, or `npx` — for running, installing, and scripting
+- Use `kubectx` for k8s context management
+- Use `kubens` for k8s namespace management
+- Use `tkn` for Tekton cluster management
 
