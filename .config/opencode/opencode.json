@@ -4,7 +4,5 @@
   "formatter": false,
   "compaction": {
     "auto": false
-  },
-  "plugin": ["opencode-antigravity-auth@latest"]
+  }
 }
-
