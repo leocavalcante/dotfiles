@@ -74,11 +74,11 @@ cohaco() {
 }
 
 copus() {
-  copilot --yolo --disable-builtin-mcps --silent --stream on --no-auto-update -p "$@" --model claude-opus-4.6
+  copilot --yolo --disable-builtin-mcps --silent --stream on --no-auto-update -p "$@" --model claude-opus-4.7
 }
 
 copusco() {
-  copilot --yolo --disable-builtin-mcps --silent --stream on --no-auto-update -p "$@" --model claude-opus-4.6 --continue
+  copilot --yolo --disable-builtin-mcps --silent --stream on --no-auto-update -p "$@" --model claude-opus-4.7 --continue
 }
 
 ico() {
