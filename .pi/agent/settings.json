@@ -1,0 +1,7 @@
+{
+  "theme": "gruvbox",
+  "defaultProvider": "github-copilot",
+  "defaultModel": "gpt-5.4",
+  "defaultThinkingLevel": "medium",
+  "lastChangelogVersion": "0.74.0"
+}
