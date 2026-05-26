@@ -2,6 +2,7 @@
 - Execute the `git add` command, unless explicitly asked
 - Execute the `git commit` command, unless explicitly asked
 - Execute the `git push` command, unless explicitly asked
+- Do things without asking first
 
 ## PREFER
 - Atomic commits following the Conventional Commits specification
