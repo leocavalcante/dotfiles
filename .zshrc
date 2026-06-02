@@ -34,6 +34,7 @@ path=(
 # ─── Aliases ───
 alias agenda="gcalcli agenda"
 alias cl="clear"
+alias codex="codex --yolo"
 alias gd="git diff-all"
 alias k="kubectl"
 alias kns="kubens"
@@ -239,4 +240,3 @@ if [[ -f "$ANTIGEN" ]]; then
     compinit -C -d "$_zcompdump"
   fi
 fi
-
