@@ -28,71 +28,19 @@ path=(
   $path
 )
 
-# Termux-specific
-[[ -n "$TERMUX_VERSION" ]] && path=("$HOME/.opencode/bin" $path)
-
 # ─── Aliases ───
-alias agenda="gcalcli agenda"
 alias cl="clear"
-alias codex="codex --yolo"
 alias gd="git diff-all"
 alias k="kubectl"
 alias kns="kubens"
 alias ktx="kubectx"
 alias l="eza --all --icons --git"
-alias ldo="lazydocker"
 alias lg="lazygit"
+alias ldo="lazydocker"
 alias ll="eza --long --all --icons --git"
 alias pip="pip3"
-alias push="git push"
 alias python="python3"
 alias stk="starship toggle kubernetes"
-alias tda="nb todos add"
-alias tdc="nb todos delete"
-alias tdd="nb todos do"
-alias tds="nb todos"
-alias tdu="nb todos undo"
-
-# ─── Functions ───
-e() {
-  $EDITOR $(zoxide query "$@")
-}
-
-co() {
-  copilot --yolo --disable-builtin-mcps --silent --stream on --no-auto-update -p "$@" --model claude-sonnet-4.6
-}
-
-coco() {
-  copilot --yolo --disable-builtin-mcps --silent --stream on --no-auto-update -p "$@" --model claude-sonnet-4.6 --continue
-}
-
-coha() {
-  copilot --yolo --disable-builtin-mcps --silent --stream on --no-auto-update -p "$@" --model claude-haiku-4.5
-}
-
-cohaco() {
-  copilot --yolo --disable-builtin-mcps --silent --stream on --no-auto-update -p "$@" --model claude-haiku-4.5 --continue
-}
-
-copus() {
-  copilot --yolo --disable-builtin-mcps --silent --stream on --no-auto-update -p "$@" --model claude-opus-4.7
-}
-
-copusco() {
-  copilot --yolo --disable-builtin-mcps --silent --stream on --no-auto-update -p "$@" --model claude-opus-4.7 --continue
-}
-
-ico() {
-  copilot --yolo --disable-builtin-mcps --model claude-sonnet-4.6
-}
-
-icoco() {
-  copilot --yolo --disable-builtin-mcps --model claude-sonnet-4.6 --continue
-}
-
-icopus() {
-  copilot --yolo --disable-builtin-mcps --model claude-opus-4.6
-}
 
 # Update dotfiles from repository
 dot() {
