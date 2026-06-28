@@ -154,6 +154,8 @@ ZVM_VI_INSERT_ESCAPE_BINDKEY='^['
 ANTIGEN="$HOME/antigen.zsh"
 ANTIGEN_VERSION="v2.2.3"
 ANTIGEN_SHA256="3d0261e1f00decf59b04555ef5696cb7008b924b92d8d82fd70914121c1eb7ae"
+# Reuse Antigen compdump; full compinit is slow under proot.
+ANTIGEN_COMPINIT_OPTS=(-C -i)
 if [[ ! -f "$ANTIGEN" ]]; then
   local tmp_antigen="/tmp/antigen_$$.zsh"
   curl -sSL "https://raw.githubusercontent.com/zsh-users/antigen/${ANTIGEN_VERSION}/bin/antigen.zsh" -o "$tmp_antigen"
