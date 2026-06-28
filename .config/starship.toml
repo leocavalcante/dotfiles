@@ -47,6 +47,9 @@ disabled = true
 [docker_context]
 disabled = true
 
+[container]
+disabled = true
+
 [cmd_duration]
 disabled = false
 min_time = 0
@@ -70,4 +73,3 @@ detect_extensions = []
 
 [gcloud]
 disabled = true
-
