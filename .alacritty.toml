@@ -1,19 +1,18 @@
 [font]
 normal = { family = "JetBrainsMono Nerd Font Mono", style = "Regular" }
-size = 12
+size = 9
 
 [env]
 TERM = "xterm-256color"
 
 [terminal.shell]
-program = "/bin/zsh"
-args = ["-lc", "tmux"]
+program = "wsl.exe"
+args = ["-d", "Ubuntu", "--cd", "~", "zsh", "-lc", "tmux"]
 
 [window]
 padding = { x = 10, y = 10 }
-decorations = "Buttonless"
+decorations = "Full"
 opacity = 1
-blur = true
 startup_mode = "Maximized"
 
 [colors.primary]
@@ -51,13 +50,19 @@ white   = "#ebdbb2"
 [[keyboard.bindings]]
 key = "Return"
 mods = "Shift"
-chars = "\x1b\r"
+chars = "\u001b\r"
+
+[[keyboard.bindings]]
+# tmux's C-Space prefix is the NUL control byte.
+key = "Space"
+mods = "Control"
+chars = "\u0000"
 
 [hints]
 alphabet = "jfkdls;ahgurieowpq"
 
 [[hints.enabled]]
-command = "open"  # macOS default. Use "xdg-open" on Linux.
+command = "explorer.exe"
 hyperlinks = true
 post_processing = true
 regex = "(ipfs:|ipns:|magnet:|mailto:|gemini://|gopher://|https://|http://|news:|file:|git://|ssh:|ftp://)[^\u0000-\u001F\u007F-\u009F<>\"\\s{-}\\^⟨⟩`]+"
@@ -69,4 +74,3 @@ mods = "Control|Shift"
 [hints.enabled.mouse]
 enabled = true
 mods = "Shift"
-
