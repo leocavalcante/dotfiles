@@ -58,6 +58,12 @@ key = "Space"
 mods = "Control"
 chars = "\u0000"
 
+[[keyboard.bindings]]
+# Paste the Windows host clipboard into terminal applications such as Codex.
+key = "V"
+mods = "Control"
+action = "Paste"
+
 [hints]
 alphabet = "jfkdls;ahgurieowpq"
 
