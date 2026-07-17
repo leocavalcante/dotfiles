@@ -10,7 +10,7 @@ program = "wsl.exe"
 args = ["-d", "Ubuntu", "--cd", "~", "zsh", "-lc", "tmux"]
 
 [window]
-title = "Ubuntu"
+title = "Alacritty"
 dynamic_title = false
 padding = { x = 10, y = 10 }
 decorations = "Full"
