@@ -10,6 +10,8 @@ program = "wsl.exe"
 args = ["-d", "Ubuntu", "--cd", "~", "zsh", "-lc", "tmux"]
 
 [window]
+title = "Ubuntu"
+dynamic_title = false
 padding = { x = 10, y = 10 }
 decorations = "Full"
 opacity = 1
