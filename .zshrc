@@ -1,5 +1,3 @@
-# ─── Early Setup ───
-typeset -U PATH path
 
 # ─── Environment Variables ───
 export LANG="en_US.UTF-8"
@@ -41,6 +39,8 @@ alias ll="eza --long --all --icons --git"
 alias pip="pip3"
 alias python="python3"
 alias stk="starship toggle kubernetes"
+alias cdx="codex --yolo --model gpt-5.6-luna -c model_reasoning_effort=max"
+alias cdxe="codex exec --yolo --model gpt-5.6-luna -c model_reasoning_effort=max"
 
 # Update dotfiles from repository
 dot() {
