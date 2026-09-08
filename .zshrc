@@ -41,6 +41,7 @@ alias python="python3"
 alias stk="starship toggle kubernetes"
 alias cdx="codex --yolo --model gpt-5.6-luna -c model_reasoning_effort=max"
 alias cdxe="codex exec --yolo --model gpt-5.6-luna -c model_reasoning_effort=max"
+alias csr="cursor agent --yolo --model 'auto-smart[optimize_for=intelligence]'"
 
 # Update dotfiles from repository
 dot() {
