@@ -2,7 +2,7 @@
 # tmux-battery - Cross-platform battery percentage script
 # Caches result for 60 seconds to reduce system calls
 
-CACHE_FILE="/tmp/tmux-battery-cache"
+CACHE_FILE="${TMPDIR:-/tmp}/tmux-battery-cache"
 CACHE_TTL=60
 
 # Check if cache is valid
