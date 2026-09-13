@@ -151,6 +151,20 @@ fi
 # ─── zsh-vi-mode Configuration ───
 ZVM_VI_INSERT_ESCAPE_BINDKEY='^['
 
+# Android's regcomp rejects the `\a` escape in the plugin's zvm_cursor_style
+# regex, so every accepted command line prints a compile error. PCRE accepts
+# the pattern, and local_options keeps the option from leaking out.
+if [[ -n "$TERMUX_VERSION" ]] && zmodload zsh/pcre 2>/dev/null; then
+  _zvm_pcre_cursor_style() {
+    functions -c zvm_cursor_style zvm_cursor_style_posix_re || return
+    zvm_cursor_style() {
+      setopt local_options re_match_pcre
+      zvm_cursor_style_posix_re "$@"
+    }
+  }
+  zvm_after_init_commands+=('_zvm_pcre_cursor_style')
+fi
+
 # ─── Antigen Plugin Manager ───
 ANTIGEN="$HOME/antigen.zsh"
 ANTIGEN_VERSION="v2.2.3"
