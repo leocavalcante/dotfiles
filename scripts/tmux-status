@@ -1,6 +1,10 @@
 #!/bin/sh
-# Quiet right-side status text: branch, AWS profile, directory, battery.
+# Quiet right-side status text: branch, AWS profile, directory, battery, clock.
+# The HomeLab stays plugged in, so its battery sits at 100%. Skip it.
+# The clock is omitted when this client was opened from another tmux, so the
+# outer bar is the only one showing the time.
 path=$1
+client_pid=$2
 parts=
 
 add() {
@@ -22,12 +26,31 @@ if [ "$path" != "$HOME" ]; then
 	add "$(basename "$path")"
 fi
 
-cap=$(awk 'NR==1 { print; exit }' /sys/class/power_supply/BAT*/capacity 2>/dev/null) || cap=
-if [ -n "$cap" ]; then
-	st=$(awk 'NR==1 { print; exit }' /sys/class/power_supply/BAT*/status 2>/dev/null) || st=
-	mark=
-	[ "$st" = Charging ] && mark=+
-	add "${cap}%${mark}"
+if [ "$(hostname -s 2>/dev/null)" != ubuntu ]; then
+	cap=$(awk 'NR==1 { print; exit }' /sys/class/power_supply/BAT*/capacity 2>/dev/null) || cap=
+	if [ -n "$cap" ]; then
+		st=$(awk 'NR==1 { print; exit }' /sys/class/power_supply/BAT*/status 2>/dev/null) || st=
+		mark=
+		[ "$st" = Charging ] && mark=+
+		add "${cap}%${mark}"
+	fi
+fi
+
+nested=0
+pid=$client_pid
+i=0
+while [ -n "$pid" ] && [ "$pid" -gt 1 ] 2>/dev/null && [ "$i" -lt 6 ]; do
+	# /proc/PID/environ is NUL-separated. A line-oriented read only sees the first variable.
+	term=$(tr '\0' '\n' < "/proc/$pid/environ" 2>/dev/null | awk -F= '$1=="TERM" { print $2; exit }') || term=
+	case $term in
+		tmux*) nested=1; break ;;
+	esac
+	pid=$(ps -o ppid= -p "$pid" 2>/dev/null | tr -d ' ')
+	i=$((i + 1))
+done
+
+if [ "$nested" -eq 0 ]; then
+	add "$(date '+%a %-d %b %H:%M')"
 fi
 
 [ -n "$parts" ] && printf '%s  ' "$parts"
