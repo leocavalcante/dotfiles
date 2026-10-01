@@ -1,0 +1,33 @@
+#!/bin/sh
+# Quiet right-side status text: branch, AWS profile, directory, battery.
+path=$1
+parts=
+
+add() {
+	[ -n "$1" ] || return 0
+	if [ -n "$parts" ]; then
+		parts="$parts  $1"
+	else
+		parts=$1
+	fi
+}
+
+branch=$(git -C "$path" rev-parse --abbrev-ref HEAD 2>/dev/null) || branch=
+add "$branch"
+
+add "${AWS_PROFILE:-}"
+
+# Home's directory name is the login name. Skip it.
+if [ "$path" != "$HOME" ]; then
+	add "$(basename "$path")"
+fi
+
+cap=$(awk 'NR==1 { print; exit }' /sys/class/power_supply/BAT*/capacity 2>/dev/null) || cap=
+if [ -n "$cap" ]; then
+	st=$(awk 'NR==1 { print; exit }' /sys/class/power_supply/BAT*/status 2>/dev/null) || st=
+	mark=
+	[ "$st" = Charging ] && mark=+
+	add "${cap}%${mark}"
+fi
+
+[ -n "$parts" ] && printf '%s  ' "$parts"
