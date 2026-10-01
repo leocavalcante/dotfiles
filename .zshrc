@@ -1,4 +1,7 @@
 
+# HomeLab Mosh sessions do not inherit the GNOME display. Absent on LCPC.
+[ -f "$HOME/.config/homelab/session-env.sh" ] && . "$HOME/.config/homelab/session-env.sh"
+
 # ─── Environment Variables ───
 export LANG="en_US.UTF-8"
 export COLORTERM="truecolor"
@@ -166,6 +169,10 @@ if [[ -n "$TERMUX_VERSION" ]] && zmodload zsh/pcre 2>/dev/null; then
 fi
 
 # ─── Antigen Plugin Manager ───
+# A remote shell must not stop on Oh My Zsh's update prompt.
+zstyle ':omz:update' mode disabled
+DISABLE_AUTO_UPDATE=true
+DISABLE_UPDATE_PROMPT=true
 ANTIGEN="$HOME/antigen.zsh"
 ANTIGEN_VERSION="v2.2.3"
 ANTIGEN_SHA256="3d0261e1f00decf59b04555ef5696cb7008b924b92d8d82fd70914121c1eb7ae"
@@ -205,3 +212,6 @@ if [[ -f "$ANTIGEN" ]]; then
     compinit -C -d "$_zcompdump"
   fi
 fi
+
+# Machine-local overrides. This file is not in the public dotfiles repo.
+[ -f "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"
