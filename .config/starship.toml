@@ -2,6 +2,9 @@
 
 command_timeout = 3000
 
+# 1.19 has no hostname aliases. Keep the SSH-only hostname, and show ubuntu as homelab.
+format = "${custom.host}$all"
+
 # GitHub Dark Default palette
 palette = "gruvbox_dark"
 
@@ -28,7 +31,23 @@ magenta = "#b16286"
 disabled = true
 
 [hostname]
-disabled = false
+disabled = true
+
+[custom.host]
+description = "Hostname, with ubuntu shown as homelab"
+shell = ["sh"]
+when = '[ -n "$SSH_CONNECTION" ]'
+command = """
+host=$(hostname)
+host=${host%%.*}
+if [ "$host" = ubuntu ]; then
+  printf homelab
+else
+  printf '%s' "$host"
+fi
+"""
+format = "[🌐 $output]($style) in "
+style = "green dimmed bold"
 
 [kubernetes]
 disabled = true
