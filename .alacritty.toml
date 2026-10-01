@@ -15,7 +15,7 @@ dynamic_title = false
 padding = { x = 10, y = 10 }
 decorations = "Full"
 opacity = 1
-startup_mode = "Maximized"
+startup_mode = "Fullscreen"
 
 [colors.primary]
 background = "#282828"
