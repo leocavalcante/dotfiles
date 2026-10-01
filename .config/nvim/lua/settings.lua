@@ -6,12 +6,14 @@ vim.opt.clipboard = 'unnamedplus'
 
 -- A yank in one nvim is invisible to the nvim the next pane starts.
 -- The tmux paste buffer is shared by every pane on this server.
+-- -w also sends the yank to the terminal over OSC 52, so it lands in the
+-- Windows clipboard and Alacritty's Ctrl+V can paste it into a Mosh pane.
 if vim.env.TMUX ~= nil and vim.fn.executable('tmux') == 1 then
   vim.g.clipboard = {
     name = 'tmux-buffer',
     copy = {
-      ['+'] = { 'tmux', 'load-buffer', '-' },
-      ['*'] = { 'tmux', 'load-buffer', '-' },
+      ['+'] = { 'tmux', 'load-buffer', '-w', '-' },
+      ['*'] = { 'tmux', 'load-buffer', '-w', '-' },
     },
     -- A server with no buffers yet exits 1, which nvim would show as a paste error.
     paste = {
