@@ -55,10 +55,11 @@ mods = "Shift"
 chars = "\u001b\r"
 
 [[keyboard.bindings]]
-# tmux's C-Space prefix is the NUL control byte.
+# Ctrl-Space is NUL. ConPTY drops that byte, so the Ubuntu tmux never sees
+# the prefix over Mosh. CSI u for Ctrl-Space survives, and tmux accepts it.
 key = "Space"
 mods = "Control"
-chars = "\u0000"
+chars = "\u001b[32;5u"
 
 [[keyboard.bindings]]
 # Paste the Windows host clipboard into terminal applications such as Codex.
