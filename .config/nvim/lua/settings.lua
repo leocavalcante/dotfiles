@@ -3,6 +3,25 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 vim.opt.breakindent = true
 vim.opt.clipboard = 'unnamedplus'
+
+-- A yank in one nvim is invisible to the nvim the next pane starts.
+-- The tmux paste buffer is shared by every pane on this server.
+if vim.env.TMUX ~= nil and vim.fn.executable('tmux') == 1 then
+  vim.g.clipboard = {
+    name = 'tmux-buffer',
+    copy = {
+      ['+'] = { 'tmux', 'load-buffer', '-' },
+      ['*'] = { 'tmux', 'load-buffer', '-' },
+    },
+    -- A server with no buffers yet exits 1, which nvim would show as a paste error.
+    paste = {
+      ['+'] = { 'sh', '-c', 'tmux save-buffer - 2>/dev/null' },
+      ['*'] = { 'sh', '-c', 'tmux save-buffer - 2>/dev/null' },
+    },
+    -- With the cache on, nvim answers from its own last yank and skips tmux.
+    cache_enabled = 0,
+  }
+end
 vim.opt.cursorline = true
 vim.opt.expandtab = true
 -- vim.opt.guicursor = ""
