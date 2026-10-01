@@ -22,7 +22,7 @@ Personal development environment with AI-powered workflows and unified Gruvbox D
 | **Git** (`.gitconfig`) | Delta pager with Gruvbox Dark theme, LFS support, diff-all alias |
 | **Terminal Apps** | Alacritty (`.alacritty.toml`), Kitty (`.config/kitty/`), Starship (`.config/starship.toml`) |
 | **Emacs** (`.emacs.d/`) | Minimal setup with LSP, Copilot, and completions |
-| **AI Configs** | Claude Code (`.claude/`), GitHub Copilot (`.copilot/`), OpenCode (`.config/opencode/`), Gemini (`.gemini/`) |
+| **AI Configs** | Cursor CLI status line (`.config/cursor/statusline.sh`), Claude Code (`.claude/`), GitHub Copilot (`.copilot/`), OpenCode (`.config/opencode/`), Gemini (`.gemini/`) |
 | **DevOps Tools** | k9s (`.config/k9s/`), lazygit (`.config/lazygit/`), bat (`.config/bat/`) |
 | **Themes** | Gruvbox Dark/Light, Solarized Dark/Light exports for iTerm2 and Windows Terminal |
 
@@ -40,6 +40,20 @@ stow .
 ```
 
 This creates symlinks from the repository to `$HOME`. First run will auto-install Antigen plugins and Neovim plugins on first launch.
+
+### Cursor CLI status line
+
+The shared script requires `jq`. Keep Cursor's machine-specific
+`.config/cursor/cli-config.json` out of Git and configure each machine with:
+
+```json
+{
+  "statusLine": {
+    "type": "command",
+    "command": "~/.config/cursor/statusline.sh"
+  }
+}
+```
 
 ## AI Shell Wrappers
 
