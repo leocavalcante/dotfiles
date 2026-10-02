@@ -1,0 +1,21 @@
+[font]
+size = 12
+
+[terminal.shell]
+program = "/bin/zsh"
+args = ["-lc", "tmux"]
+
+# Imports replace a whole array, so this block repeats the shared hint fields.
+[[hints.enabled]]
+command = "open"
+hyperlinks = true
+post_processing = true
+regex = "(ipfs:|ipns:|magnet:|mailto:|gemini://|gopher://|https://|http://|news:|file:|git://|ssh:|ftp://)[^\u0000-\u001F\u007F-\u009F<>\"\\s{-}\\^⟨⟩`]+"
+
+[hints.enabled.binding]
+key = "U"
+mods = "Control|Shift"
+
+[hints.enabled.mouse]
+enabled = true
+mods = "Shift"

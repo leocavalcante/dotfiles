@@ -1,0 +1,44 @@
+[font]
+size = 9
+
+[terminal.shell]
+program = "wsl.exe"
+args = ["-d", "Ubuntu", "--cd", "~", "zsh", "-lc", "tmux"]
+
+[window]
+title = "Alacritty"
+dynamic_title = false
+
+# Imports replace keyboard.bindings, so the shared Shift+Return binding is repeated here.
+[[keyboard.bindings]]
+key = "Return"
+mods = "Shift"
+chars = "\u001b\r"
+
+[[keyboard.bindings]]
+# Ctrl-Space is NUL. ConPTY drops that byte, so the Ubuntu tmux never sees
+# the prefix over Mosh. CSI u for Ctrl-Space survives, and tmux accepts it.
+key = "Space"
+mods = "Control"
+chars = "\u001b[32;5u"
+
+[[keyboard.bindings]]
+# Paste the Windows host clipboard into terminal applications such as Codex.
+key = "V"
+mods = "Control"
+action = "Paste"
+
+# Imports replace hints.enabled, so the shared hint fields are repeated here.
+[[hints.enabled]]
+command = "explorer.exe"
+hyperlinks = true
+post_processing = true
+regex = "(ipfs:|ipns:|magnet:|mailto:|gemini://|gopher://|https://|http://|news:|file:|git://|ssh:|ftp://)[^\u0000-\u001F\u007F-\u009F<>\"\\s{-}\\^⟨⟩`]+"
+
+[hints.enabled.binding]
+key = "U"
+mods = "Control|Shift"
+
+[hints.enabled.mouse]
+enabled = true
+mods = "Shift"
