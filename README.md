@@ -61,6 +61,33 @@ The always-on rule `.cursor/rules/agents.mdc` tells Cursor to read the private
 `~/.agents/AGENTS.md`. Only that rules directory is shared. The rest of
 `~/.cursor` stays on the machine.
 
+### Pi workers
+
+`.pi/agent/agents/worker.md` defines a general-purpose worker using
+`openai-codex/gpt-6-luna:max`. In Pi, run `/reload`, then ask:
+
+```text
+Spawn a worker to review the authentication code without changing files.
+```
+
+Each worker runs in a separate Pi process with its own context. Workers can
+read and change files through the same OS account; context isolation is not
+a sandbox. The parent must include relevant context in the delegated task.
+Authenticate separately on each machine with `/login`. This configuration
+requires a Pi version that supports the model and `max` thinking.
+
+The extension's `index.ts` and `agents.ts` are copied from the
+[Pi subagent example](https://github.com/earendil-works/pi/tree/main/packages/coding-agent/examples/extensions/subagent)
+bundled with Pi 1.0.0. Its MIT license is included alongside the code. These
+are regular files, not links to a machine-specific Pi installation.
+
+Keep `~/.pi/agent` as a real directory and use `stow --no-folding .`.
+Git's Pi allowlist includes only reviewed settings, the theme, worker
+instructions, and extension files. Authentication, sessions, model caches,
+trust decisions, and private `AGENTS.md` instructions stay outside this repo.
+Review settings for secrets before committing; an allowlist does not check
+file contents.
+
 ### Alacritty
 
 `.alacritty.toml` imports `.config/alacritty/common.toml` and a machine-local `.config/alacritty/platform.toml`. The reusable macOS and Windows configs under `.config/alacritty/platforms/` are committed. Only the `platform.toml` selector symlink is ignored. Decorations, blur, colors, and the font family are shared. Font size, the shell, and the hint opener are platform-specific.

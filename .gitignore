@@ -13,3 +13,22 @@
 **/.env.*
 **/credentials.json
 **/*.pem
+
+# Pi: share only reviewed configuration and code, never runtime/private state.
+.pi/*
+!.pi/agent/
+.pi/agent/*
+!.pi/agent/settings.json
+!.pi/agent/themes/
+!.pi/agent/agents/
+!.pi/agent/extensions/
+.pi/agent/themes/*
+!.pi/agent/themes/gruvbox.json
+.pi/agent/agents/*
+!.pi/agent/agents/worker.md
+.pi/agent/extensions/*
+!.pi/agent/extensions/subagent/
+.pi/agent/extensions/subagent/*
+!.pi/agent/extensions/subagent/index.ts
+!.pi/agent/extensions/subagent/agents.ts
+!.pi/agent/extensions/subagent/LICENSE
