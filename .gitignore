@@ -3,3 +3,12 @@
 
 # Opencoder runtime files
 .opencoder/
+
+# Credentials. A folded Stow directory can drop these inside this tree.
+.config/gh/
+.config/composer/auth.json
+.wakatime.cfg
+**/.env
+**/.env.*
+**/credentials.json
+**/*.pem

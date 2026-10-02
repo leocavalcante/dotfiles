@@ -46,6 +46,11 @@ alias cdx="codex --yolo --model gpt-5.6-luna -c model_reasoning_effort=max"
 alias cdxe="codex exec --yolo --model gpt-5.6-luna -c model_reasoning_effort=max"
 alias csr="cursor agent --yolo --model 'auto-smart[optimize_for=intelligence]'"
 
+# Termux is the outer Mosh client. Its mosh accepts only adaptive|always|never.
+if [[ -n "$TERMUX_VERSION" ]]; then
+  alias mhome='mosh --predict=always ubuntu -- tmux new-session -A -s 0'
+fi
+
 # Update dotfiles from repository
 dot() {
   emulate -L zsh
