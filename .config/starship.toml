@@ -50,7 +50,7 @@ format = "[🌐 $output]($style) in "
 style = "green dimmed bold"
 
 [kubernetes]
-disabled = true
+disabled = false
 
 [aws]
 disabled = true
