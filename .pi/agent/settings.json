@@ -1,7 +1,8 @@
 {
   "theme": "gruvbox",
-  "defaultProvider": "github-copilot",
-  "defaultModel": "gpt-5.4",
-  "defaultThinkingLevel": "medium",
-  "lastChangelogVersion": "0.74.0"
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-6.1-sol",
+  "defaultThinkingLevel": "high",
+  "lastChangelogVersion": "1.0.0",
+  "deviceId": "84b2771a-f63f-41ff-840a-43971c6ee98d"
 }
