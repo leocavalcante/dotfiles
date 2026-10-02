@@ -64,8 +64,8 @@ The always-on rule `.cursor/rules/agents.mdc` tells Cursor to read the private
 ### Pi workers
 
 The subagent extension now lives in its own repository,
-[pi-subagents](https://github.com/leocavalcante/pi-subagents). Once published,
-install it on each machine with:
+[pi-subagents](https://github.com/leocavalcante/pi-subagents). Install it on
+each machine with:
 
 ```bash
 pi install git:github.com/leocavalcante/pi-subagents
