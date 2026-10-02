@@ -13,7 +13,7 @@ dynamic_title = false
 [[keyboard.bindings]]
 key = "Return"
 mods = "Shift"
-chars = "\u001b\r"
+chars = "\u001b[13;2u"
 
 [[keyboard.bindings]]
 # Ctrl-Space is NUL. ConPTY drops that byte, so the Ubuntu tmux never sees

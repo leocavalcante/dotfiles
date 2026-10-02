@@ -46,7 +46,7 @@ white   = "#ebdbb2"
 [[keyboard.bindings]]
 key = "Return"
 mods = "Shift"
-chars = "\u001b\r"
+chars = "\u001b[13;2u"
 
 [hints]
 alphabet = "jfkdls;ahgurieowpq"
