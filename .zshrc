@@ -30,6 +30,7 @@ path=(
 )
 
 # ─── Aliases ───
+alias pi='command pi --use-theme gruvbox'
 alias cl="clear"
 alias gd="git diff-all"
 alias k="kubectl"
