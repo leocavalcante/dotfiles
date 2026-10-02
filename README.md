@@ -101,7 +101,7 @@ The Zsh and Fish configs include Copilot CLI shortcut functions:
 - `<leader>t` - Toggle file explorer
 - `jj` - Exit insert mode
 
-### tmux (Prefix = `C-Space`)
+### tmux (Prefix = `C-Space` on workstations, `C-b` on the home lab)
 - `C-h/j/k/l` - Navigate panes (no prefix, works across Neovim + tmux)
 - `prefix + h` - Split horizontally
 - `prefix + l` - Split vertically
