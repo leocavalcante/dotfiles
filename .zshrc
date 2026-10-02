@@ -67,7 +67,9 @@ dot() {
   
   if (( $+commands[stow] )); then
     echo "Restowing dotfiles using GNU Stow..."
-    stow . && echo "Dotfiles stowed successfully."
+    # --no-folding keeps ~/.config a real directory, so machine-local
+    # credentials never land inside this public working tree.
+    stow --no-folding . && echo "Dotfiles stowed successfully."
   else
     echo "GNU Stow not installed! Please install it to continue." >&2
   fi

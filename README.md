@@ -36,8 +36,10 @@ Personal development environment with AI-powered workflows and unified Gruvbox D
 **Install:**
 ```bash
 cd ~/.dotfiles
-stow .
+stow --no-folding .
 ```
+
+`--no-folding` keeps directories such as `~/.config` real, and symlinks each file. A folded directory would put machine-local credentials inside this public working tree.
 
 This creates symlinks from the repository to `$HOME`. First run will auto-install Antigen plugins and Neovim plugins on first launch.
 
