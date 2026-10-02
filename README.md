@@ -20,7 +20,7 @@ Personal development environment with AI-powered workflows and unified Gruvbox D
 | **Neovim** (`.config/nvim/`) | Modern editor with LSP, fuzzy finder, file explorer, AI copilot, Wakatime |
 | **tmux** (`.tmux.conf`) | Terminal multiplexer with DevOps status bar, session persistence, and vim integration |
 | **Git** (`.gitconfig`) | Delta pager with Gruvbox Dark theme, LFS support, diff-all alias |
-| **Terminal Apps** | Alacritty (`.alacritty.toml`), Kitty (`.config/kitty/`), Starship (`.config/starship.toml`) |
+| **Terminal Apps** | Alacritty (`.alacritty.toml`, `.config/alacritty/`), Kitty (`.config/kitty/`), Starship (`.config/starship.toml`) |
 | **Emacs** (`.emacs.d/`) | Minimal setup with LSP, Copilot, and completions |
 | **AI Configs** | Cursor CLI status line (`.config/cursor/statusline.sh`), Claude Code (`.claude/`), GitHub Copilot (`.copilot/`), OpenCode (`.config/opencode/`), Gemini (`.gemini/`) |
 | **DevOps Tools** | k9s (`.config/k9s/`), lazygit (`.config/lazygit/`), bat (`.config/bat/`) |
@@ -60,6 +60,20 @@ The shared script requires `jq`. Keep Cursor's machine-specific
 The always-on rule `.cursor/rules/agents.mdc` tells Cursor to read the private
 `~/.agents/AGENTS.md`. Only that rules directory is shared. The rest of
 `~/.cursor` stays on the machine.
+
+### Alacritty
+
+`.alacritty.toml` imports `.config/alacritty/common.toml` and a machine-local `.config/alacritty/platform.toml`. The reusable macOS and Windows configs under `.config/alacritty/platforms/` are committed. Only the `platform.toml` selector symlink is ignored. Decorations, blur, colors, and the font family are shared. Font size, the shell, and the hint opener are platform-specific.
+
+```bash
+# macOS
+ln -sfn platforms/macos.toml ~/.dotfiles/.config/alacritty/platform.toml
+
+# Windows
+ln -sfn platforms/windows.toml ~/.dotfiles/.config/alacritty/platform.toml
+```
+
+Windows Alacritty reads `%APPDATA%\alacritty\alacritty.toml`. Point that file at `~/.alacritty.toml` if it is not already.
 
 ## AI Shell Wrappers
 

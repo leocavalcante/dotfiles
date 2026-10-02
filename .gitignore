@@ -1,5 +1,6 @@
 .claude/settings.local.json
 .config/cursor/cli-config.json
+.config/alacritty/platform.toml
 
 # Opencoder runtime files
 .opencoder/
