@@ -63,8 +63,19 @@ The always-on rule `.cursor/rules/agents.mdc` tells Cursor to read the private
 
 ### Pi workers
 
-`.pi/agent/agents/worker.md` defines a general-purpose worker using
-`openai-codex/gpt-6-luna:max`. In Pi, run `/reload`, then ask:
+The subagent extension now lives in its own repository,
+[pi-subagents](https://github.com/leocavalcante/pi-subagents). Once published,
+install it on each machine with:
+
+```bash
+pi install git:github.com/leocavalcante/pi-subagents
+```
+
+Remove any old `~/.pi/agent/extensions/subagent` copy or development symlink
+before installing the package, then run `/reload` in Pi.
+
+`.pi/agent/agents/worker.md` stays in dotfiles. It defines a general-purpose
+worker using `openai-codex/gpt-6-luna:max`. Ask Pi:
 
 ```text
 Spawn a worker to review the authentication code without changing files.
@@ -76,14 +87,13 @@ a sandbox. The parent must include relevant context in the delegated task.
 Authenticate separately on each machine with `/login`. This configuration
 requires a Pi version that supports the model and `max` thinking.
 
-The extension's `index.ts` and `agents.ts` are copied from the
-[Pi subagent example](https://github.com/earendil-works/pi/tree/main/packages/coding-agent/examples/extensions/subagent)
-bundled with Pi 1.0.0. Its MIT license is included alongside the code. These
-are regular files, not links to a machine-specific Pi installation.
+For local extension development, follow the checkout's README. Dotfiles
+ignores `~/.pi/agent/extensions`, including any machine-local development
+symlink.
 
 Keep `~/.pi/agent` as a real directory and use `stow --no-folding .`.
-Git's Pi allowlist includes only reviewed settings, the theme, worker
-instructions, and extension files. Authentication, sessions, model caches,
+Git's Pi allowlist includes only reviewed settings, the theme, and worker
+instructions. Authentication, sessions, model caches,
 trust decisions, and private `AGENTS.md` instructions stay outside this repo.
 Review settings for secrets before committing; an allowlist does not check
 file contents.
