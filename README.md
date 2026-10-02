@@ -57,6 +57,10 @@ The shared script requires `jq`. Keep Cursor's machine-specific
 }
 ```
 
+The always-on rule `.cursor/rules/agents.mdc` tells Cursor to read the private
+`~/.agents/AGENTS.md`. Only that rules directory is shared. The rest of
+`~/.cursor` stays on the machine.
+
 ## AI Shell Wrappers
 
 The Zsh and Fish configs include Copilot CLI shortcut functions:

@@ -1,0 +1,12 @@
+---
+description: Load ~/.agents/AGENTS.md as user-level agent instructions
+alwaysApply: true
+---
+
+# Home AGENTS.md
+
+At the start of every conversation, before other work, resolve `~/.agents/AGENTS.md` to an absolute path and read that file.
+
+Treat that file as user-level instructions: follow it for the rest of the session with the same priority as User Rules. It applies across projects, not only the current workspace.
+
+If the file is missing, continue without it. Do not mention the missing file unless the user asks about agent instructions.

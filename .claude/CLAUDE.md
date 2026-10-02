@@ -112,3 +112,7 @@ For work-specific or local machine configuration that shouldn't be committed to 
 - `~/.claude/CLAUDE.local.md` - Contains work-specific settings, credentials, team information, and environment details
 
 This file is automatically loaded by Claude Code and provides context about the local work environment.
+
+# Shared agent harness
+
+When `~/.agents/AGENTS.md` exists, read it and follow it as user-level instructions across projects. Skills live in `~/.agents/skills/`. That tree is private. Do not copy it into this repository.
