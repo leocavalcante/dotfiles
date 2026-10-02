@@ -26,12 +26,26 @@ if [ "$path" != "$HOME" ]; then
 	add "$(basename "$path")"
 fi
 
+# HomeLab stays on AC at 100%, so skip it. Linux laptops expose sysfs.
+# macOS has no /sys; pmset is the shared-config equivalent. A desktop
+# with neither source adds nothing.
 if [ "$(hostname -s 2>/dev/null)" != ubuntu ]; then
-	cap=$(awk 'NR==1 { print; exit }' /sys/class/power_supply/BAT*/capacity 2>/dev/null) || cap=
-	if [ -n "$cap" ]; then
+	cap=
+	st=
+	if [ -d /sys/class/power_supply ]; then
+		cap=$(awk 'NR==1 { print; exit }' /sys/class/power_supply/BAT*/capacity 2>/dev/null) || cap=
 		st=$(awk 'NR==1 { print; exit }' /sys/class/power_supply/BAT*/status 2>/dev/null) || st=
+	fi
+	if [ -z "$cap" ] && command -v pmset >/dev/null 2>&1; then
+		batt=$(pmset -g batt 2>/dev/null) || batt=
+		cap=$(printf '%s\n' "$batt" | sed -n 's/.*InternalBattery.*[[:space:]]\([0-9][0-9]*\)%;.*/\1/p' | head -n 1)
+		st=$(printf '%s\n' "$batt" | sed -n 's/.*InternalBattery.*;[[:space:]]*\([^;]*\);.*/\1/p' | head -n 1)
+	fi
+	if [ -n "$cap" ]; then
 		mark=
-		[ "$st" = Charging ] && mark=+
+		case $st in
+			Charging|charging|"finishing charge") mark=+ ;;
+		esac
 		add "${cap}%${mark}"
 	fi
 fi
