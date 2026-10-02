@@ -4,7 +4,7 @@
 local M = {}
 
 M.colors = {
-  bg = "#282828",
+  bg = "#1d2021",
   bg_highlight = "#3c3836",
   bg_visual = "#504945",
   border = "#665c54",
@@ -13,7 +13,7 @@ M.colors = {
   fg_subtle = "#928374",
 
   -- Terminal colors (ANSI)
-  black = "#282828",
+  black = "#1d2021",
   bright_black = "#928374",
   white = "#a89984",
   bright_white = "#ebdbb2",
