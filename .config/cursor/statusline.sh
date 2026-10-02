@@ -15,4 +15,4 @@ if [ -z "$pct" ] || [ "$pct" = "null" ]; then
 fi
 
 pct=${pct%%.*}
-printf '\033[2m%s  %s%%\033[0m' "$model" "$pct"
+printf '\033[2m%s %s%%\033[0m' "$model" "$pct"
