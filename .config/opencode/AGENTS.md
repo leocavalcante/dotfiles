@@ -24,3 +24,4 @@
 - Use `kubens` for k8s namespace management
 - Use `tkn` for Tekton cluster management
 - Save memory updates to `~/.config/opencode/AGENTS.md`
+- When `~/.agents/AGENTS.md` exists, read it and follow it. Skills live in `~/.agents/skills/`. That tree is private. Do not copy it here.

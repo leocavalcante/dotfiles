@@ -57,6 +57,10 @@ The shared script requires `jq`. Keep Cursor's machine-specific
 }
 ```
 
+The always-on rule `.cursor/rules/agents.mdc` tells Cursor to read the private
+`~/.agents/AGENTS.md`. Only that rules directory is shared. The rest of
+`~/.cursor` stays on the machine.
+
 ### Alacritty
 
 `.alacritty.toml` imports `.config/alacritty/common.toml` and a machine-local `.config/alacritty/platform.toml`. The reusable macOS and Windows configs under `.config/alacritty/platforms/` are committed. Only the `platform.toml` selector symlink is ignored. Decorations, blur, colors, and the font family are shared. Font size, the shell, and the hint opener are platform-specific.

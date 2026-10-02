@@ -8,6 +8,10 @@
 - Atomic commits following the Conventional Commits specification
 - Pull Request titles following the Conventional Commits specification
 
+## Shared harness
+
+When `~/.agents/AGENTS.md` exists, read it and follow it. Skills live in `~/.agents/skills/`. That tree is private. Do not copy it here.
+
 ## TOOLS
 - Use `uv` instead of `python`, `pip` or `poetry`
 - Use `bun` instead of `node`, `npm`, `yarn`, `pnpm`, or `npx` — for running, installing, and scripting
