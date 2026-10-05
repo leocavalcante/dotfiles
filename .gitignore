@@ -21,6 +21,9 @@
 !.pi/agent/settings.json
 !.pi/agent/themes/
 !.pi/agent/agents/
+!.pi/agent/prompts/
+.pi/agent/prompts/*
+!.pi/agent/prompts/capture.md
 .pi/agent/themes/*
 !.pi/agent/themes/gruvbox.json
 .pi/agent/agents/*
