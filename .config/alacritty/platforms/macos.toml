@@ -5,12 +5,7 @@ size = 12
 program = "/bin/zsh"
 args = ["-lc", "tmux"]
 
-# Imports replace keyboard.bindings, so repeat the shared Shift+Return mapping.
-[[keyboard.bindings]]
-key = "Return"
-mods = "Shift"
-chars = "\u001b[13;2u"
-
+# Binding arrays append across imports. Shift+Return is defined in common.toml.
 # Preserve Option+Return for Pi's follow-up queue.
 [[keyboard.bindings]]
 key = "Return"
