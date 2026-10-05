@@ -3,6 +3,7 @@
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-6.1-sol",
   "defaultThinkingLevel": "high",
+  "defaultTools": ["+codemode"],
   "lastChangelogVersion": "1.0.3",
   "deviceId": "84b2771a-f63f-41ff-840a-43971c6ee98d",
   "packages": [
