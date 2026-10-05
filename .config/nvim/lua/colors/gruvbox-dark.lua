@@ -1,41 +1,41 @@
 -- Gruvbox Dark theme for Neovim
--- Based on https://github.com/morhetz/gruvbox
+-- Match Pi's soft Gruvbox palette and tmux's terminal background.
 
 local M = {}
 
 M.colors = {
-  bg = "#1d2021",
+  bg = "#282828",
   bg_highlight = "#3c3836",
   bg_visual = "#504945",
-  border = "#665c54",
-  fg = "#ebdbb2",
-  fg_muted = "#a89984",
+  border = "#504945",
+  fg = "#d4be98",
+  fg_muted = "#bdae93",
   fg_subtle = "#928374",
 
   -- Terminal colors (ANSI)
-  black = "#1d2021",
+  black = "#282828",
   bright_black = "#928374",
   white = "#a89984",
   bright_white = "#ebdbb2",
 
-  -- Syntax colors (use Gruvbox bright variants for dark mode)
-  red = "#fb4934",
+  -- Syntax colors (Pi's soft Gruvbox accents)
+  red = "#ea6962",
   bright_red = "#cc241d",
-  orange = "#fe8019",
-  yellow = "#fabd2f",
+  orange = "#e78a4e",
+  yellow = "#d8a657",
   bright_yellow = "#d79921",
-  green = "#b8bb26",
+  green = "#a9b665",
   bright_green = "#98971a",
-  cyan = "#8ec07c",
+  cyan = "#89b482",
   bright_cyan = "#689d6a",
-  blue = "#83a598",
+  blue = "#7daea3",
   bright_blue = "#458588",
   purple = "#d3869b",
   magenta = "#b16286",
   pink = "#d3869b",
 
   -- Special
-  cursor = "#ebdbb2",
+  cursor = "#d4be98",
 
   -- Diff colors
   diff_add = "#98971a",
@@ -52,6 +52,7 @@ function M.setup()
     vim.cmd("syntax reset")
   end
   vim.o.termguicolors = true
+  vim.o.background = "dark"
   vim.g.colors_name = "gruvbox-dark"
 
   local highlights = {
@@ -121,8 +122,8 @@ function M.setup()
     -- Syntax (following gruvbox.vim rules)
     Comment = { fg = c.fg_subtle, italic = true },
     Constant = { fg = c.purple },
-    String = { fg = c.green },
-    Character = { fg = c.green },
+    String = { fg = c.cyan },
+    Character = { fg = c.cyan },
     Number = { fg = c.purple },
     Boolean = { fg = c.purple },
     Float = { fg = c.purple },
@@ -132,7 +133,7 @@ function M.setup()
     Conditional = { fg = c.red },
     Repeat = { fg = c.red },
     Label = { fg = c.red },
-    Operator = { fg = c.fg },
+    Operator = { fg = c.fg_muted },
     Keyword = { fg = c.red },
     Exception = { fg = c.red },
     PreProc = { fg = c.cyan },
@@ -147,7 +148,7 @@ function M.setup()
     Special = { fg = c.orange },
     SpecialChar = { fg = c.orange },
     Tag = { fg = c.green },
-    Delimiter = { fg = c.fg },
+    Delimiter = { fg = c.fg_muted },
     SpecialComment = { fg = c.fg_subtle },
     Debug = { fg = c.orange },
     Underlined = { underline = true },
@@ -165,10 +166,10 @@ function M.setup()
     ["@constant.macro"] = { fg = c.cyan },
     ["@module"] = { fg = c.fg },
     ["@label"] = { fg = c.red },
-    ["@string"] = { fg = c.green },
+    ["@string"] = { fg = c.cyan },
     ["@string.escape"] = { fg = c.orange },
     ["@string.special"] = { fg = c.orange },
-    ["@character"] = { fg = c.green },
+    ["@character"] = { fg = c.cyan },
     ["@number"] = { fg = c.purple },
     ["@boolean"] = { fg = c.purple },
     ["@float"] = { fg = c.purple },
@@ -185,10 +186,10 @@ function M.setup()
     ["@keyword.repeat"] = { fg = c.red },
     ["@keyword.import"] = { fg = c.cyan },
     ["@keyword.exception"] = { fg = c.red },
-    ["@operator"] = { fg = c.fg },
-    ["@punctuation.bracket"] = { fg = c.fg },
-    ["@punctuation.delimiter"] = { fg = c.fg },
-    ["@punctuation.special"] = { fg = c.fg },
+    ["@operator"] = { fg = c.fg_muted },
+    ["@punctuation.bracket"] = { fg = c.fg_muted },
+    ["@punctuation.delimiter"] = { fg = c.fg_muted },
+    ["@punctuation.special"] = { fg = c.fg_muted },
     ["@comment"] = { fg = c.fg_subtle, italic = true },
     ["@type"] = { fg = c.yellow },
     ["@type.builtin"] = { fg = c.yellow },
