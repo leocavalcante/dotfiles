@@ -5,6 +5,18 @@ size = 12
 program = "/bin/zsh"
 args = ["-lc", "tmux"]
 
+# Imports replace keyboard.bindings, so repeat the shared Shift+Return mapping.
+[[keyboard.bindings]]
+key = "Return"
+mods = "Shift"
+chars = "\u001b[13;2u"
+
+# Preserve Option+Return for Pi's follow-up queue.
+[[keyboard.bindings]]
+key = "Return"
+mods = "Alt"
+chars = "\u001b[13;3u"
+
 # Imports replace a whole array, so this block repeats the shared hint fields.
 [[hints.enabled]]
 command = "open"
