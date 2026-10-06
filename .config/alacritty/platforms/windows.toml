@@ -9,11 +9,7 @@ args = ["-d", "Ubuntu", "--cd", "~", "zsh", "-lc", "tmux"]
 title = "Alacritty"
 dynamic_title = false
 
-# Imports replace keyboard.bindings, so the shared Shift+Return binding is repeated here.
-[[keyboard.bindings]]
-key = "Return"
-mods = "Shift"
-chars = "\u001b[13;2u"
+# Binding arrays append across imports. Shift+Return is defined in common.toml.
 
 [[keyboard.bindings]]
 # Ctrl-Space is NUL. ConPTY drops that byte, so the Ubuntu tmux never sees
