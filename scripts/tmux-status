@@ -27,14 +27,20 @@ if [ "$path" != "$HOME" ]; then
 fi
 
 # HomeLab stays on AC at 100%, so skip it. Linux laptops expose sysfs.
-# macOS has no /sys; pmset is the shared-config equivalent. A desktop
-# with neither source adds nothing.
+# Android restricts sysfs; use Termux:API there. macOS uses pmset.
+# A desktop with none of these sources adds nothing.
 if [ "$(hostname -s 2>/dev/null)" != ubuntu ]; then
 	cap=
 	st=
 	if [ -d /sys/class/power_supply ]; then
 		cap=$(awk 'NR==1 { print; exit }' /sys/class/power_supply/BAT*/capacity 2>/dev/null) || cap=
 		st=$(awk 'NR==1 { print; exit }' /sys/class/power_supply/BAT*/status 2>/dev/null) || st=
+	fi
+	if [ -z "$cap" ] && [ -n "${TERMUX_VERSION:-}${PREFIX:-}" ] && command -v termux-battery-status >/dev/null 2>&1; then
+		# Bound the wait if Termux:API is unavailable or Android suspends it.
+		batt=$(timeout 2 termux-battery-status 2>/dev/null) || batt=
+		cap=$(printf '%s\n' "$batt" | sed -n 's/^[[:space:]]*"percentage":[[:space:]]*\([0-9][0-9]*\),\{0,1\}[[:space:]]*$/\1/p')
+		st=$(printf '%s\n' "$batt" | sed -n 's/^[[:space:]]*"status":[[:space:]]*"\([^"]*\)".*$/\1/p')
 	fi
 	if [ -z "$cap" ] && command -v pmset >/dev/null 2>&1; then
 		batt=$(pmset -g batt 2>/dev/null) || batt=
@@ -44,7 +50,7 @@ if [ "$(hostname -s 2>/dev/null)" != ubuntu ]; then
 	if [ -n "$cap" ]; then
 		mark=
 		case $st in
-			Charging|charging|"finishing charge") mark=+ ;;
+			Charging|CHARGING|charging|"finishing charge") mark=+ ;;
 		esac
 		add "${cap}%${mark}"
 	fi
