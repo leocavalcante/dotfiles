@@ -37,8 +37,29 @@ if [ "$(hostname -s 2>/dev/null)" != ubuntu ]; then
 		st=$(awk 'NR==1 { print; exit }' /sys/class/power_supply/BAT*/status 2>/dev/null) || st=
 	fi
 	if [ -z "$cap" ] && [ -n "${TERMUX_VERSION:-}${PREFIX:-}" ] && command -v termux-battery-status >/dev/null 2>&1; then
-		# Bound the wait if Termux:API is unavailable or Android suspends it.
-		batt=$(timeout 2 termux-battery-status 2>/dev/null) || batt=
+		# Killing a Termux:API client closes its reply socket before Android
+		# can return the result. Read a cache and let one detached poll finish.
+		cache_dir=${XDG_CACHE_HOME:-$HOME/.cache}/tmux
+		if command -v flock >/dev/null 2>&1; then
+			(
+				umask 077
+				mkdir -p "$cache_dir" || exit
+				exec 9>"$cache_dir/battery.lock"
+				flock -n 9 || exit
+				now=$(date +%s)
+				last=0
+				read -r last < "$cache_dir/battery.polled" || last=0
+				case $last in ''|*[!0-9]*) last=0 ;; esac
+				[ "$((now - last))" -ge 60 ] || exit
+				printf '%s\n' "$now" > "$cache_dir/battery.polled"
+				if termux-battery-status > "$cache_dir/battery.tmp"; then
+					mv "$cache_dir/battery.tmp" "$cache_dir/battery.json"
+				else
+					rm -f "$cache_dir/battery.tmp"
+				fi
+			) </dev/null >/dev/null 2>&1 &
+		fi
+		batt=$(cat "$cache_dir/battery.json" 2>/dev/null) || batt=
 		cap=$(printf '%s\n' "$batt" | sed -n 's/^[[:space:]]*"percentage":[[:space:]]*\([0-9][0-9]*\),\{0,1\}[[:space:]]*$/\1/p')
 		st=$(printf '%s\n' "$batt" | sed -n 's/^[[:space:]]*"status":[[:space:]]*"\([^"]*\)".*$/\1/p')
 	fi
