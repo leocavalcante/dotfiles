@@ -87,8 +87,8 @@ k9s:
     table:
       fgColor: '#d4be98'
       bgColor: '#282828'
-      cursorFgColor: '#d4be98'
-      cursorBgColor: '#3c3836'
+      cursorFgColor: '#282828'
+      cursorBgColor: '#d4be98'
       markColor: '#e78a4e'
       header:
         fgColor: '#bdae93'
