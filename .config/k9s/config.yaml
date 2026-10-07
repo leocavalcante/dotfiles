@@ -1,3 +1,4 @@
+# Global skin for every context; shared through dotfiles.
 k9s:
   ui:
     skin: gruvbox-dark

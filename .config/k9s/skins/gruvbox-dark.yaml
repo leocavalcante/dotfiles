@@ -1,85 +1,119 @@
-# Gruvbox Dark skin for k9s
+# Shared soft Gruvbox palette: .pi/agent/themes/gruvbox.json (vars)
+# Keep in sync with .config/nvim/lua/colors/gruvbox-dark.lua.
 k9s:
   body:
-    fgColor: '#ebdbb2'
-    bgColor: default
-    logoColor: '#83a598'
+    fgColor: '#d4be98'
+    bgColor: '#282828'
+    logoColor: '#7daea3'
+    logoColorMsg: '#d4be98'
+    logoColorInfo: '#a9b665'
+    logoColorWarn: '#d8a657'
+    logoColorError: '#ea6962'
   info:
-    fgColor: '#a89984'
-    sectionColor: '#83a598'
+    fgColor: '#bdae93'
+    sectionColor: '#7daea3'
+    cpuColor: '#a9b665'
+    memColor: '#89b482'
+    k9sRevColor: '#7daea3'
   prompt:
-    fgColor: '#ebdbb2'
-    bgColor: default
-    suggestColor: '#83a598'
+    fgColor: '#d4be98'
+    bgColor: '#282828'
+    suggestColor: '#7daea3'
+    border:
+      command: '#7daea3'
+      default: '#504945'
+  help:
+    fgColor: '#d4be98'
+    bgColor: '#282828'
+    sectionColor: '#a9b665'
+    keyColor: '#7daea3'
+    numKeyColor: '#89b482'
   dialog:
-    fgColor: '#ebdbb2'
-    bgColor: default
-    buttonFgColor: '#ebdbb2'
+    fgColor: '#d4be98'
+    bgColor: '#282828'
+    buttonFgColor: '#d4be98'
     buttonBgColor: '#504945'
     buttonFocusFgColor: '#282828'
-    buttonFocusBgColor: '#83a598'
-    labelFgColor: '#fe8019'
-    fieldFgColor: '#ebdbb2'
+    buttonFocusBgColor: '#7daea3'
+    labelFgColor: '#e78a4e'
+    fieldFgColor: '#d4be98'
   frame:
     border:
       fgColor: '#504945'
-      focusColor: '#83a598'
+      focusColor: '#7daea3'
     menu:
-      fgColor: '#ebdbb2'
-      keyColor: '#83a598'
-      numKeyColor: '#8ec07c'
+      fgColor: '#d4be98'
+      keyColor: '#7daea3'
+      numKeyColor: '#89b482'
     crumbs:
-      fgColor: '#ebdbb2'
-      bgColor: default
-      activeColor: '#83a598'
+      fgColor: '#d4be98'
+      bgColor: '#282828'
+      activeColor: '#7daea3'
     status:
-      newColor: '#b8bb26'
-      modifyColor: '#83a598'
-      addColor: '#b8bb26'
-      errorColor: '#fb4934'
-      highlightcolor: '#83a598'
+      newColor: '#a9b665'
+      modifyColor: '#7daea3'
+      addColor: '#a9b665'
+      pendingColor: '#d8a657'
+      errorColor: '#ea6962'
+      highlightColor: '#7daea3'
       killColor: '#928374'
-      completedColor: '#a89984'
+      completedColor: '#bdae93'
     title:
-      fgColor: '#ebdbb2'
-      bgColor: default
-      highlightColor: '#83a598'
-      counterColor: '#8ec07c'
-      filterColor: '#fe8019'
+      fgColor: '#d4be98'
+      bgColor: '#282828'
+      highlightColor: '#7daea3'
+      counterColor: '#89b482'
+      filterColor: '#e78a4e'
   views:
     charts:
-      bgColor: default
+      bgColor: '#282828'
+      dialBgColor: '#282828'
+      chartBgColor: '#282828'
+      focusFgColor: '#d4be98'
+      focusBgColor: '#3c3836'
       defaultDialColors:
-        - '#83a598'
+        - '#7daea3'
         - '#504945'
       defaultChartColors:
-        - '#83a598'
-        - '#b8bb26'
+        - '#7daea3'
+        - '#a9b665'
+      resourceColors:
+        cpu:
+          - '#7daea3'
+          - '#504945'
+        mem:
+          - '#d8a657'
+          - '#504945'
     table:
-      fgColor: '#ebdbb2'
-      bgColor: default
-      cursorFgColor: '#ebdbb2'
-      cursorBgColor: '#504945'
-      markColor: '#fe8019'
+      fgColor: '#d4be98'
+      bgColor: '#282828'
+      cursorFgColor: '#d4be98'
+      cursorBgColor: '#3c3836'
+      markColor: '#e78a4e'
       header:
-        fgColor: '#a89984'
-        bgColor: default
-        sorterColor: '#fe8019'
+        fgColor: '#bdae93'
+        bgColor: '#282828'
+        sorterColor: '#e78a4e'
+        selectedSortColumnColor: '#7daea3'
     xray:
-      fgColor: '#ebdbb2'
-      bgColor: default
-      cursorColor: '#504945'
-      graphicColor: '#83a598'
-      showIcons: false
+      fgColor: '#d4be98'
+      bgColor: '#282828'
+      cursorColor: '#3c3836'
+      cursorTextColor: '#d4be98'
+      graphicColor: '#7daea3'
     yaml:
-      keyColor: '#83a598'
+      keyColor: '#7daea3'
       colonColor: '#928374'
-      valueColor: '#ebdbb2'
+      valueColor: '#d4be98'
+    picker:
+      mainColor: '#d4be98'
+      focusColor: '#7daea3'
+      shortcutColor: '#89b482'
     logs:
-      fgColor: '#ebdbb2'
-      bgColor: default
+      fgColor: '#d4be98'
+      bgColor: '#282828'
       indicator:
-        fgColor: '#ebdbb2'
-        bgColor: default
-        toggleOnColor: '#b8bb26'
+        fgColor: '#d4be98'
+        bgColor: '#282828'
+        toggleOnColor: '#a9b665'
         toggleOffColor: '#928374'

@@ -123,6 +123,18 @@ ln -sfn platforms/windows.toml ~/.dotfiles/.config/alacritty/platform.toml
 
 Windows Alacritty reads `%APPDATA%\alacritty\alacritty.toml`. Point that file at `~/.alacritty.toml` if it is not already.
 
+### K9s
+
+`.config/k9s/config.yaml` selects `gruvbox-dark` globally for all contexts.
+The skin in `.config/k9s/skins/gruvbox-dark.yaml` uses the same soft Gruvbox
+palette as Pi (`.pi/agent/themes/gruvbox.json`) and Neovim, with explicit
+backgrounds so it does not depend on the device's terminal theme.
+
+On each device, pull dotfiles and run `stow --no-folding .`, then restart K9s.
+Keep `K9S_SKIN` unset and remove any context-level `k9s.ui.skin` override to
+use the shared global skin. Context files remain machine-local; `k9s info`
+shows their location and the active config/skins directories.
+
 ## AI Shell Wrappers
 
 The Zsh and Fish configs include Copilot CLI shortcut functions:
