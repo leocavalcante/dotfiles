@@ -81,6 +81,55 @@ dot() {
   echo "Dotfiles update process completed."
 }
 
+# Update the private agent harness
+agents() {
+  emulate -L zsh
+  local agents_dir="$HOME/.agents"
+  local current_branch
+  local worktree_status
+
+  echo "Starting agent harness update process"
+
+  current_branch=$(git -C "$agents_dir" branch --show-current) || {
+    echo "Could not inspect the agent harness repository." >&2
+    return 1
+  }
+  if [[ "$current_branch" != "main" ]]; then
+    echo "Refusing to update: $agents_dir is not on main (currently ${current_branch:-detached})." >&2
+    return 1
+  fi
+
+  worktree_status=$(git -C "$agents_dir" status --porcelain) || {
+    echo "Could not inspect the agent harness worktree." >&2
+    return 1
+  }
+  if [[ -n "$worktree_status" ]]; then
+    echo "Local changes found in $agents_dir; refusing to update." >&2
+    return 1
+  fi
+
+  echo "Fetching latest changes..."
+  git -C "$agents_dir" fetch --quiet origin refs/heads/main:refs/remotes/origin/main || {
+    echo "Could not fetch the agent harness repository." >&2
+    return 1
+  }
+
+  if git -C "$agents_dir" merge-base --is-ancestor HEAD origin/main; then
+    git -C "$agents_dir" merge --ff-only --quiet origin/main || {
+      echo "Could not fast-forward the agent harness repository." >&2
+      return 1
+    }
+    echo "Repository updated."
+  elif git -C "$agents_dir" merge-base --is-ancestor origin/main HEAD; then
+    echo "Local repository is already ahead of origin/main; nothing to update."
+  else
+    echo "Local and remote histories have diverged; refusing to update." >&2
+    return 1
+  fi
+
+  echo "Agent harness update process completed."
+}
+
 # System update utility
 up() {
   emulate -L zsh
