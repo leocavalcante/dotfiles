@@ -70,13 +70,13 @@
     "syntaxType": "yellow",
     "syntaxOperator": "fgMuted",
     "syntaxPunctuation": "fgMuted",
-    "thinkingOff": "bg3",
+    "thinkingOff": "gray",
     "thinkingMinimal": "gray",
-    "thinkingLow": "blue",
-    "thinkingMedium": "aqua",
+    "thinkingLow": "gray",
+    "thinkingMedium": "gray",
     "thinkingHigh": "gray",
-    "thinkingXhigh": "orange",
-    "thinkingMax": "red",
+    "thinkingXhigh": "gray",
+    "thinkingMax": "gray",
     "bashMode": "green"
   },
   "export": {
