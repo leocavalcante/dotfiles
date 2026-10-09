@@ -33,6 +33,9 @@ path=(
 alias cl="clear"
 alias gd="git diff-all"
 alias k="kubectl"
+# K9s under tmux-256color paints #282828 as 256-color #262626. TERM=xterm-256color
+# keeps truecolor, so its background matches Alacritty.
+alias k9s="TERM=xterm-256color k9s"
 alias kns="kubens"
 alias ktx="kubectx"
 alias l="eza --all --icons --git"
