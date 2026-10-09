@@ -162,13 +162,12 @@ The Zsh and Fish configs include Copilot CLI shortcut functions:
 - `jj` - Exit insert mode
 
 ### tmux (Prefix = `C-Space` on workstations, `C-b` on the home lab)
-- `C-h/j/k/l` - Navigate panes (no prefix, works across Neovim + tmux)
-- `prefix + h` - Split horizontally
-- `prefix + l` - Split vertically
+- `prefix + h` - Previous pane
+- `prefix + l` - Next pane
 - `prefix + j` - Previous window
 - `prefix + k` - Next window
 - `prefix + s` - Session picker (sessionx)
-- `prefix + C-h/j/k/l` - Resize panes
+- `prefix + M-j/M-k` - Resize panes
 
 ## Theme
 
