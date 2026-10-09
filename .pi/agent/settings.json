@@ -1,15 +1,13 @@
 {
   "theme": "gruvbox",
-  "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-6.1-sol",
-  "defaultThinkingLevel": "high",
-  "defaultTools": [
-    "+codemode"
-  ],
+  "defaultProvider": "github-copilot",
+  "defaultModel": "claude-haiku-5.5",
+  "defaultThinkingLevel": "max",
   "lastChangelogVersion": "1.1.0",
   "deviceId": "84b2771a-f63f-41ff-840a-43971c6ee98d",
   "packages": [
     "git:github.com/leocavalcante/pi-subagents",
     "git:github.com/leocavalcante/pi-tmux"
-  ]
+  ],
+  "hideThinkingBlock": true
 }
