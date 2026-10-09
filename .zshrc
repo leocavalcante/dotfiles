@@ -49,11 +49,6 @@ alias cdx="codex --yolo --model gpt-5.6-luna -c model_reasoning_effort=max"
 alias cdxe="codex exec --yolo --model gpt-5.6-luna -c model_reasoning_effort=max"
 alias csr="cursor agent --yolo --model 'auto-smart[optimize_for=intelligence]'"
 
-# LCPC and Termux both use this to reach the lab. --predict=always is the
-# overlap their mosh builds accept; Termux rejects experimental and
-# --predict-overwrite.
-alias mhome='mosh --predict=always ubuntu -- tmux new-session -A -s 0'
-
 # Update dotfiles from repository
 dot() {
   emulate -L zsh
