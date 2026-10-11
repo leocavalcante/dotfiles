@@ -3,9 +3,16 @@
 # The HomeLab stays plugged in, so its battery sits at 100%. Skip it.
 # The clock is omitted when this client was opened from another tmux, so the
 # outer bar is the only one showing the time.
+# Termux (Flip) shows neither the battery nor the clock.
 path=$1
 client_pid=$2
 parts=
+
+# Match the Termux prefix exactly, because other hosts may export some PREFIX.
+termux=0
+if [ -n "${TERMUX_VERSION:-}" ] || [ "${PREFIX:-}" = /data/data/com.termux/files/usr ]; then
+	termux=1
+fi
 
 add() {
 	[ -n "$1" ] || return 0
@@ -27,41 +34,14 @@ if [ "$path" != "$HOME" ]; then
 fi
 
 # HomeLab stays on AC at 100%, so skip it. Linux laptops expose sysfs.
-# Android restricts sysfs; use Termux:API there. macOS uses pmset.
-# A desktop with none of these sources adds nothing.
-if [ "$(hostname -s 2>/dev/null)" != ubuntu ]; then
+# macOS uses pmset. A desktop with neither source adds nothing.
+# Termux is skipped because the bar omits its battery.
+if [ "$(hostname -s 2>/dev/null)" != ubuntu ] && [ "$termux" -eq 0 ]; then
 	cap=
 	st=
 	if [ -d /sys/class/power_supply ]; then
 		cap=$(awk 'NR==1 { print; exit }' /sys/class/power_supply/BAT*/capacity 2>/dev/null) || cap=
 		st=$(awk 'NR==1 { print; exit }' /sys/class/power_supply/BAT*/status 2>/dev/null) || st=
-	fi
-	if [ -z "$cap" ] && [ -n "${TERMUX_VERSION:-}${PREFIX:-}" ] && command -v termux-battery-status >/dev/null 2>&1; then
-		# Killing a Termux:API client closes its reply socket before Android
-		# can return the result. Read a cache and let one detached poll finish.
-		cache_dir=${XDG_CACHE_HOME:-$HOME/.cache}/tmux
-		if command -v flock >/dev/null 2>&1; then
-			(
-				umask 077
-				mkdir -p "$cache_dir" || exit
-				exec 9>"$cache_dir/battery.lock"
-				flock -n 9 || exit
-				now=$(date +%s)
-				last=0
-				read -r last < "$cache_dir/battery.polled" || last=0
-				case $last in ''|*[!0-9]*) last=0 ;; esac
-				[ "$((now - last))" -ge 60 ] || exit
-				printf '%s\n' "$now" > "$cache_dir/battery.polled"
-				if termux-battery-status > "$cache_dir/battery.tmp"; then
-					mv "$cache_dir/battery.tmp" "$cache_dir/battery.json"
-				else
-					rm -f "$cache_dir/battery.tmp"
-				fi
-			) </dev/null >/dev/null 2>&1 &
-		fi
-		batt=$(cat "$cache_dir/battery.json" 2>/dev/null) || batt=
-		cap=$(printf '%s\n' "$batt" | sed -n 's/^[[:space:]]*"percentage":[[:space:]]*\([0-9][0-9]*\),\{0,1\}[[:space:]]*$/\1/p')
-		st=$(printf '%s\n' "$batt" | sed -n 's/^[[:space:]]*"status":[[:space:]]*"\([^"]*\)".*$/\1/p')
 	fi
 	if [ -z "$cap" ] && command -v pmset >/dev/null 2>&1; then
 		batt=$(pmset -g batt 2>/dev/null) || batt=
@@ -90,7 +70,7 @@ while [ -n "$pid" ] && [ "$pid" -gt 1 ] 2>/dev/null && [ "$i" -lt 6 ]; do
 	i=$((i + 1))
 done
 
-if [ "$nested" -eq 0 ]; then
+if [ "$nested" -eq 0 ] && [ "$termux" -eq 0 ]; then
 	add "$(date '+%a %-d %b %H:%M')"
 fi
 

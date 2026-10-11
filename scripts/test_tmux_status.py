@@ -1,109 +1,57 @@
 #!/usr/bin/env python3
-"""Regression tests for detached Termux battery polling (no Android calls)."""
+"""Regression tests for tmux-status on Termux (no Android calls)."""
 
 import os
 from pathlib import Path
-import shlex
-import shutil
 import subprocess
-import sys
 import tempfile
-import time
 import unittest
 
 
 SCRIPT = Path(__file__).with_name("tmux-status")
+TERMUX_PREFIX = "/data/data/com.termux/files/usr"
 
 
-class BatteryPollingTest(unittest.TestCase):
+class TmuxStatusTest(unittest.TestCase):
     def setUp(self):
-        self.temp = tempfile.TemporaryDirectory()
-        self.root = Path(self.temp.name)
-        self.bin = self.root / "bin"
-        self.bin.mkdir()
-        self.cache = self.root / "cache" / "tmux"
-        self.env = dict(os.environ, HOME=str(self.root),
-                        XDG_CACHE_HOME=str(self.root / "cache"),
-                        TERMUX_VERSION="test", PATH=f"{self.bin}:{os.environ['PATH']}")
-        self.command("hostname", "#!/bin/sh\nprintf 'localhost\\n'\n")
-        # Ignore the test host's physical battery, but preserve other awk uses.
-        awk = shlex.quote(shutil.which("awk"))
-        self.command("awk", f'''#!/bin/sh
-case "$*" in *'/sys/class/power_supply/'*) exit 1 ;; esac
-exec {awk} "$@"
-''')
-        self.command("termux-battery-status", f'''#!{sys.executable}
-import os
-from pathlib import Path
-import time
-root = Path(os.environ["HOME"])
-with (root / "calls").open("a") as calls:
-    calls.write("call\\n")
-if os.environ.get("BATTERY_FAIL"):
-    raise SystemExit(1)
-end = time.monotonic() + 10
-while not (root / "release").exists():
-    if time.monotonic() > end:
-        raise SystemExit(1)
-    time.sleep(0.02)
-print('{{\\n  "percentage": 88,\\n  "status": "CHARGING"\\n}}')
-''')
+        temp = tempfile.TemporaryDirectory()
+        self.addCleanup(temp.cleanup)
+        root = Path(temp.name)
+        self.path = root / "proj"
+        self.path.mkdir()
+        self.calls = root / "calls"
+        bin_dir = root / "bin"
+        bin_dir.mkdir()
+        # A fixed clock makes a present or absent clock unambiguous.
+        self.command(bin_dir, "date", "#!/bin/sh\necho 'Mon 1 Jan 00:00'\n")
+        self.command(bin_dir, "termux-battery-status",
+                     f"#!/bin/sh\necho call >> '{self.calls}'\n")
+        self.env = dict(os.environ, HOME=str(root),
+                        PATH=f"{bin_dir}:{os.environ['PATH']}")
+        for name in ("AWS_PROFILE", "PREFIX", "TERMUX_VERSION"):
+            self.env.pop(name, None)
 
-    def command(self, name, content):
-        path = self.bin / name
+    def command(self, bin_dir, name, content):
+        path = bin_dir / name
         path.write_text(content)
         path.chmod(0o755)
 
-    def tearDown(self):
-        (self.root / "release").touch()
-        # Let any detached test worker complete before deleting its cache.
-        time.sleep(0.15)
-        self.temp.cleanup()
-
-    def status(self):
-        start = time.monotonic()
-        result = subprocess.run(["sh", str(SCRIPT), str(self.root), ""],
-                                env=self.env, capture_output=True, text=True, timeout=1)
+    def status(self, **env):
+        result = subprocess.run(["sh", str(SCRIPT), str(self.path), ""],
+                                env={**self.env, **env}, capture_output=True,
+                                text=True, timeout=5)
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertLess(time.monotonic() - start, 1)
         return result.stdout
 
-    def wait_for(self, predicate):
-        end = time.monotonic() + 3
-        while not predicate():
-            if time.monotonic() > end:
-                self.fail("Detached poll did not reach the expected state")
-            time.sleep(0.02)
+    def test_termux_omits_battery_and_clock(self):
+        for env in ({"TERMUX_VERSION": "test"}, {"PREFIX": TERMUX_PREFIX}):
+            with self.subTest(env=env):
+                self.assertEqual(self.status(**env), "proj  ")
+        self.assertFalse(self.calls.exists(), "Termux:API must not be polled")
 
-    def call_count(self):
-        calls = self.root / "calls"
-        return len(calls.read_text().splitlines()) if calls.exists() else 0
-
-    def test_slow_poll_survives_and_does_not_overlap(self):
-        self.assertNotIn("88%", self.status())
-        self.wait_for(lambda: self.call_count() == 1)
-        # The old timeout killed requests after two seconds.
-        time.sleep(2.2)
-        for _ in range(5):
-            self.assertNotIn("88%", self.status())
-        self.assertEqual(self.call_count(), 1)
-        (self.root / "release").touch()
-        self.wait_for(lambda: (self.cache / "battery.json").exists())
-        self.assertIn("88%+", self.status())
-        time.sleep(0.1)
-        self.assertEqual(self.call_count(), 1, "Fresh cache should throttle polls")
-
-    def test_failed_poll_preserves_cache_and_throttles_retries(self):
-        self.cache.mkdir(parents=True)
-        (self.cache / "battery.json").write_text('{\n  "percentage": 42,\n  "status": "DISCHARGING"\n}\n')
-        self.env["BATTERY_FAIL"] = "1"
-        self.assertIn("42%", self.status())
-        self.wait_for(lambda: self.call_count() == 1)
-        time.sleep(0.1)
-        self.assertIn("42%", self.status())
-        time.sleep(0.1)
-        self.assertEqual(self.call_count(), 1)
-        self.assertFalse((self.cache / "battery.tmp").exists())
+    def test_other_hosts_keep_the_clock(self):
+        # Another PREFIX does not make a host Termux.
+        self.assertTrue(self.status(PREFIX="/usr").endswith("Mon 1 Jan 00:00  "))
 
 
 if __name__ == "__main__":
