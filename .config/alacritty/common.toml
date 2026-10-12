@@ -48,5 +48,9 @@ key = "Return"
 mods = "Shift"
 chars = "\u001b[13;2u"
 
+# Copy mouse selections to the system clipboard when released.
+[selection]
+save_to_clipboard = true
+
 [hints]
 alphabet = "jfkdls;ahgurieowpq"
