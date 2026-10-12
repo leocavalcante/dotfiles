@@ -7,7 +7,8 @@ args = ["-d", "Ubuntu", "--cd", "~", "zsh", "-l"]
 
 [window]
 title = "Alacritty"
-dynamic_title = false
+# Mosh helpers in private ~/.zprofile set the peer name as the window title.
+dynamic_title = true
 
 # Binding arrays append across imports. Shift+Return is defined in common.toml.
 
