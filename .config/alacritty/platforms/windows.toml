@@ -3,7 +3,7 @@ size = 9
 
 [terminal.shell]
 program = "wsl.exe"
-args = ["-d", "Ubuntu", "--cd", "~", "zsh", "-lc", "tmux"]
+args = ["-d", "Ubuntu", "--cd", "~", "zsh", "-l"]
 
 [window]
 title = "Alacritty"
