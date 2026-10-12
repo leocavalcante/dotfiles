@@ -161,7 +161,7 @@ The Zsh and Fish configs include Copilot CLI shortcut functions:
 - `<leader>t` - Toggle file explorer
 - `jj` - Exit insert mode
 
-### tmux (Prefix = `C-Space` on workstations, `C-b` on the home lab)
+### tmux (Prefix = `C-Space` on every host)
 - `prefix + h/j/k/l` - Select pane left/down/up/right
 - `prefix + Ctrl+h/j/k/l` - Previous window (h, k) or next window (j, l)
 - `prefix + Shift+h/j/k/l` - Previous session (h, k) or next session (j, l)
