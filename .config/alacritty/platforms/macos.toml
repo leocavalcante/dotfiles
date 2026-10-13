@@ -5,6 +5,10 @@ size = 12
 program = "/bin/zsh"
 args = ["-l"]
 
+# macOS only: SimpleFullscreen keeps windows on the current desktop, so Cmd+` can cycle them.
+[window]
+startup_mode = "SimpleFullscreen"
+
 # Binding arrays append across imports. Shift+Return is defined in common.toml.
 # Preserve Option+Return for Pi's follow-up queue.
 [[keyboard.bindings]]
