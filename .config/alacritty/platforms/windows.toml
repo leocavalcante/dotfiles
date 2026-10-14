@@ -6,6 +6,9 @@ program = "wsl.exe"
 args = ["-d", "Ubuntu", "--cd", "~", "zsh", "-l"]
 
 [window]
+# Borderless maximized avoids Windows' true-fullscreen transitions.
+decorations = "None"
+startup_mode = "Maximized"
 title = "Alacritty"
 # Mosh helpers in private ~/.zprofile set the peer name as the window title.
 dynamic_title = true
