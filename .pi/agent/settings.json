@@ -1,7 +1,7 @@
 {
   "theme": "gruvbox",
-  "defaultProvider": "github-copilot",
-  "defaultModel": "claude-haiku-5.5",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-6-luna",
   "defaultThinkingLevel": "max",
   "lastChangelogVersion": "1.2.0",
   "deviceId": "84b2771a-f63f-41ff-840a-43971c6ee98d",
