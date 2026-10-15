@@ -9,5 +9,11 @@
     "git:github.com/leocavalcante/pi-subagents",
     "git:github.com/leocavalcante/pi-tmux"
   ],
-  "hideThinkingBlock": true
+  "hideThinkingBlock": true,
+  "enabledModels": [
+    "github-copilot/claude-haiku-5.5",
+    "github-copilot/claude-opus-5.5",
+    "openai-codex/gpt-6-luna",
+    "openai-codex/gpt-6.1-sol"
+  ]
 }
