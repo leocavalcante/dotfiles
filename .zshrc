@@ -49,6 +49,19 @@ alias cdx="codex --yolo --model gpt-5.6-luna -c model_reasoning_effort=max"
 alias cdxe="codex exec --yolo --model gpt-5.6-luna -c model_reasoning_effort=max"
 alias csr="cursor agent --yolo --model 'auto-smart[optimize_for=intelligence]'"
 
+# Start a local ttyd session with the shared browser index and Alacritty font.
+ttyd_local() {
+  command ttyd \
+    -i 127.0.0.1 \
+    -p 1337 \
+    -W \
+    -O \
+    -I "$HOME/ttyd-index.html" \
+    -t fontSize=12 \
+    -t 'fontFamily=JetBrainsMono Nerd Font Mono' \
+    /bin/zsh -l
+}
+
 # Update dotfiles from repository
 dot() {
   emulate -L zsh
