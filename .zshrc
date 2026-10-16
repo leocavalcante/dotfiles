@@ -50,7 +50,7 @@ alias cdxe="codex exec --yolo --model gpt-5.6-luna -c model_reasoning_effort=max
 alias csr="cursor agent --yolo --model 'auto-smart[optimize_for=intelligence]'"
 
 # Start a local ttyd session with the shared browser index and Alacritty font.
-ttyd_local() {
+ttydd() {
   command ttyd \
     -i 127.0.0.1 \
     -p 1337 \
