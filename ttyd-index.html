@@ -12,6 +12,18 @@
     return originalSend.call(this, data);
   };
   document.addEventListener('keydown', event => {
+    // Keep Chrome's Ctrl+1–9 tab shortcuts out of xterm.js.
+    if (
+      event.ctrlKey &&
+      !event.shiftKey &&
+      !event.altKey &&
+      !event.metaKey &&
+      /^[1-9]$/.test(event.key)
+    ) {
+      event.stopPropagation();
+      return;
+    }
+
     if (event.key === 'Enter' || event.keyCode === 13) {
       pendingShiftEnter = event.shiftKey && !event.ctrlKey && !event.altKey && !event.metaKey;
     }
