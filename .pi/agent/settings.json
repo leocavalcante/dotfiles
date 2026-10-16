@@ -7,7 +7,8 @@
   "deviceId": "84b2771a-f63f-41ff-840a-43971c6ee98d",
   "packages": [
     "git:github.com/leocavalcante/pi-subagents",
-    "git:github.com/leocavalcante/pi-tmux"
+    "git:github.com/leocavalcante/pi-tmux",
+    "git:github.com/leocavalcante/pi-ttyd"
   ],
   "hideThinkingBlock": true,
   "enabledModels": [

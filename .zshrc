@@ -51,7 +51,7 @@ alias csr="cursor agent --yolo --model 'auto-smart[optimize_for=intelligence]'"
 
 # Start a local ttyd session with the shared browser index and Alacritty font.
 ttydd() {
-  command ttyd \
+  PI_TTYD_NOTIFY=1 command ttyd \
     -i 127.0.0.1 \
     -p 1337 \
     -W \
