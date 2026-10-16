@@ -49,17 +49,26 @@ alias cdx="codex --yolo --model gpt-5.6-luna -c model_reasoning_effort=max"
 alias cdxe="codex exec --yolo --model gpt-5.6-luna -c model_reasoning_effort=max"
 alias csr="cursor agent --yolo --model 'auto-smart[optimize_for=intelligence]'"
 
-# Start a local ttyd session with the shared browser index and Alacritty font.
+# Start a ttyd session with the shared browser index and Alacritty font.
 ttydd() {
+  local interface="${TTYD_INTERFACE:-127.0.0.1}"
+  local credential_file="$HOME/.config/ttyd/credentials"
+
+  if [[ ! -r "$credential_file" ]]; then
+    print -u2 -- "Missing ttyd credentials: $credential_file"
+    return 1
+  fi
+
   PI_TTYD_NOTIFY=1 command ttyd \
-    -i 127.0.0.1 \
+    -i "$interface" \
     -p 1337 \
+    -c "$(<"$credential_file")" \
     -W \
     -O \
     -I "$HOME/ttyd-index.html" \
     -t fontSize=12 \
     -t 'fontFamily=JetBrainsMono Nerd Font Mono' \
-    /bin/zsh -l
+    zsh -l
 }
 
 # Update dotfiles from repository
