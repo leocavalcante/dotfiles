@@ -128,6 +128,14 @@ agents() {
   echo "Agent harness update process completed."
 }
 
+# Update agentic development tools
+agentic-update() {
+  dot &&
+    agents &&
+    pi update &&
+    pi update --extensions
+}
+
 # System update utility
 up() {
   emulate -L zsh
