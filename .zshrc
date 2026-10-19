@@ -53,6 +53,7 @@ alias csr="cursor agent --yolo --model 'auto-smart[optimize_for=intelligence]'"
 dot() {
   emulate -L zsh
   local dotfiles_dir="$HOME/.dotfiles"
+  local update_status=0
   echo "Starting dotfiles update process"
   
   cd "$dotfiles_dir" || {
@@ -61,21 +62,37 @@ dot() {
   }
   
   echo "Pulling latest changes from git repository..."
-  git pull --quiet && echo "Repository updated."
-  
-  if (( $+commands[stow] )); then
-    echo "Restowing dotfiles using GNU Stow..."
-    # --no-folding keeps ~/.config a real directory, so machine-local
-    # credentials never land inside this public working tree.
-    stow --no-folding . && echo "Dotfiles stowed successfully."
-  else
-    echo "GNU Stow not installed! Please install it to continue." >&2
+  git pull --quiet || {
+    update_status=$?
+    echo "Could not pull latest changes from git repository." >&2
+  }
+  if (( update_status == 0 )); then
+    echo "Repository updated."
+
+    if (( $+commands[stow] )); then
+      echo "Restowing dotfiles using GNU Stow..."
+      # --no-folding keeps ~/.config a real directory, so machine-local
+      # credentials never land inside this public working tree.
+      stow --no-folding . || {
+        update_status=$?
+        echo "Could not stow dotfiles." >&2
+      }
+      if (( update_status == 0 )); then
+        echo "Dotfiles stowed successfully."
+      fi
+    else
+      echo "GNU Stow not installed! Please install it to continue." >&2
+      update_status=1
+    fi
   fi
   
   cd "$HOME" || {
     echo "Could not return to the home directory!" >&2
     return 1
   }
+  if (( update_status != 0 )); then
+    return "$update_status"
+  fi
   echo "Dotfiles update process completed."
 }
 
