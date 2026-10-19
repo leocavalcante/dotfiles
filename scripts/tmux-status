@@ -3,7 +3,7 @@
 # The HomeLab stays plugged in, so its battery sits at 100%. Skip it.
 # The clock is omitted when this client was opened from another tmux, so the
 # outer bar is the only one showing the time.
-# Termux (Flip) shows neither the battery nor the clock.
+# Local Termux clients keep a compact bar; remote clients get the Flip battery and clock.
 path=$1
 client_pid=$2
 parts=
@@ -14,6 +14,16 @@ if [ -n "${TERMUX_VERSION:-}" ] || [ "${PREFIX:-}" = /data/data/com.termux/files
 	termux=1
 fi
 
+# The server environment is Termux for every client. Identify remote clients
+# from their own process environment instead of the shared server environment.
+remote_client=0
+if [ "$termux" -eq 1 ] && [ -n "$client_pid" ] && [ -r "/proc/$client_pid/environ" ]; then
+	if tr '\0' '\n' < "/proc/$client_pid/environ" 2>/dev/null |
+		awk -F= '$1=="SSH_CONNECTION" { found=1 } END { exit !found }'; then
+		remote_client=1
+	fi
+fi
+
 add() {
 	[ -n "$1" ] || return 0
 	if [ -n "$parts" ]; then
@@ -21,6 +31,54 @@ add() {
 	else
 		parts=$1
 	fi
+}
+
+cache_root=${XDG_CACHE_HOME:-"$HOME/.cache"}
+battery_cache_dir=$cache_root/tmux-status
+battery_cache=$battery_cache_dir/flip-battery
+battery_lock=$battery_cache.lock
+
+read_battery_cache() {
+	battery_checked=0
+	battery_percent=
+	battery_mark=
+	if [ -r "$battery_cache" ]; then
+		IFS=' ' read -r battery_checked battery_percent battery_mark < "$battery_cache" || :
+	fi
+	case $battery_checked in ''|*[!0-9]*) battery_checked=0 ;; esac
+	case $battery_percent in *[!0-9]*|'') battery_percent= ;; esac
+	case $battery_mark in +|'') ;; *) battery_mark= ;; esac
+}
+
+write_battery_cache() {
+	tmp=$battery_cache.$$.tmp
+	printf '%s %s %s\n' "$1" "$2" "$3" > "$tmp" && mv -f "$tmp" "$battery_cache"
+}
+
+refresh_battery_cache() {
+	(
+		umask 077
+		mkdir -p "$battery_cache_dir" || exit 0
+		exec 9>"$battery_lock" || exit 0
+		flock -n 9 || exit 0
+		read_battery_cache
+		now=$(date +%s 2>/dev/null) || exit 0
+		case $now in ''|*[!0-9]*) exit 0 ;; esac
+		if [ "$battery_checked" -gt 0 ] && [ "$((now - battery_checked))" -lt 60 ]; then
+			exit 0
+		fi
+
+		# Record the attempt first. If Termux:API stalls, later refreshes keep
+		# showing this cached value without spawning overlapping requests.
+		write_battery_cache "$now" "$battery_percent" "$battery_mark" || exit 0
+		battery_json=$(termux-battery-status 2>/dev/null) || battery_json=
+		battery_percent=$(printf '%s\n' "$battery_json" | jq -er '.percentage | select(type == "number" and . >= 0 and . <= 100) | floor' 2>/dev/null) || battery_percent=
+		case $battery_percent in *[!0-9]*|'') exit 0 ;; esac
+		battery_status=$(printf '%s\n' "$battery_json" | jq -r '.status // empty' 2>/dev/null) || battery_status=
+		battery_mark=
+		case $battery_status in Charging|CHARGING|charging) battery_mark=+ ;; esac
+		write_battery_cache "$now" "$battery_percent" "$battery_mark"
+	) </dev/null >/dev/null 2>&1 &
 }
 
 branch=$(git -C "$path" rev-parse --abbrev-ref HEAD 2>/dev/null) || branch=
@@ -35,7 +93,6 @@ fi
 
 # HomeLab stays on AC at 100%, so skip it. Linux laptops expose sysfs.
 # macOS uses pmset. A desktop with neither source adds nothing.
-# Termux is skipped because the bar omits its battery.
 if [ "$(hostname -s 2>/dev/null)" != ubuntu ] && [ "$termux" -eq 0 ]; then
 	cap=
 	st=
@@ -55,6 +112,10 @@ if [ "$(hostname -s 2>/dev/null)" != ubuntu ] && [ "$termux" -eq 0 ]; then
 		esac
 		add "${cap}%${mark}"
 	fi
+elif [ "$termux" -eq 1 ] && [ "$remote_client" -eq 1 ]; then
+	read_battery_cache
+	refresh_battery_cache
+	[ -n "$battery_percent" ] && add "${battery_percent}%${battery_mark}"
 fi
 
 nested=0
@@ -70,7 +131,7 @@ while [ -n "$pid" ] && [ "$pid" -gt 1 ] 2>/dev/null && [ "$i" -lt 6 ]; do
 	i=$((i + 1))
 done
 
-if [ "$nested" -eq 0 ] && [ "$termux" -eq 0 ]; then
+if [ "$nested" -eq 0 ] && { [ "$termux" -eq 0 ] || [ "$remote_client" -eq 1 ]; }; then
 	add "$(date '+%a %-d %b %H:%M')"
 fi
 
