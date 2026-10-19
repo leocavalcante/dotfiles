@@ -129,7 +129,7 @@ agents() {
 }
 
 # Update agentic development tools
-agentic-update() {
+keep-it-up() {
   dot &&
     agents &&
     pi update &&
