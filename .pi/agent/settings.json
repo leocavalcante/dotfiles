@@ -1,7 +1,7 @@
 {
   "theme": "gruvbox",
   "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-6-luna",
+  "defaultModel": "gpt-6.1-sol",
   "defaultThinkingLevel": "max",
   "lastChangelogVersion": "1.3.0",
   "deviceId": "84b2771a-f63f-41ff-840a-43971c6ee98d",
@@ -9,7 +9,7 @@
     "git:github.com/leocavalcante/pi-subagents",
     "git:github.com/leocavalcante/pi-tmux@main"
   ],
-  "hideThinkingBlock": true,
+  "hideThinkingBlock": false,
   "enabledModels": [
     "github-copilot/claude-haiku-5.5",
     "github-copilot/claude-opus-5.5",
