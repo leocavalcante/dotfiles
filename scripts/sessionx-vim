@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+# SessionX does not persist @sessionx-additional-options for its launcher.
+# Extend its cached fzf arguments without editing the TPM-managed plugin.
+eval "$(tmux show-option -gqv @sessionx-_built-args)"
+args+=(
+  --bind 'start:change-prompt(NORMAL> )'
+  --bind 'j:down,k:up,J:down,K:up,q:abort'
+  --bind '/:unbind(j,k,J,K,q,/)+change-prompt(/ )'
+  --bind 'esc:rebind(j,k,J,K,q,/)+change-prompt(NORMAL> )'
+)
+tmux set-option -g @sessionx-_built-args "$(declare -p args)"
