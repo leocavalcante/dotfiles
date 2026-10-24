@@ -49,100 +49,92 @@ alias cdx="codex --yolo --model gpt-5.6-luna -c model_reasoning_effort=max"
 alias cdxe="codex exec --yolo --model gpt-5.6-luna -c model_reasoning_effort=max"
 alias csr="cursor agent --yolo --model 'auto-smart[optimize_for=intelligence]'"
 
-# Update dotfiles from repository
+# Commit local config changes, merge origin/main, and publish without rewriting history.
+_sync_config_repo() {
+  emulate -L zsh
+  local repo_dir="$1" repo_name="$2"
+  local current_branch git_dir worktree_status unmerged_files divergence
+  local local_head remote_head
+  local commit_helper="$HOME/.agents/scripts/git_commit.py"
+  local -a commit_command=(python3 "$commit_helper" --repo-dir "$repo_dir")
+  local -x PYTHONDONTWRITEBYTECODE=1 GIT_TERMINAL_PROMPT=0
+
+  current_branch=$(git -C "$repo_dir" branch --show-current) || return
+  if [[ "$current_branch" != "main" ]]; then
+    echo "Refusing to sync: $repo_dir is not on main (currently ${current_branch:-detached})." >&2
+    return 1
+  fi
+  git_dir=$(git -C "$repo_dir" rev-parse --absolute-git-dir) || return
+  unmerged_files=$(git -C "$repo_dir" ls-files --unmerged) || return
+  if [[ -n "$unmerged_files" || -e "$git_dir/MERGE_HEAD" ||
+        -e "$git_dir/CHERRY_PICK_HEAD" || -e "$git_dir/REVERT_HEAD" ||
+        -d "$git_dir/rebase-merge" || -d "$git_dir/rebase-apply" ]]; then
+    echo "Finish the in-progress Git operation in $repo_dir before syncing." >&2
+    return 1
+  fi
+  if [[ ! -f "$commit_helper" ]] || (( ! $+commands[python3] )); then
+    echo "Sync requires python3 and $commit_helper." >&2
+    return 1
+  fi
+
+  echo "Syncing $repo_name..."
+  git -C "$repo_dir" fetch --quiet origin refs/heads/main:refs/remotes/origin/main || return
+  worktree_status=$(git -C "$repo_dir" status --porcelain) || return
+  if [[ -n "$worktree_status" ]]; then
+    git -C "$repo_dir" add --all -- . || return
+    git -C "$repo_dir" diff --cached --stat || return
+    printf 'chore(%s): sync local changes\n' "$repo_name" |
+      "${commit_command[@]}" --message-file - || return
+  fi
+
+  divergence=$(git -C "$repo_dir" rev-list --left-right --count HEAD...origin/main) || return
+  local -a counts=(${=divergence})
+  if (( counts[1] == 0 )); then
+    git -C "$repo_dir" merge --ff-only --quiet origin/main || return
+  elif (( counts[2] > 0 )); then
+    git -C "$repo_dir" merge --no-ff --no-commit origin/main || {
+      echo "Resolve and finish the merge in $repo_dir, then retry. Nothing was pushed." >&2
+      return 1
+    }
+    git -C "$repo_dir" diff --cached --stat || return
+    printf 'chore(%s): merge remote changes\n' "$repo_name" |
+      "${commit_command[@]}" --message-file - --allow-empty || return
+  fi
+
+  "${commit_command[@]}" --verify-range origin/main || return
+  git -C "$repo_dir" push origin HEAD:refs/heads/main || return
+  local_head=$(git -C "$repo_dir" rev-parse HEAD) || return
+  remote_head=$(git -C "$repo_dir" ls-remote --exit-code --heads origin refs/heads/main) || return
+  if [[ "${remote_head%%[[:space:]]*}" != "$local_head" ]]; then
+    echo "Could not verify $repo_name sync: origin/main differs from HEAD." >&2
+    return 1
+  fi
+  worktree_status=$(git -C "$repo_dir" status --porcelain) || return
+  if [[ -n "$worktree_status" ]]; then
+    echo "New local changes remain in $repo_dir; run sync again." >&2
+    return 1
+  fi
+  echo "$repo_name synchronized."
+}
+
+# Sync dotfiles, then apply their Stow links.
 dot() {
   emulate -L zsh
-  local dotfiles_dir="$HOME/.dotfiles"
-  local update_status=0
-  echo "Starting dotfiles update process"
-  
-  cd "$dotfiles_dir" || {
-    echo "Could not find the .dotfiles directory!" >&2
+  _sync_config_repo "$HOME/.dotfiles" dotfiles || return
+  if (( ! $+commands[stow] )); then
+    echo "GNU Stow not installed! Please install it to continue." >&2
     return 1
-  }
-  
-  echo "Pulling latest changes from git repository..."
-  git pull --quiet || {
-    update_status=$?
-    echo "Could not pull latest changes from git repository." >&2
-  }
-  if (( update_status == 0 )); then
-    echo "Repository updated."
-
-    if (( $+commands[stow] )); then
-      echo "Restowing dotfiles using GNU Stow..."
-      # --no-folding keeps ~/.config a real directory, so machine-local
-      # credentials never land inside this public working tree.
-      stow --no-folding . || {
-        update_status=$?
-        echo "Could not stow dotfiles." >&2
-      }
-      if (( update_status == 0 )); then
-        echo "Dotfiles stowed successfully."
-      fi
-    else
-      echo "GNU Stow not installed! Please install it to continue." >&2
-      update_status=1
-    fi
   fi
-  
-  cd "$HOME" || {
-    echo "Could not return to the home directory!" >&2
-    return 1
-  }
-  if (( update_status != 0 )); then
-    return "$update_status"
-  fi
+  echo "Restowing dotfiles using GNU Stow..."
+  # --no-folding keeps ~/.config a real directory, so machine-local
+  # credentials never land inside this public working tree.
+  stow --dir="$HOME/.dotfiles" --target="$HOME" --no-folding . || return
   echo "Dotfiles update process completed."
 }
 
-# Update the private agent harness
+# Sync the private agent harness.
 agents() {
-  emulate -L zsh
-  local agents_dir="$HOME/.agents"
-  local current_branch
-  local worktree_status
-
-  echo "Starting agent harness update process"
-
-  current_branch=$(git -C "$agents_dir" branch --show-current) || {
-    echo "Could not inspect the agent harness repository." >&2
-    return 1
-  }
-  if [[ "$current_branch" != "main" ]]; then
-    echo "Refusing to update: $agents_dir is not on main (currently ${current_branch:-detached})." >&2
-    return 1
-  fi
-
-  worktree_status=$(git -C "$agents_dir" status --porcelain) || {
-    echo "Could not inspect the agent harness worktree." >&2
-    return 1
-  }
-  if [[ -n "$worktree_status" ]]; then
-    echo "Local changes found in $agents_dir; refusing to update." >&2
-    return 1
-  fi
-
-  echo "Fetching latest changes..."
-  git -C "$agents_dir" fetch --quiet origin refs/heads/main:refs/remotes/origin/main || {
-    echo "Could not fetch the agent harness repository." >&2
-    return 1
-  }
-
-  if git -C "$agents_dir" merge-base --is-ancestor HEAD origin/main; then
-    git -C "$agents_dir" merge --ff-only --quiet origin/main || {
-      echo "Could not fast-forward the agent harness repository." >&2
-      return 1
-    }
-    echo "Repository updated."
-  elif git -C "$agents_dir" merge-base --is-ancestor origin/main HEAD; then
-    echo "Local repository is already ahead of origin/main; nothing to update."
-  else
-    echo "Local and remote histories have diverged; refusing to update." >&2
-    return 1
-  fi
-
-  echo "Agent harness update process completed."
+  _sync_config_repo "$HOME/.agents" agents
 }
 
 # Update agentic development tools

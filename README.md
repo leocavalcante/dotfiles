@@ -43,6 +43,20 @@ stow --no-folding .
 
 This creates symlinks from the repository to `$HOME`. First run will auto-install Antigen plugins and Neovim plugins on first launch.
 
+### Configuration and tool updates
+
+Run `keep-it-up` in zsh to sync dotfiles, sync the private agent harness, then
+update Pi and its extensions. `dot` and `agents` can also be run separately.
+
+Both sync commands require the repository to be on `main`, Python 3, and
+`~/.agents/scripts/git_commit.py`. They automatically commit all non-ignored
+local changes, merge `origin/main`, push, and verify the remote HEAD. Review
+local edits before running them, especially because dotfiles are public.
+
+Conflicts, unfinished Git operations, or failed pushes stop the sequence without
+stashing, resetting, or force-pushing. Resolve and finish a conflicted merge
+before retrying. `dot` applies Stow links only after a successful sync.
+
 ### Cursor CLI status line
 
 The shared script requires `jq`. Keep Cursor's machine-specific
