@@ -48,14 +48,21 @@ This creates symlinks from the repository to `$HOME`. First run will auto-instal
 Run `keep-it-up` in zsh to sync dotfiles, sync the private agent harness, then
 update Pi and its extensions. `dot` and `agents` can also be run separately.
 
-Both sync commands require the repository to be on `main`, Python 3, and
-`~/.agents/scripts/git_commit.py`. They automatically commit all non-ignored
-local changes, merge `origin/main`, push, and verify the remote HEAD. Review
+Both sync commands require the repository to be on `main`, Python 3,
+`~/.agents/scripts/git_commit.py`, and `scripts/sync_git.py`. They automatically
+commit all non-ignored local changes, merge `origin/main`, push, and verify the
+remote HEAD. Review
 local edits before running them, especially because dotfiles are public.
 
 Conflicts, unfinished Git operations, or failed pushes stop the sequence without
 stashing, resetting, or force-pushing. Resolve and finish a conflicted merge
 before retrying. `dot` applies Stow links only after a successful sync.
+
+Fetch, push, and remote verification announce their progress and stop after
+30 seconds, including stalled credential helpers. On Lab, unlock the GNOME
+login keyring if GitHub CLI authentication waits indefinitely. Successful
+commit-verifier JSON is normal; the following push still needs credentials.
+After a timed-out push, check the remote HEAD before retrying.
 
 ### Cursor CLI status line
 

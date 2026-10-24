@@ -56,7 +56,9 @@ _sync_config_repo() {
   local current_branch git_dir worktree_status unmerged_files divergence
   local local_head remote_head
   local commit_helper="$HOME/.agents/scripts/git_commit.py"
+  local git_helper="$HOME/.dotfiles/scripts/sync_git.py"
   local -a commit_command=(python3 "$commit_helper" --repo-dir "$repo_dir")
+  local -a remote_git=(python3 "$git_helper" -C "$repo_dir")
   local -x PYTHONDONTWRITEBYTECODE=1 GIT_TERMINAL_PROMPT=0
 
   current_branch=$(git -C "$repo_dir" branch --show-current) || return
@@ -72,13 +74,14 @@ _sync_config_repo() {
     echo "Finish the in-progress Git operation in $repo_dir before syncing." >&2
     return 1
   fi
-  if [[ ! -f "$commit_helper" ]] || (( ! $+commands[python3] )); then
-    echo "Sync requires python3 and $commit_helper." >&2
+  if [[ ! -f "$commit_helper" || ! -f "$git_helper" ]] || (( ! $+commands[python3] )); then
+    echo "Sync requires python3, $commit_helper, and $git_helper." >&2
     return 1
   fi
 
   echo "Syncing $repo_name..."
-  git -C "$repo_dir" fetch --quiet origin refs/heads/main:refs/remotes/origin/main || return
+  echo "Fetching $repo_name from origin/main (30s deadline)..."
+  "${remote_git[@]}" fetch --quiet origin refs/heads/main:refs/remotes/origin/main || return
   worktree_status=$(git -C "$repo_dir" status --porcelain) || return
   if [[ -n "$worktree_status" ]]; then
     git -C "$repo_dir" add --all -- . || return
@@ -101,10 +104,13 @@ _sync_config_repo() {
       "${commit_command[@]}" --message-file - --allow-empty || return
   fi
 
+  echo "Verifying $repo_name commits..."
   "${commit_command[@]}" --verify-range origin/main || return
-  git -C "$repo_dir" push origin HEAD:refs/heads/main || return
+  echo "Pushing $repo_name to origin/main (30s deadline)..."
+  "${remote_git[@]}" push origin HEAD:refs/heads/main || return
   local_head=$(git -C "$repo_dir" rev-parse HEAD) || return
-  remote_head=$(git -C "$repo_dir" ls-remote --exit-code --heads origin refs/heads/main) || return
+  echo "Checking $repo_name remote HEAD (30s deadline)..."
+  remote_head=$("${remote_git[@]}" ls-remote --exit-code --heads origin refs/heads/main) || return
   if [[ "${remote_head%%[[:space:]]*}" != "$local_head" ]]; then
     echo "Could not verify $repo_name sync: origin/main differs from HEAD." >&2
     return 1

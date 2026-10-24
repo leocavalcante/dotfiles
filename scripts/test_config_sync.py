@@ -4,13 +4,19 @@
 Requires zsh, git, python3, and ~/.agents/scripts/git_commit.py.
 """
 
+from contextlib import redirect_stderr
+import io
 import os
 from pathlib import Path
 import re
 import shutil
 import subprocess
 import tempfile
+import time
 import unittest
+from unittest.mock import patch
+
+import sync_git
 
 
 ZSHRC = Path(__file__).resolve().parents[1] / ".zshrc"
@@ -69,6 +75,11 @@ class ConfigSyncTest(unittest.TestCase):
             self.run_command("git", "clone", str(remote), str(repo))
             self.repos[name] = repo
             self.remotes[name] = remote
+        transport = self.repos["dot"] / "scripts/sync_git.py"
+        transport.parent.mkdir()
+        shutil.copyfile(Path(sync_git.__file__), transport)
+        with (self.repos["dot"] / ".git/info/exclude").open("a") as handle:
+            handle.write("\n/scripts/sync_git.py\n")
         # The real helper runs locally; its private source is never published.
         helper = self.home / ".agents/scripts/git_commit.py"
         helper.parent.mkdir()
@@ -124,6 +135,14 @@ class ConfigSyncTest(unittest.TestCase):
                     result = self.sync(name)
                     self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
                     self.assertEqual(self.assert_synced(name), head)
+
+    def test_sync_announces_remote_operations(self):
+        result = self.sync("dot")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("Fetching dotfiles from origin/main (30s deadline)...", result.stdout)
+        self.assertIn("Verifying dotfiles commits...", result.stdout)
+        self.assertIn("Pushing dotfiles to origin/main (30s deadline)...", result.stdout)
+        self.assertIn("Checking dotfiles remote HEAD (30s deadline)...", result.stdout)
 
     def test_commits_all_nonignored_local_changes(self):
         for name, repo in self.repos.items():
@@ -252,6 +271,27 @@ class ConfigSyncTest(unittest.TestCase):
         self.assertEqual(self.git(self.repos["dot"], "show", "HEAD:tracked.txt").stdout, "local\n")
         self.assertFalse((self.home / "calls").exists())
 
+    def test_push_timeout_stops_keep_it_up(self):
+        transport = self.repos["dot"] / "scripts/sync_git.py"
+        transport.write_text(transport.read_text().replace(
+            "TIMEOUT_SECONDS = 30", "TIMEOUT_SECONDS = 0.2",
+        ))
+        remote = self.remotes["dot"]
+        remote_head = self.git(remote, "rev-parse", "main").stdout
+        hook = remote / "hooks/pre-receive"
+        hook.write_text('#!/bin/sh\nprintf started > "$HOME/push-started"\nsleep 2\n')
+        hook.chmod(0o755)
+        for repo in self.repos.values():
+            (repo / "tracked.txt").write_text("local\n")
+        result = self.sync("keep-it-up")
+        self.assertEqual(result.returncode, 124, result.stdout + result.stderr)
+        self.assertTrue((self.home / "push-started").exists())
+        self.assertIn("Git timed out", result.stderr)
+        self.assertEqual(self.git(remote, "rev-parse", "main").stdout, remote_head)
+        self.assertEqual(self.git(self.repos["dot"], "show", "HEAD:tracked.txt").stdout, "local\n")
+        self.assertEqual(self.git(self.repos["agents"], "show", "HEAD:tracked.txt").stdout, "initial\n")
+        self.assertFalse((self.home / "calls").exists())
+
     def test_keep_it_up_syncs_both_repos_before_pi_updates(self):
         for repo in self.repos.values():
             (repo / "tracked.txt").write_text("local\n")
@@ -269,6 +309,53 @@ class ConfigSyncTest(unittest.TestCase):
         result = self.sync("keep-it-up")
         self.assertEqual(result.returncode, 23, result.stdout + result.stderr)
         self.assertEqual(len((self.home / "calls").read_text().splitlines()), 1)
+
+
+class GitDeadlineTest(unittest.TestCase):
+    def test_preserves_git_exit_code(self):
+        with patch.object(sync_git.subprocess, "Popen") as popen:
+            popen.return_value.wait.return_value = 23
+            popen.return_value.poll.return_value = 23
+            self.assertEqual(sync_git.main(["push", "origin", "main"]), 23)
+            popen.assert_called_once_with(
+                ["git", "push", "origin", "main"], start_new_session=True,
+            )
+
+    def test_timeout_kills_git_and_credential_helpers(self):
+        with tempfile.TemporaryDirectory(prefix="config-sync-timeout-") as temp:
+            root = Path(temp)
+            started = root / "started"
+            leaked = root / "leaked"
+            git = root / "git"
+            git.write_text(
+                '#!/bin/sh\n'
+                '(sleep 0.5; printf leaked > "$LEAK_MARKER") &\n'
+                'printf started > "$START_MARKER"\n'
+                'wait\n'
+            )
+            git.chmod(0o755)
+            error = io.StringIO()
+            with patch.dict(os.environ, {
+                "PATH": f"{root}:{os.environ['PATH']}",
+                "START_MARKER": str(started),
+                "LEAK_MARKER": str(leaked),
+            }), patch.object(sync_git, "TIMEOUT_SECONDS", 0.2), redirect_stderr(error):
+                self.assertEqual(sync_git.main(["push", "origin", "main"]), 124)
+            self.assertTrue(started.exists(), "fixture did not reach the credential helper")
+            self.assertIn("timed out", error.getvalue())
+            self.assertIn("unlock your login keyring/keychain", error.getvalue())
+            self.assertIn("Check the remote HEAD", error.getvalue())
+            time.sleep(0.7)
+            self.assertFalse(leaked.exists(), "credential helper survived the deadline")
+
+    def test_interrupt_terminates_git_process_group(self):
+        with patch.object(sync_git.subprocess, "Popen") as popen, \
+                patch.object(sync_git.os, "killpg") as killpg:
+            process = popen.return_value
+            process.wait.side_effect = [KeyboardInterrupt, 0]
+            process.poll.return_value = None
+            self.assertEqual(sync_git.main(["fetch", "origin"]), 130)
+            killpg.assert_called_once_with(process.pid, sync_git.signal.SIGKILL)
 
 
 if __name__ == "__main__":
