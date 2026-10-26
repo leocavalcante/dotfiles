@@ -46,7 +46,8 @@ This creates symlinks from the repository to `$HOME`. First run will auto-instal
 ### Configuration and tool updates
 
 Run `keep-it-up` in zsh to sync dotfiles, sync the private agent harness, then
-update Pi and its extensions. `dot` and `agents` can also be run separately.
+update Pi and its extensions. Pi itself updates through npm on Termux and
+`pi update` elsewhere. `dot` and `agents` can also be run separately.
 
 Both sync commands require the repository to be on `main`, Python 3,
 `~/.agents/scripts/git_commit.py`, and `scripts/sync_git.py`. They automatically

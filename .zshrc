@@ -145,10 +145,15 @@ agents() {
 
 # Update agentic development tools
 keep-it-up() {
-  dot &&
-    agents &&
-    pi update &&
-    pi update --extensions
+  emulate -L zsh
+  dot && agents || return
+  if [[ -n "$TERMUX_VERSION" || "$PREFIX" == /data/data/com.termux/files/usr ]]; then
+    # Termux installs Pi through npm, not Pi's managed installer.
+    npm install -g --ignore-scripts @earendil-works/pi-coding-agent || return
+  else
+    pi update || return
+  fi
+  pi update --extensions
 }
 
 # System update utility

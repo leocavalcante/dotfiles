@@ -46,12 +46,17 @@ class ConfigSyncTest(unittest.TestCase):
             GIT_TERMINAL_PROMPT="0",
             PYTHONDONTWRITEBYTECODE="1",
         )
+        self.env.pop("TERMUX_VERSION", None)
+        self.env.pop("PREFIX", None)
         self.functions = self.root / "functions.zsh"
         self.functions.write_text("\n\n".join(re.findall(
             r"^(?:_sync_config_repo|dot|agents|keep-it-up)\(\) \{\n.*?^\}",
             ZSHRC.read_text(), re.MULTILINE | re.DOTALL,
         )))
-        for name, exit_var in (("stow", "STOW_EXIT_CODE"), ("pi", "PI_EXIT_CODE")):
+        for name, exit_var in (
+            ("stow", "STOW_EXIT_CODE"), ("pi", "PI_EXIT_CODE"),
+            ("npm", "NPM_EXIT_CODE"),
+        ):
             command = bin_dir / name
             command.write_text(
                 f'#!/bin/sh\nprintf "%s\\n" "{name} $*" >> "$HOME/calls"\n'
@@ -303,6 +308,51 @@ class ConfigSyncTest(unittest.TestCase):
         self.assertTrue(calls[0].startswith("stow "))
         self.assertIn("--no-folding", calls[0])
         self.assertEqual(calls[1:], ["pi update", "pi update --extensions"])
+
+    def test_keep_it_up_uses_npm_on_termux(self):
+        for markers in (
+            {"TERMUX_VERSION": "0.118.3"},
+            {"PREFIX": "/data/data/com.termux/files/usr"},
+        ):
+            with self.subTest(markers=markers):
+                self.env.pop("TERMUX_VERSION", None)
+                self.env.pop("PREFIX", None)
+                self.env.update(markers)
+                (self.home / "calls").write_text("")
+                result = self.sync("keep-it-up")
+                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                calls = (self.home / "calls").read_text().splitlines()
+                self.assertTrue(calls[0].startswith("stow "))
+                self.assertEqual(calls[1:], [
+                    "npm install -g --ignore-scripts @earendil-works/pi-coding-agent",
+                    "pi update --extensions",
+                ])
+
+    def test_termux_npm_failure_stops_keep_it_up(self):
+        self.env.update(TERMUX_VERSION="0.118.3", NPM_EXIT_CODE="23")
+        result = self.sync("keep-it-up")
+        self.assertEqual(result.returncode, 23, result.stdout + result.stderr)
+        calls = (self.home / "calls").read_text().splitlines()
+        self.assertEqual(calls[1:], [
+            "npm install -g --ignore-scripts @earendil-works/pi-coding-agent",
+        ])
+
+    def test_pi_self_update_failure_stops_keep_it_up(self):
+        self.env["PI_EXIT_CODE"] = "23"
+        result = self.sync("keep-it-up")
+        self.assertEqual(result.returncode, 23, result.stdout + result.stderr)
+        calls = (self.home / "calls").read_text().splitlines()
+        self.assertEqual(calls[1:], ["pi update"])
+
+    def test_termux_extension_failure_is_returned(self):
+        self.env.update(TERMUX_VERSION="0.118.3", PI_EXIT_CODE="23")
+        result = self.sync("keep-it-up")
+        self.assertEqual(result.returncode, 23, result.stdout + result.stderr)
+        calls = (self.home / "calls").read_text().splitlines()
+        self.assertEqual(calls[1:], [
+            "npm install -g --ignore-scripts @earendil-works/pi-coding-agent",
+            "pi update --extensions",
+        ])
 
     def test_stow_failure_stops_keep_it_up(self):
         self.env["STOW_EXIT_CODE"] = "23"
