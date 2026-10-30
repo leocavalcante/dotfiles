@@ -279,12 +279,12 @@ class ConfigSyncTest(unittest.TestCase):
     def test_push_timeout_stops_keep_it_up(self):
         transport = self.repos["dot"] / "scripts/sync_git.py"
         transport.write_text(transport.read_text().replace(
-            "TIMEOUT_SECONDS = 30", "TIMEOUT_SECONDS = 0.2",
+            "TIMEOUT_SECONDS = 30", "TIMEOUT_SECONDS = 2",
         ))
         remote = self.remotes["dot"]
         remote_head = self.git(remote, "rev-parse", "main").stdout
         hook = remote / "hooks/pre-receive"
-        hook.write_text('#!/bin/sh\nprintf started > "$HOME/push-started"\nsleep 2\n')
+        hook.write_text('#!/bin/sh\nprintf started > "$HOME/push-started"\nsleep 10\n')
         hook.chmod(0o755)
         for repo in self.repos.values():
             (repo / "tracked.txt").write_text("local\n")
