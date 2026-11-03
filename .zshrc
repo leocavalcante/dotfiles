@@ -47,7 +47,6 @@ alias python="python3"
 alias stk="starship toggle kubernetes"
 alias cdx="codex --yolo --model gpt-5.6-luna -c model_reasoning_effort=max"
 alias cdxe="codex exec --yolo --model gpt-5.6-luna -c model_reasoning_effort=max"
-alias csr="cursor agent --yolo --model 'auto-smart[optimize_for=intelligence]'"
 
 # Commit local config changes, merge origin/main, and publish without rewriting history.
 _sync_config_repo() {
