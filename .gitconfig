@@ -54,9 +54,9 @@
 	diff-all = !git diff | delta && git ls-files --others --exclude-standard | xargs -I{} git diff --no-index /dev/null {} | delta
 
 [credential "https://github.com"]
-	helper =
-	helper = !gh auth git-credential
+	helper = 
+	helper = !/data/data/com.termux/files/usr/bin/gh auth git-credential
 [credential "https://gist.github.com"]
-	helper =
-	helper = !gh auth git-credential
+	helper = 
+	helper = !/data/data/com.termux/files/usr/bin/gh auth git-credential
 
