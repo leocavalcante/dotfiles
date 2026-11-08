@@ -8,7 +8,7 @@ Personal development environment with AI-powered workflows and unified Gruvbox D
 - **Unified Gruvbox Dark Theme** - Consistently applied across Neovim, tmux, Kitty, Alacritty, and git-delta
 - **Performance-Optimized Shells** - Zsh and Fish with aggressive lazy-loading, caching, and startup optimizations
 - **DevOps-Focused tmux** - Status bar displays Kubernetes context, AWS profile, and git branch; 11 plugins including session persistence and fuzzy search
-- **Modern Neovim Setup** - 27 plugins with LSP support for Go, PHP, Lua, TypeScript, Python, Rust, YAML, JSON, and Markdown; Git integration; Copilot; Database client; Wakatime
+- **Modern Neovim Setup** - 26 plugins with LSP support for Go, PHP, Lua, TypeScript, Python, Rust, YAML, JSON, and Markdown; Git integration; Copilot; Database client
 - **Cross-Platform** - Works on macOS (Homebrew), Linux (apt), and Termux
 
 ## What's Included
@@ -17,7 +17,7 @@ Personal development environment with AI-powered workflows and unified Gruvbox D
 |-----------|---------|
 | **Zsh** (`.zshrc`) | Shell with 13 custom functions, Antigen plugin manager, 7 curated plugins |
 | **Fish** (`.config/fish/`) | Alternative shell with identical tooling: vi bindings, Starship, zoxide, direnv, Goose |
-| **Neovim** (`.config/nvim/`) | Modern editor with LSP, fuzzy finder, file explorer, AI copilot, Wakatime |
+| **Neovim** (`.config/nvim/`) | Modern editor with LSP, fuzzy finder, file explorer, AI copilot |
 | **tmux** (`.tmux.conf`) | Terminal multiplexer with DevOps status bar, session persistence, and vim integration |
 | **Git** (`.gitconfig`) | Delta pager with Gruvbox Dark theme, LFS support, diff-all alias |
 | **Terminal Apps** | Alacritty (`.alacritty.toml`, `.config/alacritty/`), Kitty (`.config/kitty/`), Starship (`.config/starship.toml`) |
