@@ -189,17 +189,18 @@ fi
 
 # ─── Lazy-loaded Tools ───
 
-# Lazy-load zoxide (z and zi commands)
+# Lazy-load zoxide (z and zi commands).
+# Call its functions directly: new aliases cannot expand in an already parsed function.
 if (( $+commands[zoxide] )); then
   z() {
     unfunction z zi 2>/dev/null
     eval "$(zoxide init zsh)"
-    z "$@"
+    __zoxide_z "$@"
   }
   zi() {
     unfunction z zi 2>/dev/null
     eval "$(zoxide init zsh)"
-    zi "$@"
+    __zoxide_zi "$@"
   }
 fi
 
