@@ -115,21 +115,10 @@ symlink.
 
 Keep `~/.pi/agent` as a real directory and use `stow --no-folding .`.
 Git's Pi allowlist includes only reviewed settings, the theme, worker
-instructions, and the capture prompt. Authentication, sessions, model caches,
+instructions. Authentication, sessions, model caches,
 trust decisions, and private `AGENTS.md` instructions stay outside this repo.
 Review settings for secrets before committing; an allowlist does not check
 file contents.
-
-### Pi session capture
-
-`.pi/agent/prompts/capture.md` adds `/capture` to Pi. After linking dotfiles,
-run `/reload`, then use `/capture` before `/quit`. An optional focus works as
-`/capture Pi tooling`.
-
-The prompt requires the private `~/.agents` harness on each machine. It
-reviews available session evidence, promotes supported guidance, and retains
-uncertain findings. Pi stays open for review; capture does not run
-automatically on exit or authorize pushes.
 
 ### Alacritty
 
