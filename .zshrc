@@ -38,10 +38,8 @@ alias k="kubectl"
 alias k9s="TERM=xterm-256color k9s"
 alias kns="kubens"
 alias ktx="kubectx"
-alias l="eza --all --icons --git"
 alias lg="lazygit"
 alias ldo="lazydocker"
-alias ll="eza --long --all --icons --git"
 alias pip="pip3"
 alias python="python3"
 alias stk="starship toggle kubernetes"
@@ -294,6 +292,10 @@ if [[ -f "$ANTIGEN" ]]; then
     compinit -C -d "$_zcompdump"
   fi
 fi
+
+# Keep these after Oh My Zsh, which defines its own l and ll aliases.
+alias l="eza --all --icons --git"
+alias ll="eza --long --all --icons --git"
 
 # Machine-local overrides. This file is not in the public dotfiles repo.
 [ -f "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"
