@@ -126,10 +126,10 @@ file contents.
 run `/reload`, then use `/capture` before `/quit`. An optional focus works as
 `/capture Pi tooling`.
 
-The prompt requires the private `~/.agents` harness and its
-`skills/harness/SKILL.md` on each machine. It reviews available session evidence,
-promotes supported guidance, and retains uncertain findings. Pi stays open for
-review; capture does not run automatically on exit or authorize pushes.
+The prompt requires the private `~/.agents` harness on each machine. It
+reviews available session evidence, promotes supported guidance, and retains
+uncertain findings. Pi stays open for review; capture does not run
+automatically on exit or authorize pushes.
 
 ### Alacritty
 
