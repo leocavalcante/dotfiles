@@ -3,20 +3,19 @@
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-6.1-sol",
   "defaultThinkingLevel": "max",
-  "lastChangelogVersion": "1.5.0",
+  "lastChangelogVersion": "1.5.2",
   "deviceId": "84b2771a-f63f-41ff-840a-43971c6ee98d",
   "packages": [
-    "git:github.com/leocavalcante/pi-subagents",
-    "git:github.com/leocavalcante/pi-tmux@main",
     "git:github.com/leocavalcante/pi-a2a",
-    "git:github.com/leocavalcante/pi-otel"
+    "git:github.com/leocavalcante/pi-otel",
+    "git:github.com/leocavalcante/pi-subagents",
+    "git:github.com/leocavalcante/pi-tmux"
   ],
-  "hideThinkingBlock": false,
   "enabledModels": [
     "github-copilot/claude-haiku-5.5",
     "github-copilot/claude-opus-5.5",
     "openai-codex/gpt-6-luna",
-    "openai-codex/gpt-6.1-sol",
-    "github-copilot/gpt-6.1-sol"
+    "openai-codex/gpt-6.1-sol"
   ]
 }
+
