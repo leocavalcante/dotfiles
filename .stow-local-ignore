@@ -7,3 +7,6 @@
 /README.md
 /.config/ghostty
 
+# Pi: link only agent/settings.json, agent/themes/, and agent/agents/; the rest of ~/.pi stays local.
+/\.pi/(?!agent(/settings\.json|/(themes|agents)(/.*)?)?$).+
+

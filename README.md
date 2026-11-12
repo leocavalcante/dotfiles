@@ -113,12 +113,19 @@ For local extension development, follow the checkout's README. Dotfiles
 ignores `~/.pi/agent/extensions`, including any machine-local development
 symlink.
 
-Keep `~/.pi/agent` as a real directory and use `stow --no-folding .`.
+Stow links only `.pi/agent/settings.json`, `.pi/agent/themes/`, and
+`.pi/agent/agents/`; `.stow-local-ignore` skips the rest of `.pi`. Keep
+`~/.pi` and `~/.pi/agent` as real directories and use `stow --no-folding .`.
 Git's Pi allowlist includes only reviewed settings, the theme, worker
 instructions. Authentication, sessions, model caches,
 trust decisions, and private `AGENTS.md` instructions stay outside this repo.
 Review settings for secrets before committing; an allowlist does not check
 file contents.
+
+`--no-folding` does not undo an existing folded link. If `~/.pi` is a symlink
+into this repo, close Pi, remove the link, and move everything in `.pi/agent/`
+except `settings.json`, `themes/`, and `agents/` into a real `~/.pi/agent/`.
+Then run `stow --no-folding .`.
 
 ### Alacritty
 
