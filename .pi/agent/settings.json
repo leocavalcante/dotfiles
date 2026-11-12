@@ -1,9 +1,9 @@
 {
   "theme": "gruvbox",
-  "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-6.1-sol",
+  "defaultProvider": "github-copilot",
+  "defaultModel": "claude-opus-5.5",
   "defaultThinkingLevel": "max",
-  "lastChangelogVersion": "1.5.0",
+  "lastChangelogVersion": "1.5.2",
   "deviceId": "84b2771a-f63f-41ff-840a-43971c6ee98d",
   "packages": [
     "git:github.com/leocavalcante/pi-a2a",
