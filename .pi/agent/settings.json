@@ -16,6 +16,8 @@
     "github-copilot/claude-opus-5.5",
     "openai-codex/gpt-6-luna",
     "openai-codex/gpt-6.1-sol"
-  ]
+  ],
+  "extensionChangelogVersions": {
+    "{\"source\":\"git:github.com/leocavalcante/pi-otel\",\"scope\":\"user\"}": "0.1.2"
+  }
 }
-

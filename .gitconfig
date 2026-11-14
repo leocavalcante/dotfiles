@@ -53,3 +53,6 @@
 [alias]
 	diff-all = !git diff | delta && git ls-files --others --exclude-standard | xargs -I{} git diff --no-index /dev/null {} | delta
 
+[user]
+	name = leocavalcante
+	email = git@leocavalcante.dev
